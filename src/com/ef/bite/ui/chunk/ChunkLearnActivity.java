@@ -152,6 +152,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					final int position, long id) {
+
 				// made in Alan
 				mposition = position;
 				PresentationConversation conversation = mChunkModel
@@ -160,6 +161,15 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 				Integer startTime = conversation.getStartTime();
 				Integer endTime = conversation.getEndTime();
 				mDialogueAdapter.StopGif(position, true);
+
+                // is first time or not
+                int time = mDialogueAdapter.findRecord(position);
+                if (time == 1) {
+                    mDialogueAdapter.doubleClick();
+                    mWeChatPlayer.pause();
+                    return;
+                }
+
 				if (startTime != null && endTime != null) {
 					// mBottomPlayer.start(startTime);
 					// mBottomPlayer.stop(endTime);
@@ -170,7 +180,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 						public void OnStop() {
 							// TODO Auto-generated method stub
 							// mDialogueAdapter.StopGif(position, false);
-							mDialogueAdapter.closeTranslationGif(false);
+							//mDialogueAdapter.closeTranslationGif(false);
 						}
 					});
 
@@ -179,7 +189,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 				}
 
 				mDialogueAdapter.setTranslationMorn(false, position);
-				// mDialogueAdapter.setTranslationMorn(true, position);
+//				 mDialogueAdapter.setTranslationMorn(true, position);
 			}
 		});
 
@@ -187,7 +197,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 			@Override
 			public void onClick(View v) {
 				MobclickTracking.OmnitureTrack.ActionDialogue(1);
-				MobclickTracking.UmengTrack.ActionDialogue(1, mContext);
+//				MobclickTracking.UmengTrack.ActionDialogue(1, mContext);
 				finish();
 //				if (isChunkForPreview) {
 //					finish();
@@ -271,7 +281,9 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 						mBottomPlayer.start();
 					}
 					MobclickTracking.OmnitureTrack.ActionDialogue(3);
-					MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
+                    MobclickTracking.OmnitureTrack.ActionDialogue(6);
+
+//                    MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
 				}
 			}
 		});

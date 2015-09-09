@@ -64,6 +64,9 @@ public class EFRegisterActivity extends BaseActivity {
 	private String mindexAge;
 	private int mPositionAge;
 
+    int step = 1;
+    TermsServicePopupWindow popup;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -130,9 +133,13 @@ public class EFRegisterActivity extends BaseActivity {
 				R.drawable.arrow_goback_black, -1, new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						finish();
-						overridePendingTransition(R.anim.activity_in_from_left,
-								R.anim.activity_out_to_right);
+						if (step == 2) {
+							attempBack();
+						} else {
+							finish();
+							overridePendingTransition(R.anim.activity_in_from_left,
+									R.anim.activity_out_to_right);
+						}
 					}
 				}, null);
 		// 下一步设置手机号和密码
@@ -273,7 +280,7 @@ public class EFRegisterActivity extends BaseActivity {
 		// termsIntent.putExtra(AppConst.BundleKeys.Terms_Btnbar_Show, true);
 		// startActivityForResult(termsIntent,
 		// AppConst.RequestCode.TERMS_CONDITION);
-		TermsServicePopupWindow popup = new TermsServicePopupWindow(this,
+		popup = new TermsServicePopupWindow(this,
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -321,22 +328,23 @@ public class EFRegisterActivity extends BaseActivity {
 		fadein.setDuration(200);
 		fadein.setFillAfter(true);
 		fadein.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-				mEnterPhoneLayout.setVisibility(View.VISIBLE);
-			}
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mEnterPhoneLayout.setVisibility(View.VISIBLE);
+            }
 
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
 
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				mEnterNameLayout.setVisibility(View.GONE);
-			}
-		});
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mEnterNameLayout.setVisibility(View.GONE);
+            }
+        });
 		mEnterNameLayout.startAnimation(fadeout);
 		mEnterPhoneLayout.startAnimation(fadein);
+        step++;
 
 	}
 
@@ -368,7 +376,17 @@ public class EFRegisterActivity extends BaseActivity {
 		});
 		mEnterPhoneLayout.startAnimation(fadeout);
 		mEnterNameLayout.startAnimation(fadein);
+        step--;
 	}
+
+	@Override
+	public void onBackPressed() {
+        if (step == 2) {
+            attempBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
 	/** 注册 **/
 	private void attempRegister(final String phone, final String password,
@@ -531,16 +549,16 @@ public class EFRegisterActivity extends BaseActivity {
 							ContextDataMode.RegisterPhoneValues.pageSiteSectionValue,
 							mContext);
 			// Umeng
-			MobclickTracking.UmengTrack.setPageStart(
-					ContextDataMode.RegisterNameValues.pageNameValue,
-					ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
-					ContextDataMode.RegisterNameValues.pageSiteSectionValue,
-					mContext);
-			MobclickTracking.UmengTrack.setPageEnd(
-					ContextDataMode.RegisterNameValues.pageNameValue,
-					ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
-					ContextDataMode.RegisterNameValues.pageSiteSectionValue,
-					mContext);
+//			MobclickTracking.UmengTrack.setPageStart(
+//					ContextDataMode.RegisterNameValues.pageNameValue,
+//					ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
+//					ContextDataMode.RegisterNameValues.pageSiteSectionValue,
+//					mContext);
+//			MobclickTracking.UmengTrack.setPageEnd(
+//					ContextDataMode.RegisterNameValues.pageNameValue,
+//					ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
+//					ContextDataMode.RegisterNameValues.pageSiteSectionValue,
+//					mContext);
 			break;
 
 		case 3:
@@ -551,18 +569,18 @@ public class EFRegisterActivity extends BaseActivity {
 							ContextDataMode.RegisterTermsValues.pageSiteSubSectionValue,
 							ContextDataMode.RegisterTermsValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.RegisterTermsValues.pageNameValue,
-							ContextDataMode.RegisterTermsValues.pageSiteSubSectionValue,
-							ContextDataMode.RegisterTermsValues.pageSiteSectionValue,
-							mContext);
-			MobclickTracking.UmengTrack
-					.setPageEnd(
-							ContextDataMode.RegisterTermsValues.pageNameValue,
-							ContextDataMode.RegisterTermsValues.pageSiteSubSectionValue,
-							ContextDataMode.RegisterTermsValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.RegisterTermsValues.pageNameValue,
+//							ContextDataMode.RegisterTermsValues.pageSiteSubSectionValue,
+//							ContextDataMode.RegisterTermsValues.pageSiteSectionValue,
+//							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageEnd(
+//							ContextDataMode.RegisterTermsValues.pageNameValue,
+//							ContextDataMode.RegisterTermsValues.pageSiteSubSectionValue,
+//							ContextDataMode.RegisterTermsValues.pageSiteSectionValue,
+//							mContext);
 			break;
 		}
 	}

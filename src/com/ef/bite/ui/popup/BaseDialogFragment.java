@@ -12,7 +12,9 @@ public class BaseDialogFragment extends DialogFragment {
 	protected AlertDialog.Builder mBuilder;
 	protected Activity mActivity;
 	protected LayoutInflater mInflater ;
-	
+
+    public BaseDialogFragment(){}
+
 	public BaseDialogFragment(Activity activity){
 		mActivity = activity;
 		mBuilder = new AlertDialog.Builder(mActivity);

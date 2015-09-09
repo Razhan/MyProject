@@ -17,24 +17,25 @@ import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
+import com.ef.bite.business.CountryBLL;
 import com.ef.bite.business.GlobalConfigBLL;
 import com.ef.bite.business.task.GetGlobalLanguageTask;
 import com.ef.bite.business.task.GetServerAddressTask;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.PostFingerPrintTask;
+import com.ef.bite.dataacces.ProfileCache;
 import com.ef.bite.dataacces.mode.httpMode.HttpAppResourceRequest;
+import com.ef.bite.dataacces.mode.httpMode.NewHttpAppResourceRequest;
 import com.ef.bite.lang.Closure;
 import com.ef.bite.model.ConfigModel;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.ui.user.EFLoginWelcomeActivity;
 import com.ef.bite.utils.*;
 import com.ef.bite.widget.GifImageView;
+import com.parse.ParseObject;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 @SuppressLint("SimpleDateFormat")
 public class SplashActivity extends BaseActivity {
@@ -49,9 +50,21 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
         setupViews();
-        startActivity(new Intent(this, SecondSplashActivity.class));
-        iniAppResources();
+
+        int requestCode = 0;
+        startActivityForResult(new Intent(this, SecondSplashActivity.class), requestCode);
+
+//        startActivity(new Intent(this, SecondSplashActivity.class));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==0){
+            iniAppResources();
+        }
     }
 
     private void setupViews() {
@@ -69,28 +82,28 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickTracking.UmengTrack.setPageStart(
-                ContextDataMode.SplashValues.pageNameValue,
-                ContextDataMode.SplashValues.pageSiteSubSectionValue,
-                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
+//        MobclickTracking.UmengTrack.setPageStart(
+//                ContextDataMode.SplashValues.pageNameValue,
+//                ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
 
         if (AppConst.HeaderStore.StoreName.equals("woo")) {
-            MobclickTracking.UmengTrack
-                    .setPageStart(
-                            ContextDataMode.Keydata.splash_wo_store,
-                            ContextDataMode.SplashValues.pageSiteSubSectionValue,
-                            ContextDataMode.SplashValues.pageSiteSectionValue,
-                            mContext);
+//            MobclickTracking.UmengTrack
+//                    .setPageStart(
+//                            ContextDataMode.Keydata.splash_wo_store,
+//                            ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                            ContextDataMode.SplashValues.pageSiteSectionValue,
+//                            mContext);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        MobclickTracking.UmengTrack.setPageEnd(
-                ContextDataMode.SplashValues.pageNameValue,
-                ContextDataMode.SplashValues.pageSiteSubSectionValue,
-                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
+//        MobclickTracking.UmengTrack.setPageEnd(
+//                ContextDataMode.SplashValues.pageNameValue,
+//                ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
     }
 
     // Woo商店Logo显示
@@ -138,8 +151,6 @@ public class SplashActivity extends BaseActivity {
                 AppConst.GlobalConfig.Language = AppLanguageHelper
                         .getSystemLaunguage(mContext);
 
-
-            // 加载上次登录信息
             profileCache.loadUserProfile();
 
             // 检查网络
@@ -156,12 +167,22 @@ public class SplashActivity extends BaseActivity {
 
     }
 
+
     private void getServerAddressAPI() {
         progress.setMessage("Getting language pack...");
         GetServerAddressTask getServerAddressTask = new GetServerAddressTask(this, new Closure() {
             @Override
             public void execute(Object result) {
-                getLanguagePack();
+                String path = android.os.Environment.getExternalStorageDirectory() + File.separator +
+                        AppConst.CacheKeys.RootStorage + File.separator
+                        + AppConst.CacheKeys.Storage_Language + File.separator;
+                File file=new File(path + "config.json");
+
+                if (!file.exists()){
+                    FileStorage.CopyAssets(AppConst.CacheKeys.Storage_Language, path, mContext);
+                }
+                getResourceInfo();
+//                getLanguagePack();
                 postFingerPrint();
             }
         });
@@ -184,14 +205,39 @@ public class SplashActivity extends BaseActivity {
                 Build.VERSION.RELEASE});
     }
 
-    private void getLanguagePack() {
-        progress.setMessage("Getting language pack...");
-        HttpAppResourceRequest appResourceRequest = new HttpAppResourceRequest();
-        appResourceRequest.app_ver = AppUtils.getVersion(mContext);
-        appResourceRequest.system = AppConst.GlobalConfig.OS;
-        appResourceRequest.res_ver = getTranslationVersion();
-        appResourceRequest.system_culture = AppLanguageHelper.getSystemLaunguage(mContext);
-        appResourceRequest.app_res_culture = PreferencesUtils.getString(mContext, AppLanguageHelper.App_Res_Culture, "");
+//    private void getLanguagePack() {
+//        progress.setMessage("Getting language pack...");
+//        HttpAppResourceRequest appResourceRequest = new HttpAppResourceRequest();
+//        appResourceRequest.app_ver = AppUtils.getVersion(mContext);
+//        appResourceRequest.system = AppConst.GlobalConfig.OS;
+//        appResourceRequest.res_ver = getTranslationVersion();
+//        appResourceRequest.system_culture = AppLanguageHelper.getSystemLaunguage(mContext);
+//        appResourceRequest.app_res_culture = PreferencesUtils.getString(mContext, AppLanguageHelper.App_Res_Culture, "");
+//        GetGlobalLanguageTask getGlobalLanguageTask = new GetGlobalLanguageTask(
+//                mContext,
+//                new PostExecuting<Boolean>() {
+//
+//                    @Override
+//                    public void executing(Boolean result) {
+//                        progress.dismiss();
+//                        if (result) {
+//                            loginCheck();
+//                        }
+//                    }
+//                });
+//
+//        getGlobalLanguageTask.execute(appResourceRequest);
+//    }
+
+    private void getResourceInfo() {
+        NewHttpAppResourceRequest appResourceRequest = new NewHttpAppResourceRequest();
+
+        JSONObject obj = JsonSerializeHelper.getJSONObjectFromSD(android.os.Environment.getExternalStorageDirectory() + File.separator +
+                AppConst.CacheKeys.RootStorage + File.separator
+                + AppConst.CacheKeys.Storage_Language + File.separator + "config.json");
+
+        appResourceRequest.id = obj.optString("id");
+        appResourceRequest.version = obj.optInt("version");
         GetGlobalLanguageTask getGlobalLanguageTask = new GetGlobalLanguageTask(
                 mContext,
                 new PostExecuting<Boolean>() {
@@ -199,13 +245,24 @@ public class SplashActivity extends BaseActivity {
                     @Override
                     public void executing(Boolean result) {
                         progress.dismiss();
-                        if (result) {
-                            loginCheck();
-                        }
+
+                        // 加载上次登录信息
+//                        if (result){
+//                        }
+                        newGetLanguagePack();
+                        loginCheck();
                     }
                 });
 
         getGlobalLanguageTask.execute(appResourceRequest);
+    }
+
+    private void newGetLanguagePack() {
+        FileStorage languageStorage = new FileStorage(this, AppConst.CacheKeys.Storage_Language);
+
+        String sys_language = AppLanguageHelper.getSystemLaunguage(mContext);
+        sys_language = CountryBLL.countryMapping(sys_language);
+        AppLanguageHelper.loadLanguageFromStorage(mContext, languageStorage.getStorageFolder() + "/system_text/", sys_language);
     }
 
     private String getTranslationVersion(){
@@ -231,6 +288,7 @@ public class SplashActivity extends BaseActivity {
             return "";
         }
     }
+
 
     private void loginCheck() {
         if (AppConst.CurrUserInfo.IsLogin) {

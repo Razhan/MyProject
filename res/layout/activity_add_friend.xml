@@ -43,7 +43,8 @@
 			        android:layout_toRightOf="@+id/add_friend_search_icon"
 			        android:hint="@string/add_friend_search_hint"
 			        android:textColor="@color/bella_color_orange_light"
-			        android:background="@null" />
+					android:imeOptions="actionSearch"
+					android:background="@null" />
 		
 			    <ImageView 
 			        android:id="@+id/add_friend_search_cancel"

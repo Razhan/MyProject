@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
+import com.apptentive.android.sdk.Log;
 import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import android.os.Bundle;
@@ -17,13 +18,16 @@ import android.widget.LinearLayout;
 import com.apptentive.android.sdk.Apptentive;
 import com.ef.bite.AppSession;
 import com.ef.bite.Tracking.MobclickTracking;
+import com.ef.bite.business.TutorialConfigBiz;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.task.GetProfileTask;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.dataacces.DashboardCache;
 import com.ef.bite.dataacces.ProfileCache;
+import com.ef.bite.dataacces.TutorialConfigSharedStorage;
 import com.ef.bite.dataacces.mode.PushData;
 import com.ef.bite.dataacces.mode.httpMode.HttpProfile;
+import com.ef.bite.model.TutorialConfig;
 import com.ef.bite.ui.main.MainActivity;
 import com.ef.bite.ui.user.EFLoginWelcomeActivity;
 import com.ef.bite.utils.JsonSerializeHelper;
@@ -56,7 +60,7 @@ public class BaseActivity extends FragmentActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		MobclickTracking.OmnitureTrack.ResumeCollectingLifecycleData();
-		MobclickTracking.UmengTrack.setResume(mContext);
+//		MobclickTracking.UmengTrack.setResume(mContext);
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public class BaseActivity extends FragmentActivity {
 		// TODO Auto-generated method stub
 		super.onPause();
 		MobclickTracking.OmnitureTrack.PauseCollectingLifecycleData();
-		MobclickTracking.UmengTrack.setPause(mContext);
+//		MobclickTracking.UmengTrack.setPause(mContext);
 //		Apsalar.unregisterApsalarReceiver();
 	}
 
@@ -160,7 +164,7 @@ public class BaseActivity extends FragmentActivity {
 	 */
 	protected void getUserProfile() {
 		Activity a = this;
-		while(a.getParent() != null) {
+		while(a.getParent()!= null) {
 			a = a.getParent();
 		}
 		mProgress = new ProgressDialog(a);
@@ -175,8 +179,10 @@ public class BaseActivity extends FragmentActivity {
 								&& result.status.equals("0")
 								&& result.data != null) {
 							profileCache.setUserProfile(result);
-							startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data",getStringExtra("com.parse.Data")));
+
+							startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data", getStringExtra("com.parse.Data")));
 							finish();
+
 						} else {
 							toast("Getting profile failed");
 							Intent intent = new Intent(mContext,

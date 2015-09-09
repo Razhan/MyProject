@@ -2,8 +2,12 @@ package com.ef.bite.ui.record;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
@@ -16,19 +20,27 @@ import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
+import com.ef.bite.business.CountryBLL;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.task.*;
 import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.dataacces.mode.ReviewVoice;
+import com.ef.bite.dataacces.mode.httpMode.HttpProfile;
 import com.ef.bite.dataacces.mode.httpMode.HttpReviewVoiceRequest;
 import com.ef.bite.dataacces.mode.httpMode.HttpReviewVoiceResponse;
 import com.ef.bite.dataacces.mode.httpMode.HttpVoiceRequest;
 import com.ef.bite.ui.BaseActivity;
+import com.ef.bite.ui.popup.QuitPracticePopWindow;
 import com.ef.bite.ui.popup.ReviewActivityPopWindow;
+import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.AvatarHelper;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.widget.*;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -74,6 +86,11 @@ public class ReviewActivity extends BaseActivity implements
 	private int refresh = 0;
 	private boolean isLearning;
 
+    private TextView country_name;
+    private ImageView country_flag;
+    private String country;
+    private RelativeLayout rl_country;
+
 
 	// 臨時參數
 	// private String BELLAID = "9272bfef-36e9-411d-b120-398761304e12";
@@ -92,7 +109,16 @@ public class ReviewActivity extends BaseActivity implements
 		isLearning =getBooleanExtra(AppConst.BundleKeys.Is_Chunk_Learning);
 		mChunkModel = (Chunk) getSerializableExtra(AppConst.BundleKeys.Chunk);
 		BELLAID = AppConst.CurrUserInfo.UserId;
-		COURESID = mChunkModel.getChunkCode();
+
+        country_name = (TextView)this.findViewById(R.id.country_name);
+        country_flag = (ImageView)this.findViewById(R.id.country_flag);
+        rl_country = (RelativeLayout)this.findViewById(R.id.country);
+
+		if(mChunkModel == null){
+			COURESID = getStringExtra(AppConst.BundleKeys.Course_id_list);
+		} else{
+			COURESID = mChunkModel.getChunkCode();
+		}
 
 		HideBottomLay = getIntent().getExtras().getInt(
 				AppConst.BundleKeys.Hide_Bottom_Lay, 0);
@@ -113,6 +139,34 @@ public class ReviewActivity extends BaseActivity implements
 		initView();
 		loadData();
 	}
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getCountryInfo(BELLAID);
+    }
+
+    private void getCountryInfo(String id) {
+        GetProfileTask profileTask = new GetProfileTask(mContext,
+                new PostExecuting<HttpProfile>() {
+                    @Override
+                    public void executing(HttpProfile result) {
+                        if (result != null && result.status != null && result.status.equals("0") && result.data != null) {
+                            country = result.data.market_code;
+
+                            String path = android.os.Environment.getExternalStorageDirectory()
+                                    + File.separator + AppConst.CacheKeys.RootStorage + File.separator
+                                    + AppConst.CacheKeys.Storage_Language + File.separator + "country"
+                                    + File.separator;
+
+                            rl_country.setVisibility(View.VISIBLE);
+                            country_name.setText(CountryBLL.getLocalCountry(country, path, mContext));
+                            country_flag.setImageBitmap(CountryBLL.getLoacalBitmap(country, path));
+                        }
+                    }
+                });
+        profileTask.execute(id);
+    }
 
 	@Override
 	protected void onDestroy() {
@@ -137,10 +191,30 @@ public class ReviewActivity extends BaseActivity implements
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-		super.onBackPressed();
+//		super.onBackPressed();
+
+        openQuitPopUp();
 	}
 
-	private void loadData() {
+    private void openQuitPopUp() {
+        QuitPracticePopWindow dialog = new QuitPracticePopWindow(
+                ReviewActivity.this, QuitPracticePopWindow.Quit_Rate);
+        dialog.setOnQuitListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        dialog.setOnCancelListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                return;
+            };
+        });
+        dialog.open();
+    }
+
+    private void loadData() {
 		// TODO Auto-generated method stub
 		HttpReviewVoiceRequest httpReviewVoiceRequest = new HttpReviewVoiceRequest();
 		httpReviewVoiceRequest.setBella_id(BELLAID);
@@ -203,7 +277,7 @@ public class ReviewActivity extends BaseActivity implements
 		AvatarHelper.LoadAvatar(voiceavater, reviewVoices.get(voicenum)
 				.getBella_id(), reviewVoices.get(voicenum).getAvatar());
 
-		review_chunkname.setText(mChunkModel.getCoursename().toString());
+//		review_chunkname.setText(mChunkModel.getCoursename().toString());
 		audioUrl = reviewVoices.get(voicenum).getVoice_url();
 		voiceTimes = reviewVoices.get(voicenum).getVoice_length();
 		voicetime.setText(String.valueOf(voiceTimes) + "''");
@@ -277,12 +351,12 @@ public class ReviewActivity extends BaseActivity implements
 		mNullBtn.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
 				"ratingvoice_refresh"));
 
-		likeBtn = (TextView) this.findViewById(R.id.review_like_btn);
-		likeBtn.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
-				"rate_like"));
-		dislikeBtn = (TextView) this.findViewById(R.id.review_dislike_btn);
-		dislikeBtn.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-				mContext, "rate_dislike"));
+//		likeBtn = (TextView) this.findViewById(R.id.review_like_btn);
+//		likeBtn.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
+//				"rate_like"));
+//		dislikeBtn = (TextView) this.findViewById(R.id.review_dislike_btn);
+//		dislikeBtn.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+//				mContext, "rate_dislike"));
 
 		voiceimage.getSettings().setJavaScriptEnabled(true);
 
@@ -471,8 +545,9 @@ public class ReviewActivity extends BaseActivity implements
 			break;
 
 		case R.id.chunk_actionbar_goback:
-			finish();
-			break;
+            //add prompt
+            openQuitPopUp();
+            break;
 
 		case R.id.reportvoice:
 			EditorPopupWindow editorPopupWindow = null;

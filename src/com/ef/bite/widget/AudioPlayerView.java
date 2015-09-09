@@ -295,7 +295,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		// showAudioProgress();
 		invalidate();
 		MobclickTracking.OmnitureTrack.ActionDialogue(5);
-		MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
+//		MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
 	}
 
 	public void pause() {
@@ -311,8 +311,8 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 			}
 
 			// omniture
-			MobclickTracking.OmnitureTrack.ActionDialogue(4);
-			MobclickTracking.UmengTrack.ActionDialogue(4, mContext);
+//			MobclickTracking.OmnitureTrack.ActionDialogue(4);
+//			MobclickTracking.UmengTrack.ActionDialogue(4, mContext);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -602,10 +602,12 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		case 0: // Ready
 			start();
 			MobclickTracking.OmnitureTrack.ActionDialogue(3);
-			MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
+            MobclickTracking.OmnitureTrack.ActionDialogue(6);
+//			MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
 			break;
 		case 1: // playing
 			pause();
+            MobclickTracking.OmnitureTrack.ActionDialogue(4);
 			break;
 		case 2: // paused
 			start();
@@ -614,7 +616,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 			if (mAllowReload) {
 				start();
 				MobclickTracking.OmnitureTrack.ActionDialogue(5);
-				MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
+//				MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
 			}
 
 			break;

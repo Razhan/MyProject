@@ -23,6 +23,7 @@ import com.ef.bite.business.task.UploadRecordingTask;
 import com.ef.bite.lang.Closure;
 import com.ef.bite.ui.chunk.BaseChunkActivity;
 import com.ef.bite.ui.guide.RecordGuideAvtivity;
+import com.ef.bite.ui.main.MainActivity;
 import com.ef.bite.utils.FileStorage;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.widget.DonutProgress;
@@ -133,6 +134,7 @@ public class RecordingActivity extends BaseChunkActivity {
         @Override
         public void onClick(View v) {
             onRecStart();
+            MobclickTracking.OmnitureTrack.ActionTrackingRecording(1);
         }
     };
 
@@ -203,7 +205,7 @@ public class RecordingActivity extends BaseChunkActivity {
         } catch (IOException e) {
             tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(
                     mContext, "recording_view_no_sound"));
-            MobclickTracking.OmnitureTrack.ActionTrackingRecording();
+            MobclickTracking.OmnitureTrack.ActionTrackingRecording(0);
             e.printStackTrace();
         }
     }
@@ -331,8 +333,8 @@ public class RecordingActivity extends BaseChunkActivity {
         stopMp3Record();
         // stopRecord();
         if (mRecAudioFile != null) {
-            MobclickTracking.OmnitureTrack
-                    .ActionTrackingRecordingSuccessful(mContext);
+//            MobclickTracking.OmnitureTrack
+//                    .ActionTrackingRecordingSuccessful(mContext);
             tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(
                     mContext, "recoding_view_complete"));// completed
             // information
@@ -455,12 +457,16 @@ public class RecordingActivity extends BaseChunkActivity {
                                     mContext, "record_msg_upload_completed"));
                             increasingScore(CREDITS);//
                             addScore(CREDITS);
+
+                            MobclickTracking.OmnitureTrack.ActionTrackingRecordingSuccessful(mContext);
+
                             new Handler().postDelayed(new Runnable() {
                                 public void run() {
-                                    openUsersRecordAct();
+//                                    openUsersRecordAct();
+                                    startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data", getStringExtra("com.parse.Data")));
                                     finish();
                                 }
-                            }, 1000);
+                            }, 500);
                         } else {
                             toast(JsonSerializeHelper.JsonLanguageDeserialize(
                                     mContext, "record_msg_upload_failed"));

@@ -14,6 +14,7 @@ public class QuitPracticePopWindow extends BasePopupWindow {
 
 	public final static int Quit_Practice = 0;
 	public final static int Quit_Rehearse = 1;
+    public final static int Quit_Rate = 2;
 
 	TextView mTitle;
 	TextView mInfo;
@@ -71,30 +72,43 @@ public class QuitPracticePopWindow extends BasePopupWindow {
 					mActivity, "popup_rehearsal_quit_title"));
 			mInfo.setText(JsonSerializeHelper.JsonLanguageDeserialize(
 					mActivity, "popup_rehearsal_quit_info"));
-		}
+		} else if (mCurrentQuitType == Quit_Rate) {
+            String title = "Quit Rating";
+            String info = JsonSerializeHelper.JsonLanguageDeserialize(mActivity, "popup_rating_quit_title");
 
-		FontHelper.applyFont(mActivity.getApplicationContext(), mBtnNO,
+            if (title.isEmpty()) {
+                title = "Quit Rating";
+            }
+            if (info.isEmpty()) {
+                info = "Are you sure that you want to quit?";
+            }
+
+            mTitle.setText(title);
+            mInfo.setText(info);
+        }
+
+        FontHelper.applyFont(mActivity.getApplicationContext(), mBtnNO,
 				FontHelper.FONT_OpenSans);
 		FontHelper.applyFont(mActivity.getApplicationContext(), mBtnQuit,
-				FontHelper.FONT_OpenSans);
+                FontHelper.FONT_OpenSans);
 		FontHelper.applyFont(mActivity.getApplicationContext(), mInfo,
 				FontHelper.FONT_OpenSans);
 
 		mBtnNO.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				close();
-				if (mCancelListener != null)
-					mCancelListener.onClick(v);
-			}
+            @Override
+            public void onClick(View v) {
+                close();
+                if (mCancelListener != null)
+                    mCancelListener.onClick(v);
+            }
 		});
 		mBtnQuit.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				close();
-				if (mQuitListener != null)
-					mQuitListener.onClick(v);
-			}
+            @Override
+            public void onClick(View v) {
+                close();
+                if (mQuitListener != null)
+                    mQuitListener.onClick(v);
+            }
 		});
 	}
 

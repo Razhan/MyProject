@@ -202,11 +202,11 @@ public class HomeScreenFragment extends Fragment {
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		MobclickTracking.UmengTrack.setResume(mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.DashboardValues.pageNameValue,
-				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
-				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setResume(mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.DashboardValues.pageNameValue,
+//				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
+//				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
 		Apptentive
 				.setRatingProvider(new WooAppstoreRatingProvider());
 		Apptentive.engage(getActivity(), "showRating_android");
@@ -236,11 +236,11 @@ public class HomeScreenFragment extends Fragment {
 	public void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPause(mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.DashboardValues.pageNameValue,
-				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
-				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setPause(mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.DashboardValues.pageNameValue,
+//				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
+//				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
 	}
 
 	/**

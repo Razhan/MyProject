@@ -1,6 +1,7 @@
 package com.ef.bite.ui.main;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import com.ef.bite.R;
@@ -32,6 +33,10 @@ public class SecondSplashActivity extends Activity{
 
     @Override
     public void finish() {
+        Intent intent=new Intent();
+        intent.putExtra("test", "testvvvvvvv");
+        setResult(RESULT_OK, intent);
+
         super.finish();
         this.overridePendingTransition(0, R.anim.activity_sliding_out_vertical);
     }

@@ -46,22 +46,22 @@ public class EFChangePWDActivity extends BaseActivity {
 				ContextDataMode.SettingsPasswordValues.pageSiteSubSectionValue,
 				ContextDataMode.SettingsPasswordValues.pageSiteSectionValue,
 				mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.SettingsPasswordValues.pageNameValue,
-				ContextDataMode.SettingsPasswordValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsPasswordValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.SettingsPasswordValues.pageNameValue,
+//				ContextDataMode.SettingsPasswordValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsPasswordValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.SettingsPasswordValues.pageNameValue,
-				ContextDataMode.SettingsPasswordValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsPasswordValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.SettingsPasswordValues.pageNameValue,
+//				ContextDataMode.SettingsPasswordValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsPasswordValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	private void initViews() {

@@ -11,6 +11,8 @@ import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.dataacces.AchievementCache;
 import com.ef.bite.dataacces.ChunksHolder;
 import com.ef.bite.dataacces.DashboardCache;
+import com.ef.bite.model.SMSRecord;
+import com.ef.bite.model.ServerErrorLog;
 import com.ef.bite.utils.AppUtils;
 import com.parse.*;
 
@@ -19,8 +21,8 @@ public class EFApplication extends Application {
 	private final static String APP_ID = "1Io6EnfkDiIEBpSQSzrgJjnQX9NgB6wLQxAhuBQm";
 	private final static String CLIENT_ID = "J2s697NE70y2jY5Obt1cJefvBE6n6wmxOyaN4f2i";
 	//Dev
-//	private final static String APP_ID = "7PRetxl8ccQdn0a2AQPjZz28cvCq8sDV3VNT9uNB";
-//	private final static String CLIENT_ID = "YxelMl7oCIYX5SnYPzE9t2B7btm4odWVZVC9TQYo";
+//	private final static String APP_ID = "oripCYXbBQNGR42KSwYIp3BkmcNzsWn9uSKQ1HEv";
+//	private final static String CLIENT_ID = "BHXcbWYYL4EjAScqtWLzU7U7dISYmjhux0XoPDTe";
 
 	private static EFApplication mApp;
 
@@ -44,7 +46,9 @@ public class EFApplication extends Application {
 			// Enable Local Datastore.
 			Parse.enableLocalDatastore(this);
 			// Initialize the Parse SDK.
-			Parse.initialize(this, APP_ID, CLIENT_ID);
+            ParseObject.registerSubclass(SMSRecord.class);
+            ParseObject.registerSubclass(ServerErrorLog.class);
+            Parse.initialize(this, APP_ID, CLIENT_ID);
 			ParseUser.enableAutomaticUser();
 			ParsePush.subscribeInBackground("", new SaveCallback() {
 				@Override
@@ -63,8 +67,7 @@ public class EFApplication extends Application {
 			e.printStackTrace();
 		}
 		if (AppUtils.UmengOmnitureInfo.isOpen) {
-			MobclickTracking.UmengTrack.openDurationTrack(false,
-					getApplicationContext(), true);
+//			MobclickTracking.UmengTrack.openDurationTrack(false, getApplicationContext(), true);
 			AppConst.HeaderStore.StoreName = AppUtils.UmengOmnitureInfo
 					.getUmengChannel(getApplicationContext());
 		}

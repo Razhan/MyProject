@@ -112,7 +112,13 @@ public class UserRecordingActivity extends BaseActivity implements
 
 		BELLAID = getIntent().getExtras().getString(
 				AppConst.BundleKeys.BELLAID, AppConst.CurrUserInfo.UserId);
-		COURESID = mChunkModel.getChunkCode();
+//		COURESID = mChunkModel.getChunkCode();
+
+		if(null == mChunkModel){
+			COURESID = getIntent().getExtras().getString(AppConst.BundleKeys.Course_id_list);
+		} else{
+			COURESID = mChunkModel.getChunkCode();
+		}
 
 		progressDialog = new ProgressDialog(UserRecordingActivity.this);
 		progressDialog.setCancelable(false);
@@ -230,7 +236,7 @@ public class UserRecordingActivity extends BaseActivity implements
 		}
 	}
 
-	@JavascriptInterface
+/*	@JavascriptInterface
 	public void startDisplay(final String str) {
 		runOnUiThread(new Runnable() {
 			@Override
@@ -238,7 +244,7 @@ public class UserRecordingActivity extends BaseActivity implements
 
 			}
 		});
-	}
+	}*/
 
 	private void initOnclickListener() {
 		leftLight.setOnClickListener(this);
@@ -268,7 +274,9 @@ public class UserRecordingActivity extends BaseActivity implements
 		progressDialog.show();
 		HttpUserRecordingRequest httpuserrecordingrequest = new HttpUserRecordingRequest();
 		httpuserrecordingrequest.setBella_id(BELLAID);
-		httpuserrecordingrequest.setCourse_id(mChunkModel.getChunkCode());
+//		httpuserrecordingrequest.setCourse_id(mChunkModel.getChunkCode());
+        httpuserrecordingrequest.setCourse_id(COURESID);
+
 		httpuserrecordingrequest.setSystem(AppConst.GlobalConfig.OS);
 		httpuserrecordingrequest.setRows(1);
 		httpuserrecordingrequest.setDirection(DIRECTION_CURRENT);
@@ -616,6 +624,7 @@ public class UserRecordingActivity extends BaseActivity implements
 			Intent intent = new Intent(this, ReviewActivity.class);
 			intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
 			intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, HideBottomLay);
+            intent.putExtra(AppConst.BundleKeys.Course_id_list, COURESID);
 			startActivity(intent);
 			finish();
 			break;

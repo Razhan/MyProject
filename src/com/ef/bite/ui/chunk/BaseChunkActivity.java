@@ -131,7 +131,7 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 		if (v.getId() == mGoBack.getId()) {
 			finish();
 			MobclickTracking.OmnitureTrack.ActionDialogue(1);
-			MobclickTracking.UmengTrack.ActionDialogue(1, mContext);
+//			MobclickTracking.UmengTrack.ActionDialogue(1, mContext);
 		} else if (v.getId() == mGoAHead.getId()) {
 			if (isNextEnable == true)
 				impNextClick();

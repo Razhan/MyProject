@@ -30,15 +30,18 @@ import com.ef.bite.ui.popup.TermsServicePopupWindow;
 import com.ef.bite.utils.*;
 import com.ef.bite.widget.ActionbarLayout;
 import com.ef.bite.widget.SettingItemLayout;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
+//import com.facebook.android.AsyncFacebookRunner;
+//import com.facebook.android.Facebook;
+//import com.facebook.android.FacebookError;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 public class SettingsActivity extends BaseActivity {
 
@@ -75,7 +78,9 @@ public class SettingsActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_settings);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        setContentView(R.layout.activity_settings);
 		mActionbar = (ActionbarLayout) findViewById(R.id.settings_actionbar);
 		mLogout = (Button) findViewById(R.id.settings_log_out);
 		mLogout.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
@@ -111,10 +116,10 @@ public class SettingsActivity extends BaseActivity {
 				ContextDataMode.SettingsValues.pageNameValue,
 				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
 				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.SettingsValues.pageNameValue,
-				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.SettingsValues.pageNameValue,
+//				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
 	}
 
 	@Override
@@ -127,26 +132,26 @@ public class SettingsActivity extends BaseActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.SettingsValues.pageNameValue,
-				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.SettingsFirstNameValuse.pageNameValue,
-						ContextDataMode.SettingsFirstNameValuse.pageSiteSubSectionValue,
-						ContextDataMode.SettingsFirstNameValuse.pageSiteSectionValue,
-						mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.SettingsLastNameValuse.pageNameValue,
-				ContextDataMode.SettingsLastNameValuse.pageSiteSubSectionValue,
-				ContextDataMode.SettingsLastNameValuse.pageSiteSectionValue,
-				mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.SettingsNicknameValues.pageNameValue,
-				ContextDataMode.SettingsNicknameValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsNicknameValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.SettingsValues.pageNameValue,
+//				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.SettingsFirstNameValuse.pageNameValue,
+//						ContextDataMode.SettingsFirstNameValuse.pageSiteSubSectionValue,
+//						ContextDataMode.SettingsFirstNameValuse.pageSiteSectionValue,
+//						mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.SettingsLastNameValuse.pageNameValue,
+//				ContextDataMode.SettingsLastNameValuse.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsLastNameValuse.pageSiteSectionValue,
+//				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.SettingsNicknameValues.pageNameValue,
+//				ContextDataMode.SettingsNicknameValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsNicknameValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
@@ -241,20 +246,24 @@ public class SettingsActivity extends BaseActivity {
 					@Override
 					public void onSwitch(boolean value) {
 						// 保存通知设置状态
+
+						if (value) {
+                            MobclickTracking.OmnitureTrack.ActionSettings(2, 1);
+                        } else {
+                            MobclickTracking.OmnitureTrack.ActionSettings(2, 2);
+                        }
+
 						AppConst.GlobalConfig.Notification_Enable = value;
 						ConfigModel appConfig = configbll.getConfigModel();
 						if (appConfig != null) {
 							if (appConfig.IsNotificationOn != value) {
 								appConfig.IsNotificationOn = value;
 								configbll.setConfigModel(appConfig);
-								MobclickTracking.OmnitureTrack.ActionSettings(
-										2, 1);
 							}
 						} else {
 							appConfig = new ConfigModel();
 							appConfig.IsNotificationOn = value;
 							configbll.setConfigModel(appConfig);
-							MobclickTracking.OmnitureTrack.ActionSettings(2, 2);
 						}
 					}
 				});
@@ -332,12 +341,12 @@ public class SettingsActivity extends BaseActivity {
 								ContextDataMode.SettingsNicknameValues.pageSiteSubSectionValue,
 								ContextDataMode.SettingsNicknameValues.pageSiteSectionValue,
 								mContext);
-				MobclickTracking.UmengTrack
-						.setPageStart(
-								ContextDataMode.SettingsNicknameValues.pageNameValue,
-								ContextDataMode.SettingsNicknameValues.pageSiteSubSectionValue,
-								ContextDataMode.SettingsNicknameValues.pageSiteSectionValue,
-								mContext);
+//				MobclickTracking.UmengTrack
+//						.setPageStart(
+//								ContextDataMode.SettingsNicknameValues.pageNameValue,
+//								ContextDataMode.SettingsNicknameValues.pageSiteSubSectionValue,
+//								ContextDataMode.SettingsNicknameValues.pageSiteSectionValue,
+//								mContext);
 			} else if (v.getId() == mFirstnameItem.getId()) { // 更新first name
 				onItemValueChange(
 						SettingChangeDialogFragment.SETTINGS_FIRST_NAME,
@@ -363,12 +372,12 @@ public class SettingsActivity extends BaseActivity {
 								ContextDataMode.SettingsFirstNameValuse.pageSiteSubSectionValue,
 								ContextDataMode.SettingsFirstNameValuse.pageSiteSectionValue,
 								mContext);
-				MobclickTracking.UmengTrack
-						.setPageStart(
-								ContextDataMode.SettingsFirstNameValuse.pageNameValue,
-								ContextDataMode.SettingsFirstNameValuse.pageSiteSubSectionValue,
-								ContextDataMode.SettingsFirstNameValuse.pageSiteSectionValue,
-								mContext);
+//				MobclickTracking.UmengTrack
+//						.setPageStart(
+//								ContextDataMode.SettingsFirstNameValuse.pageNameValue,
+//								ContextDataMode.SettingsFirstNameValuse.pageSiteSubSectionValue,
+//								ContextDataMode.SettingsFirstNameValuse.pageSiteSectionValue,
+//								mContext);
 			} else if (v.getId() == mLastnameItem.getId()) { // 更新last name
 				onItemValueChange(
 						SettingChangeDialogFragment.SETTINGS_LAST_NAME,
@@ -392,12 +401,12 @@ public class SettingsActivity extends BaseActivity {
 								ContextDataMode.SettingsLastNameValuse.pageSiteSubSectionValue,
 								ContextDataMode.SettingsLastNameValuse.pageSiteSectionValue,
 								mContext);
-				MobclickTracking.UmengTrack
-						.setPageStart(
-								ContextDataMode.SettingsLastNameValuse.pageNameValue,
-								ContextDataMode.SettingsLastNameValuse.pageSiteSubSectionValue,
-								ContextDataMode.SettingsLastNameValuse.pageSiteSectionValue,
-								mContext);
+//				MobclickTracking.UmengTrack
+//						.setPageStart(
+//								ContextDataMode.SettingsLastNameValuse.pageNameValue,
+//								ContextDataMode.SettingsLastNameValuse.pageSiteSubSectionValue,
+//								ContextDataMode.SettingsLastNameValuse.pageSiteSectionValue,
+//								mContext);
 			} else if (v.getId() == mPhoneItem.getId()) { // 更新手机
 				onItemValueChange(
 						SettingChangeDialogFragment.SETTINGS_PHONE,
@@ -545,60 +554,11 @@ public class SettingsActivity extends BaseActivity {
 					@SuppressWarnings("deprecation")
 					@Override
 					public void Click() {
-						final Facebook facebook = new Facebook(
-								AppConst.ThirdPart.Facebook_Login_Appkey);
-						AsyncFacebookRunner asyncFacebookRunner = new AsyncFacebookRunner(
-								facebook);
-						asyncFacebookRunner.logout(mContext,
-								new AsyncFacebookRunner.RequestListener() {
+                        LoginManager.getInstance().logOut();
+                        PreferencesUtils.putString(mContext, "access_token", null);
 
-									@Override
-									public void onMalformedURLException(
-											MalformedURLException e,
-											Object state) {
-										// TODO Auto-generated
-										// method stub
-
-									}
-
-									@Override
-									public void onIOException(IOException e,
-											Object state) {
-										// TODO Auto-generated
-										// method stub
-
-									}
-
-									@Override
-									public void onFileNotFoundException(
-											FileNotFoundException e,
-											Object state) {
-										// TODO Auto-generated
-										// method stub
-
-									}
-
-									@Override
-									public void onFacebookError(
-											FacebookError e, Object state) {
-										// TODO Auto-generated
-										// method stub
-
-									}
-
-									@Override
-									public void onComplete(String response,
-											Object state) {
-										// TODO Auto-generated
-										// method stub
-										Log.i("response", response);
-										PreferencesUtils.putString(mContext, "access_token",
-												null);
-									}
-								});
 						// call log out service
 						// to do
-
 						AppConst.CurrUserInfo.IsLogin = false;
 						AppConst.CurrUserInfo.UserId = "0";
 						profileCache.save();

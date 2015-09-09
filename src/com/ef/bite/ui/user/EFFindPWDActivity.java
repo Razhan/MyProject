@@ -106,11 +106,11 @@ public class EFFindPWDActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		// Umeng
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.RegisterNameValues.pageNameValue,
-				ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
-				ContextDataMode.RegisterNameValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.RegisterNameValues.pageNameValue,
+//				ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
+//				ContextDataMode.RegisterNameValues.pageSiteSectionValue,
+//				mContext);
 		BI_Tracking(ForgotPassword);
 	}
 
@@ -118,11 +118,11 @@ public class EFFindPWDActivity extends BaseActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.RegisterNameValues.pageNameValue,
-				ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
-				ContextDataMode.RegisterNameValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.RegisterNameValues.pageNameValue,
+//				ContextDataMode.RegisterNameValues.pageSiteSubSectionValue,
+//				ContextDataMode.RegisterNameValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	/**

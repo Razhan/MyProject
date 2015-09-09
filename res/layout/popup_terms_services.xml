@@ -9,7 +9,8 @@
 	    android:background="@color/bella_color_cellobrate_bg"
     />
     
-   <RelativeLayout 
+   <RelativeLayout
+           android:id="@+id/termswindows"
        	android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:layout_marginLeft="20dp"
@@ -20,13 +21,14 @@
         android:padding="10dp"
         android:background="@color/bella_chunk_background"
         >
-            <ImageButton 
+            <ImageButton
                 android:id="@+id/popup_terms_cancel"
                 android:layout_width="40dp"
-                android:layout_height = "40dp"  
+                android:layout_height = "40dp"
                 android:src="@drawable/chunk_multichoice_cancel"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/button_action_bar_pink_background"
+                android:visibility="invisible"
              />
             <TextView 
                     android:id="@+id/popup_terms_title"
@@ -35,6 +37,7 @@
                     android:text="@string/popup_term_service_title"
                     android:textColor="@color/bella_color_black_dark"
                     android:textSize="18sp"
+                    android:textStyle="bold"
                     />
             <WebView 
                     android:id="@+id/popup_terms_webview"

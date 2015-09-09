@@ -327,6 +327,11 @@
     <string name="user_recoding_has_rates">These people have rated you. Invite more friends to rate you!</string>
     <string name="report_confirm">This user has now been reported. We will investigate</string>
 
+
+    <!--Facebook id-->
+    <string name="fb_app_id">840080019363949</string>
+    <string name="fb_app_name">EFID</string>
+
     <string-array name="array_spinner_registerage">
         <item>0&#8211;18</item>
         <item>19&#8211;22</item>

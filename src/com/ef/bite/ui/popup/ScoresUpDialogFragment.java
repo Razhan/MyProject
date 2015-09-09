@@ -64,24 +64,24 @@ public class ScoresUpDialogFragment extends BaseDialogFragment {
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		MobclickTracking.UmengTrack.setResume(mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.ScoresUpMessageValues.pageNameValue,
-				ContextDataMode.ScoresUpMessageValues.pageSiteSubSectionValue,
-				ContextDataMode.ScoresUpMessageValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setResume(mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.ScoresUpMessageValues.pageNameValue,
+//				ContextDataMode.ScoresUpMessageValues.pageSiteSubSectionValue,
+//				ContextDataMode.ScoresUpMessageValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
 	public void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPause(mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.ScoresUpMessageValues.pageNameValue,
-				ContextDataMode.ScoresUpMessageValues.pageSiteSubSectionValue,
-				ContextDataMode.ScoresUpMessageValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPause(mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.ScoresUpMessageValues.pageNameValue,
+//				ContextDataMode.ScoresUpMessageValues.pageSiteSubSectionValue,
+//				ContextDataMode.ScoresUpMessageValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 }

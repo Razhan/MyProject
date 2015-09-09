@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import com.ef.bite.AppConst;
+import com.ef.bite.model.SMSRecord;
+import com.ef.bite.model.ServerErrorLog;
+import com.parse.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,11 +30,12 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HttpRestfulClient {
 
-	public final static int TIME_OUT = 13000;
+    public final static int TIME_OUT = 13000;
 	public static int Header_Num = 3;// 0:baidu 1:91 2:anzhuo 3:woo 4:wandoujia
 
 	/*
@@ -48,6 +53,9 @@ public class HttpRestfulClient {
 			String jsonString = null;
 			HttpGet httpGet = new HttpGet(url);
 			response = httpClient.execute(httpGet, localContext);
+
+            sendToParse(response.getStatusLine().getStatusCode(), url);
+
 			HttpEntity entity = response.getEntity();
 			jsonString = getUTF8ContentFromEntity(entity);
 			Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
@@ -78,7 +86,10 @@ public class HttpRestfulClient {
 				for (String key : headerMap.keySet())
 					httpGet.addHeader(key, headerMap.get(key));
 			response = httpClient.execute(httpGet, localContext);
-			HttpEntity entity = response.getEntity();
+
+            sendToParse(response.getStatusLine().getStatusCode(), url);
+
+            HttpEntity entity = response.getEntity();
 			jsonString = getUTF8ContentFromEntity(entity);
 			return jsonString;
 		} catch (Exception e) {
@@ -105,7 +116,7 @@ public class HttpRestfulClient {
 			HttpEntity entity = response.getEntity();
 			String jsonString = getUTF8ContentFromEntity(entity);
 			Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
-					returnType);
+                    returnType);
 			return obj;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,6 +210,9 @@ public class HttpRestfulClient {
 			if (jsonParams != null)
 				httpPost.setEntity(new StringEntity(jsonParams, HTTP.UTF_8));
 			response = httpClient.execute(httpPost, localContext);
+
+			sendToParse(response.getStatusLine().getStatusCode(), url);
+
 			HttpEntity entity = response.getEntity();
 			return getUTF8ContentFromEntity(entity);
 		} catch (Exception e) {
@@ -235,7 +249,10 @@ public class HttpRestfulClient {
 			}
 			httppost.setEntity(builder.build());
 			response = httpClient.execute(httppost, localContext);
-			HttpEntity resEntity = response.getEntity();
+
+            sendToParse(response.getStatusLine().getStatusCode(), url);
+
+            HttpEntity resEntity = response.getEntity();
 			return getUTF8ContentFromEntity(resEntity);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -284,5 +301,39 @@ public class HttpRestfulClient {
 		}
 		return response;
 	}
+
+    private static void sendToParse(int responseCode, final String url) {
+
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        list.add(200);
+        list.add(408);
+
+        if (list.contains(responseCode)) {
+            return;
+        }
+
+        ServerErrorLog log = new ServerErrorLog();
+
+        log.put("appVersion", AppConst.GlobalConfig.App_Version);
+        log.put("bellaID", AppConst.CurrUserInfo.UserId);
+        log.put("deviceModel", AppConst.GlobalConfig.Device_Model);
+        log.put("errorCode", responseCode);
+        log.put("phoneVersion", AppConst.GlobalConfig.OS_Version);
+        log.put("platform", AppConst.GlobalConfig.OS);
+        log.put("endPoint", url);
+
+        log.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException ex) {
+                if (ex == null) {
+                    final Map<String,String> params = new HashMap<String,String>();
+                    Date time = new Date();
+                    params.put("api", url);
+                    ParseCloud.callFunctionInBackground("sendSMS", params);
+                }
+            }
+        });
+
+    }
 
 }

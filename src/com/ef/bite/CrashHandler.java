@@ -22,7 +22,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.ef.bite.Tracking.MobclickTracking;
-import com.umeng.analytics.MobclickAgent;
+//import com.umeng.analytics.MobclickAgent;
 
 public class CrashHandler implements UncaughtExceptionHandler {
 
@@ -60,7 +60,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
 		// 设置该CrashHandler为程序的默认处理器
 		Thread.setDefaultUncaughtExceptionHandler(this);
-		MobclickAgent.setCatchUncaughtExceptions(true);
+//		MobclickAgent.setCatchUncaughtExceptions(true);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 				Log.e(TAG, "error : ", e);
 			}
 			// Umeng用来保存统计数据
-			MobclickTracking.UmengTrack.onKillProcess(mContext);
+//			MobclickTracking.UmengTrack.onKillProcess(mContext);
 			// 退出程序
 			android.os.Process.killProcess(android.os.Process.myPid());
 			System.exit(1);

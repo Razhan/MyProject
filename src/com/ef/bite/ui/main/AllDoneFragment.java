@@ -45,7 +45,8 @@ public class AllDoneFragment extends BaseDashboardFragment {
         FontHelper.applyFont(getActivity(), goodJob,
                 FontHelper.FONT_Museo500);
 
-        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
+//        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
+        RelativeLayout unlockBtn = (RelativeLayout) root.findViewById(R.id.home_screen_learn_layout);
         unlockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

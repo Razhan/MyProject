@@ -15,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.ef.bite.AppConst;
+import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.adapters.ChunkRehearseListAdapter;
 import com.ef.bite.business.ChunkBLL;
 import com.ef.bite.dataacces.ChunkLoader;
@@ -135,6 +136,7 @@ public class ChunkListSearchActivity extends BaseActivity {
 				mSearchCancel.setVisibility(View.VISIBLE);
 				String search = s.toString();
 				doSearch(search);
+				MobclickTracking.OmnitureTrack.ActionSearch(0);
 			}
 		});
 		mSearchCancel.setOnClickListener(new OnClickListener() {
@@ -146,7 +148,9 @@ public class ChunkListSearchActivity extends BaseActivity {
 		mSearchButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				finish();
+                //track cancelled search
+                MobclickTracking.OmnitureTrack.ActionSearch(1);
+                finish();
 			}
 		});
 	}

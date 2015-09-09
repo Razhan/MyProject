@@ -9,6 +9,10 @@ import com.google.gson.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,7 +72,7 @@ public class JsonSerializeHelper {
 		String item;
 		item = getLanguageFromTranslation(context, params);
 		if (StringUtils.isBlank(item)) {
-			item = getLanguageFromAssets(context, params);
+			//item = getLanguageFromAssets(context, params);
 		}
 		return StringUtils.nullStrToEmpty(item);
 	}
@@ -98,23 +102,32 @@ public class JsonSerializeHelper {
 			String params) {
 		String returnLan = "";
 		String translation = PreferencesUtils.getString(context,
-				AppLanguageHelper.Translation, null);
+                AppLanguageHelper.Translation, null);
 		if (translation != null) {
 			// .replaceAll("<[A-z/ =']*>", "")
 			// .replaceAll("[A-z]*", "").replaceAll("%", "")
 			JSONObject jsonObject;
 			try {
 				jsonObject = new JSONObject(translation);
-				if (jsonObject.has("data")) {
-					returnLan = jsonObject.getJSONObject("data").optString(
-							params);
-					if (!StringUtils.isBlank(returnLan)) {
-						if (returnLan.contains("%@")) {
-							returnLan = returnLan.replace("%@", "%1$s").trim();
-						}
-						// returnLan = returnLan.replace("%li", "%1$d").trim();
-					}
-				}
+//				if (jsonObject.has("data")) {
+//					returnLan = jsonObject.getJSONObject("data").optString(
+//							params);
+//					if (!StringUtils.isBlank(returnLan)) {
+//						if (returnLan.contains("%@")) {
+//							returnLan = returnLan.replace("%@", "%1$s").trim();
+//						}
+//						// returnLan = returnLan.replace("%li", "%1$d").trim();
+//					}
+//				}
+                jsonObject = new JSONObject(translation);
+                returnLan = jsonObject.optString(params);
+                if (!StringUtils.isBlank(returnLan)) {
+                    if (returnLan.contains("%@")) {
+                        returnLan = returnLan.replace("%@", "%1$s").trim();
+                    }
+                    // returnLan = returnLan.replace("%li", "%1$d").trim();
+                }
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -122,6 +135,34 @@ public class JsonSerializeHelper {
 		}
 		return returnLan;
 	}
+
+    public static JSONObject getJSONObjectFromSD(String path) {
+        String result = "";
+
+        try {
+            FileInputStream f = new FileInputStream(path);
+            InputStream is = new FileInputStream(new File(path));
+
+            InputStreamReader inputStreamReader = new InputStreamReader(is,
+                    "UTF-8");
+            char[] buffer = new char[is.available()];
+            String jsonString;
+            StringBuffer stringBuffer = new StringBuffer();
+            while ((inputStreamReader.read(buffer)) != -1) {
+                stringBuffer.append(new String(buffer, 0, buffer.length));
+            }
+            jsonString = stringBuffer.toString();
+            JSONObject languagejson = new JSONObject(jsonString);
+
+            return languagejson;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 	// @SuppressWarnings({ "null" })
 	// public static List<Chunk> getStatusChunk(Context context,
 	// String statesString) {

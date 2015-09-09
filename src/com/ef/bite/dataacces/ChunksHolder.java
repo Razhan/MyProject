@@ -20,7 +20,7 @@ import java.util.*;
  * Created by yang on 15/2/28.
  */
 public class ChunksHolder {
-    private LinkedList<Chunk> chunks;
+    private List<Chunk> chunks;
     private Context mContext;
     private static String LANG_EN = "en";
     private static ChunksHolder INSTANCE = new ChunksHolder();
@@ -33,7 +33,7 @@ public class ChunksHolder {
         mContext = context;
     }
 
-    public LinkedList<Chunk> getChunks() {
+    public List<Chunk> getChunks() {
         return chunks;
     }
 
@@ -44,7 +44,7 @@ public class ChunksHolder {
     public void loadAllChunks() {
         FileStorage courseStorage = new FileStorage(mContext,
                 AppConst.CacheKeys.Storage_Course);
-        chunks = (LinkedList<Chunk>) loadChunksFromStorage(courseStorage.getStorageFolder());
+        chunks = (List<Chunk>) loadChunksFromStorage(courseStorage.getStorageFolder());
     }
 
 
@@ -73,15 +73,15 @@ public class ChunksHolder {
         for (Iterator<Chunk> iterator = chunks.iterator(); iterator.hasNext(); ) {
             Chunk chunk = iterator.next();
             if (StringUtils.isEquals(chunk.getChunkCode(), id)) {
-                if (lang.contains(LANG_EN)) {
-                    if(chunk.getLanguage().contains(LANG_EN)){
-                        return chunk;
-                    }
-                } else if (!StringUtils.isEquals(chunk.getLanguage(), LANG_EN)) {
-                    return chunk;
-                }
+//                if (lang.contains(LANG_EN)) {
+//                    if(chunk.getLanguage().contains(LANG_EN)){
+//                        return chunk;
+//                    }
+//                } else if (!StringUtils.isEquals(chunk.getLanguage(), LANG_EN)) {
+//                    return chunk;
+//                }
+                return chunk;
             }
-
         }
         return null;
     }

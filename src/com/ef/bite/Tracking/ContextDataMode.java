@@ -2,7 +2,7 @@ package com.ef.bite.Tracking;
 
 public class ContextDataMode {
 
-	public final static String globalAppNameValue = "Bella";
+	public final static String globalAppNameValue = "bella";
 	public final static String globalPlatformNameValue = "Android";
 	public static String pagePreviousNameString = null;
 	public final static String actionTabCancelLocation = "action.TabCancelLocation";
@@ -76,7 +76,9 @@ public class ContextDataMode {
 
 	public static class ActionPhraseLearnedMessageKey {
 		public final static String actionPhraseShare = "action.phraseShare";
-	}
+        public final static String actionPhraseShareLocation = "action.phraseShare Location";
+
+    }
 
 	public static class ActionInboxKey {
 		public final static String actionFriendsAdd = "action.friendsAdd";
@@ -96,7 +98,8 @@ public class ContextDataMode {
 
 	public static class ActionSearchKey {
 		public final static String actionSearch = "action.search";
-	}
+        public final static String actionSearchCancel = "action.searchCancel";
+    }
 
 	public static class ActionSettingsKey {
 		public final static String actionAvatarUpdateClick = "action.avatarUpdateClick";
@@ -113,11 +116,12 @@ public class ContextDataMode {
 
 
 	public static class ActionADsUpsellKey {
-		public final static String actionBannerCreativeClick = "action.bannerCreativeClick";
+		public final static String actionBannerCreativeClick = "action.bannerLearnMoreClick";
 	}
 
 	public static class ActionADsCallKey {
 		public final static String actionBannerClick = "action.bannerClick";
+        public final static String actionBannerLearnMoreClick = "action.bannerLearnMoreClick";
 	}
 
 	public static class ActionReviewKey {
@@ -126,7 +130,8 @@ public class ContextDataMode {
 
 	public static class ActionRecordingKey {
 		public final static String actionrecordStatus = "action.recordStatus";
-	}
+        public final static String actionrecord = "action.record";
+    }
 	
 	public static class ActionRecordingSuccessfulKey{
 		public final static String actionrecordingstatus = "action.recordStatus";
@@ -618,7 +623,8 @@ public class ContextDataMode {
 
 	public static class ActionPhraseLearnedMessageValues {
 		public final static String actionPhraseShare = "1";
-	}
+        public final static String[] actionPhraseShareLocation = {"phrase learned page", "phrase mastered page"};
+    }
 
 	public static class ActionInboxValues {
 		public final static String actionFriendsAdd = "1";
@@ -636,14 +642,16 @@ public class ContextDataMode {
 		public final static String actionSearchLocation_rehearse = "rehearse list";
 		public final static String actionSearchLocation_mastered = "mastered list";
 		public final static String actionSearch = "1";
-	}
+        public final static String actionSearchcancel = "1";
+
+    }
 
 	public static class ActionSettingsValues {
 		public final static String actionAvatarUpdateClickValues = "1";
-		public final static String actionNotificationChoiceValues_ON = "on";
-		public final static String actionNotificationChoiceValues_OFF = "off";
-		public final static String actionSoundEffectsChoiceValues_ON = "on";
-		public final static String actionSoundEffectsChoiceValues_OFF = "off";
+		public final static String actionNotificationChoiceValues_ON = "ON";
+		public final static String actionNotificationChoiceValues_OFF = "OFF";
+		public final static String actionSoundEffectsChoiceValues_ON = "ON";
+		public final static String actionSoundEffectsChoiceValues_OFF = "OFF";
 		public final static String actionLogOutValues = "1";
 	}
 
@@ -671,6 +679,7 @@ public class ContextDataMode {
 
 	public static class ActionRecordingValues {
 		public final static String actionrecordStatus = "No audio";
+		public final static String actionrecord = "1";
 	}
 	
 	public static class ActionRecordingSuccessfulValues{
@@ -692,6 +701,16 @@ public class ContextDataMode {
 		public final static String pageSiteSubSectionValue = "Apply";
 		public final static String pageSiteSectionValue = "record";
 	}
+
+
+	public static class BalloonIntroductionkeys {
+		public final static String actionTabCancelLocationKey = "action.TabCancelLocation";
+	}
+
+	public static class BalloonIntroductionValues {
+		public final static String actionTabCancelLocationValue = "balloon introduction";
+	}
+
 
 
 }

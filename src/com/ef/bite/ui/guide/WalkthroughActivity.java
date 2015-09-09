@@ -96,30 +96,30 @@ public class WalkthroughActivity extends BaseActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.Onboarding1.pageNameValue,
-				ContextDataMode.Onboarding1.pageSiteSubSectionValue,
-				ContextDataMode.Onboarding1.pageSiteSectionValue, mContext);
-
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.Onboarding2.pageNameValue,
-				ContextDataMode.Onboarding2.pageSiteSubSectionValue,
-				ContextDataMode.Onboarding2.pageSiteSectionValue, mContext);
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.VocabularyMaster.pageNameValue,
-						ContextDataMode.VocabularyMaster.pageSiteSubSectionValue,
-						ContextDataMode.VocabularyMaster.pageSiteSectionValue,
-						mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.Dashboard.pageNameValue,
-				ContextDataMode.Dashboard.pageSiteSubSectionValue,
-				ContextDataMode.Dashboard.pageSiteSectionValue, mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.VocabularyVocabValues.pageNameValue,
-				ContextDataMode.VocabularyVocabValues.pageSiteSubSectionValue,
-				ContextDataMode.VocabularyVocabValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.Onboarding1.pageNameValue,
+//				ContextDataMode.Onboarding1.pageSiteSubSectionValue,
+//				ContextDataMode.Onboarding1.pageSiteSectionValue, mContext);
+//
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.Onboarding2.pageNameValue,
+//				ContextDataMode.Onboarding2.pageSiteSubSectionValue,
+//				ContextDataMode.Onboarding2.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.VocabularyMaster.pageNameValue,
+//						ContextDataMode.VocabularyMaster.pageSiteSubSectionValue,
+//						ContextDataMode.VocabularyMaster.pageSiteSectionValue,
+//						mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.Dashboard.pageNameValue,
+//				ContextDataMode.Dashboard.pageSiteSubSectionValue,
+//				ContextDataMode.Dashboard.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.VocabularyVocabValues.pageNameValue,
+//				ContextDataMode.VocabularyVocabValues.pageSiteSubSectionValue,
+//				ContextDataMode.VocabularyVocabValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	private void initPages() {
@@ -186,10 +186,10 @@ public class WalkthroughActivity extends BaseActivity {
 
 			BI_Tracking(Onboarding1);
 			// Umeng
-			MobclickTracking.UmengTrack.setPageStart(
-					ContextDataMode.Onboarding1.pageNameValue,
-					ContextDataMode.Onboarding1.pageSiteSubSectionValue,
-					ContextDataMode.Onboarding1.pageSiteSectionValue, mContext);
+//			MobclickTracking.UmengTrack.setPageStart(
+//					ContextDataMode.Onboarding1.pageNameValue,
+//					ContextDataMode.Onboarding1.pageSiteSubSectionValue,
+//					ContextDataMode.Onboarding1.pageSiteSectionValue, mContext);
 		} else if (isInTutorialMode
 				&& mTutorialType == TutorialConfigBiz.TUTORIAL_TYPE_HOME_SCREEN) {
 			if (AppConst.GlobalConfig.IsChunkPerDayLearned) {
@@ -336,10 +336,10 @@ public class WalkthroughActivity extends BaseActivity {
 					ContextDataMode.Onboarding2.pageNameValue,
 					ContextDataMode.Onboarding2.pageSiteSubSectionValue,
 					ContextDataMode.Onboarding2.pageSiteSectionValue, mContext);
-			MobclickTracking.UmengTrack.setPageStart(
-					ContextDataMode.Onboarding2.pageNameValue,
-					ContextDataMode.Onboarding2.pageSiteSubSectionValue,
-					ContextDataMode.Onboarding2.pageSiteSectionValue, mContext);
+//			MobclickTracking.UmengTrack.setPageStart(
+//					ContextDataMode.Onboarding2.pageNameValue,
+//					ContextDataMode.Onboarding2.pageSiteSubSectionValue,
+//					ContextDataMode.Onboarding2.pageSiteSectionValue, mContext);
 			break;
 		case 3:
 			MobclickTracking.OmnitureTrack.AnalyticsTrackState(
@@ -347,11 +347,11 @@ public class WalkthroughActivity extends BaseActivity {
 					ContextDataMode.VocabularyMaster.pageSiteSubSectionValue,
 					ContextDataMode.VocabularyMaster.pageSiteSectionValue,
 					mContext);
-			MobclickTracking.UmengTrack.setPageStart(
-					ContextDataMode.VocabularyMaster.pageNameValue,
-					ContextDataMode.VocabularyMaster.pageSiteSubSectionValue,
-					ContextDataMode.VocabularyMaster.pageSiteSectionValue,
-					mContext);
+//			MobclickTracking.UmengTrack.setPageStart(
+//					ContextDataMode.VocabularyMaster.pageNameValue,
+//					ContextDataMode.VocabularyMaster.pageSiteSubSectionValue,
+//					ContextDataMode.VocabularyMaster.pageSiteSectionValue,
+//					mContext);
 			break;
 
 		case 4:
@@ -361,22 +361,22 @@ public class WalkthroughActivity extends BaseActivity {
 							ContextDataMode.VocabularyVocabValues.pageSiteSubSectionValue,
 							ContextDataMode.VocabularyVocabValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.VocabularyVocabValues.pageNameValue,
-							ContextDataMode.VocabularyVocabValues.pageSiteSubSectionValue,
-							ContextDataMode.VocabularyVocabValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.VocabularyVocabValues.pageNameValue,
+//							ContextDataMode.VocabularyVocabValues.pageSiteSubSectionValue,
+//							ContextDataMode.VocabularyVocabValues.pageSiteSectionValue,
+//							mContext);
 			break;
 		case 5:
 			MobclickTracking.OmnitureTrack.AnalyticsTrackState(
 					ContextDataMode.Dashboard.pageNameValue,
 					ContextDataMode.Dashboard.pageSiteSubSectionValue,
 					ContextDataMode.Dashboard.pageSiteSectionValue, mContext);
-			MobclickTracking.UmengTrack.setPageStart(
-					ContextDataMode.Dashboard.pageNameValue,
-					ContextDataMode.Dashboard.pageSiteSubSectionValue,
-					ContextDataMode.Dashboard.pageSiteSectionValue, mContext);
+//			MobclickTracking.UmengTrack.setPageStart(
+//					ContextDataMode.Dashboard.pageNameValue,
+//					ContextDataMode.Dashboard.pageSiteSubSectionValue,
+//					ContextDataMode.Dashboard.pageSiteSectionValue, mContext);
 			break;
 		case 6:
 			MobclickTracking.OmnitureTrack.AnalyticsTrackState(

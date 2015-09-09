@@ -117,12 +117,12 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.PresentationLearnValues.pageNameValue,
-						ContextDataMode.PresentationLearnValues.pageSiteSubSectionValue,
-						ContextDataMode.PresentationLearnValues.pageSiteSectionValue,
-						mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.PresentationLearnValues.pageNameValue,
+//						ContextDataMode.PresentationLearnValues.pageSiteSubSectionValue,
+//						ContextDataMode.PresentationLearnValues.pageSiteSectionValue,
+//						mContext);
 	}
 
 	@Override
@@ -294,8 +294,10 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 				@Override
 				public void onClick(View v) {
 					MobclickTracking.OmnitureTrack.ActionPhrasepresentation(1);
-					MobclickTracking.UmengTrack.ActionPhrasepresentation(1,
-							mContext);
+					MobclickTracking.OmnitureTrack.ActionDialogue(7);
+
+
+//					MobclickTracking.UmengTrack.ActionPhrasepresentation(1,	mContext);
 					// if (chunk.getIsPreinstall()) {
 					// prononcingFromAsset(chunk.getAudioFileName());
 					// } else {
@@ -386,8 +388,7 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 				break;
 			case MotionEvent.ACTION_UP:
 				MobclickTracking.OmnitureTrack.ActionPhrasepresentation(3);
-				MobclickTracking.UmengTrack.ActionPhrasepresentation(3,
-						mContext);
+//				MobclickTracking.UmengTrack.ActionPhrasepresentation(3,	mContext);
 				break;
 			default:
 				break;
@@ -482,8 +483,7 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 					showChunkDetail(mChunkModel);
 				}
 				MobclickTracking.OmnitureTrack.ActionPhrasepresentation(2);
-				MobclickTracking.UmengTrack.ActionPhrasepresentation(2,
-						mContext);
+//				MobclickTracking.UmengTrack.ActionPhrasepresentation(2,	mContext);
 				return true;
 			}
 			return false;
@@ -575,12 +575,12 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 							ContextDataMode.PresentationLearnValues.pageSiteSubSectionValue,
 							ContextDataMode.PresentationLearnValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.PresentationLearnValues.pageNameValue,
-							ContextDataMode.PresentationLearnValues.pageSiteSubSectionValue,
-							ContextDataMode.PresentationLearnValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.PresentationLearnValues.pageNameValue,
+//							ContextDataMode.PresentationLearnValues.pageSiteSubSectionValue,
+//							ContextDataMode.PresentationLearnValues.pageSiteSectionValue,
+//							mContext);
 			break;
 
 		case 2:

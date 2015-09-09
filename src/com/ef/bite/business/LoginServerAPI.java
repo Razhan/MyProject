@@ -1,5 +1,6 @@
 package com.ef.bite.business;
 
+import com.ef.bite.dataacces.mode.httpMode.*;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -7,11 +8,6 @@ import android.util.Log;
 
 import com.ef.bite.AppConst;
 import com.ef.bite.dataacces.mode.LoginMode;
-import com.ef.bite.dataacces.mode.httpMode.HttpAppResourceRequest;
-import com.ef.bite.dataacces.mode.httpMode.HttpAppResourceResponse;
-import com.ef.bite.dataacces.mode.httpMode.HttpBaseMessage;
-import com.ef.bite.dataacces.mode.httpMode.HttpLogin;
-import com.ef.bite.dataacces.mode.httpMode.HttpServerAddress;
 import com.ef.bite.model.ConfigModel;
 import com.ef.bite.utils.HttpRestfulClient;
 import com.ef.bite.utils.JsonSerializeHelper;
@@ -150,12 +146,13 @@ public class LoginServerAPI extends BaseServerAPI {
 	}
 
 	public HttpAppResourceResponse getAppResource(
-			HttpAppResourceRequest appResourceRequest) {
+			NewHttpAppResourceRequest appResourceRequest) {
 		try {
 			String resource = JsonSerializeHelper
 					.JsonSerializer(appResourceRequest);
 			String language = HttpRestfulClient.JsonPost(
-					AppConst.EFAPIs.BaseAddress + "appresource", resource,
+//					AppConst.EFAPIs.BaseAddress + "appresource", resource,
+                    AppConst.EFAPIs.BaseAddress + "2/appresource", resource,
 					headerMap);
 			HttpAppResourceResponse httpAppResourceResponse = (HttpAppResourceResponse) JsonSerializeHelper
 					.JsonDeserialize(language, HttpAppResourceResponse.class);
@@ -167,4 +164,37 @@ public class LoginServerAPI extends BaseServerAPI {
 			return null;
 		}
 	}
+
+
+	//获取版本信息
+	public HttpVersionCheckResponse getAppVersion(HttpVersionCheckRequest versionRequest) {
+		try {
+			String resource = JsonSerializeHelper
+					.JsonSerializer(versionRequest);
+			String version = HttpRestfulClient.JsonPost(AppConst.EFAPIs.BaseAddress + "2/appresource", resource, headerMap);
+
+			HttpVersionCheckResponse httpVersionCheckResponse = (HttpVersionCheckResponse) JsonSerializeHelper
+					.JsonDeserialize(version, HttpVersionCheckResponse.class);
+			Log.i("version", version);
+
+			return httpVersionCheckResponse;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

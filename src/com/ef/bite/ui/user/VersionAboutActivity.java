@@ -86,22 +86,22 @@ public class VersionAboutActivity extends BaseActivity {
 				ContextDataMode.AboutEnglishBiteValues.pageSiteSubSectionValue,
 				ContextDataMode.AboutEnglishBiteValues.pageSiteSectionValue,
 				mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.AboutEnglishBiteValues.pageNameValue,
-				ContextDataMode.AboutEnglishBiteValues.pageSiteSubSectionValue,
-				ContextDataMode.AboutEnglishBiteValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.AboutEnglishBiteValues.pageNameValue,
+//				ContextDataMode.AboutEnglishBiteValues.pageSiteSubSectionValue,
+//				ContextDataMode.AboutEnglishBiteValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.AboutEnglishBiteValues.pageNameValue,
-				ContextDataMode.AboutEnglishBiteValues.pageSiteSubSectionValue,
-				ContextDataMode.AboutEnglishBiteValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.AboutEnglishBiteValues.pageNameValue,
+//				ContextDataMode.AboutEnglishBiteValues.pageSiteSubSectionValue,
+//				ContextDataMode.AboutEnglishBiteValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	/**

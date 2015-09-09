@@ -1,5 +1,7 @@
 package com.ef.bite.dataacces.mode.httpMode;
 
+import com.ef.bite.utils.StringUtils;
+
 public class HttpProfile extends HttpBaseMessage {
 	
 	public ProfileData data;
@@ -10,6 +12,7 @@ public class HttpProfile extends HttpBaseMessage {
 		public String avatar_url;
 		public String family_name;
 		public String given_name;
+        public String market_code;
 		public String phone;
 		public int score;
 		public int Level;

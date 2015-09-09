@@ -188,7 +188,7 @@ public class LevelUpPopWindow implements PlatformActionListener, Callback {
 				// TraceHelper.ACTION_CLICK, null,
 				// TraceHelper.TARGET_SHARE);
 				MobclickTracking.OmnitureTrack.ActionLevelUpMessage();
-				MobclickTracking.UmengTrack.ActionLevelUpMessage(mContext);
+//				MobclickTracking.UmengTrack.ActionLevelUpMessage(mContext);
 				LogManager
 						.definedLog(ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare);
 			}

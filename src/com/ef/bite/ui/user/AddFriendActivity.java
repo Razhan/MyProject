@@ -39,6 +39,9 @@ import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.utils.SoftInputHelper;
 import com.ef.bite.widget.ActionbarLayout;
 import com.ef.bite.widget.SelectSwitcherLayout;
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.AppInviteContent;
+import com.facebook.share.widget.AppInviteDialog;
 
 public class AddFriendActivity extends BaseActivity {
 	ActionbarLayout mActionbar;
@@ -64,7 +67,9 @@ public class AddFriendActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_add_friend);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        setContentView(R.layout.activity_add_friend);
 		mActionbar = (ActionbarLayout) findViewById(R.id.add_friend_action_bar);
 		mSelectSwitcher = (SelectSwitcherLayout) findViewById(R.id.add_friend_switcher_layout);
 		mSearchEdit = (EditText) findViewById(R.id.add_friend_search_text);
@@ -78,6 +83,7 @@ public class AddFriendActivity extends BaseActivity {
 		mSearchResultLayout.setVisibility(View.GONE);
 		// 字体设置
 		FontHelper.applyFont(mContext, mResultCount, FontHelper.FONT_Museo500);
+
 		mSelectSwitcher.initializeWithIcon(JsonSerializeHelper
 				.JsonLanguageDeserialize(mContext, "add_friend_wechat"),
 				R.drawable.add_friend_wechat, R.drawable.add_friend_wechat_i,
@@ -87,12 +93,17 @@ public class AddFriendActivity extends BaseActivity {
 					@Override
 					public void onClick(View v) {
 						searchType = SearchType.Wechat;
-						wechatInvite();
+
+                        if (AppConst.CurrUserInfo.Location.equals("cn")) {
+                            wechatInvite();
+                        } else {
+							wechatInvite();
+                        }
+
 						mSelectSwitcher.selectRight();
 
 						MobclickTracking.OmnitureTrack.ActionInviteaFriend(1);
-						MobclickTracking.UmengTrack.actionInviteaFriend(1,
-								mContext);
+//						MobclickTracking.UmengTrack.actionInviteaFriend(1, mContext);
 					}
 				}, new View.OnClickListener() {
 					@Override
@@ -105,7 +116,7 @@ public class AddFriendActivity extends BaseActivity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 					String key = mSearchEdit.getText().toString();
 					if (key == null || key.isEmpty()) {
 						Toast.makeText(
@@ -115,6 +126,7 @@ public class AddFriendActivity extends BaseActivity {
 						return false;
 					}
 					search(key);
+					MobclickTracking.OmnitureTrack.ActionInviteaFriend(2);
 					return false;
 				}
 				return false;
@@ -137,7 +149,7 @@ public class AddFriendActivity extends BaseActivity {
 				if (key != null && !key.isEmpty())
 					search(key);
 				MobclickTracking.OmnitureTrack.ActionInviteaFriend(2);
-				MobclickTracking.UmengTrack.actionInviteaFriend(2, mContext);
+//				MobclickTracking.UmengTrack.actionInviteaFriend(2, mContext);
 			}
 		});
 		// Cancel Search
@@ -260,11 +272,35 @@ public class AddFriendActivity extends BaseActivity {
 									Toast.LENGTH_SHORT).show();
 					}
 				});
-		task.execute(new String[] { AppConst.CurrUserInfo.UserId,
-				AppLanguageHelper.getSystemLaunguage(mContext) });
+		task.execute(new String[]{AppConst.CurrUserInfo.UserId,
+                AppLanguageHelper.getSystemLaunguage(mContext)});
 		// tracking
 		// TraceHelper.tracingAction(mContext, TraceHelper.PAGE_INVITE_FRIEND,
 		// TraceHelper.ACTION_CLICK, null, TraceHelper.TARGET_WECHAT);
 	}
 
+
+    private void facebookInvite() {
+        String appLinkUrl, previewImageUrl;
+
+        appLinkUrl = "https://fb.me/1603425726573202";
+        previewImageUrl = null;
+
+        if (AppInviteDialog.canShow()) {
+            AppInviteContent content = new AppInviteContent.Builder()
+                    .setApplinkUrl(appLinkUrl)
+                    .setPreviewImageUrl(previewImageUrl)
+                    .build();
+            AppInviteDialog.show(this, content);
+        }
+
+
+
+
+
+
+
+
+
+    }
 }

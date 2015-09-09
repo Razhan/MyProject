@@ -92,6 +92,8 @@ public class BalloonActivity extends BaseActivity {
 	private boolean isAnimation = false;
 	private Vibrator vibrator;
 
+	private Boolean isStart = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -173,9 +175,12 @@ public class BalloonActivity extends BaseActivity {
 					@Override
 					public void onClick(View v) {
 						onQuit();
-						MobclickTracking.OmnitureTrack.ActionBallonQuestion(1);
-						MobclickTracking.UmengTrack.ActionBallonQuestion(1,
-								mContext);
+						if (isStart) {
+							MobclickTracking.OmnitureTrack.ActionTrackingBallonIntroduction();
+						} else {
+							MobclickTracking.OmnitureTrack.ActionBallonQuestion(0);
+						}
+//						MobclickTracking.UmengTrack.ActionBallonQuestion(1,	mContext);
 					}
 				});
 		FontHelper.applyFont(mContext, mTopLayout, FontHelper.FONT_Museo300);
@@ -263,6 +268,7 @@ public class BalloonActivity extends BaseActivity {
 				startlayout.setAnimation(fadeout);
 				startlayout.setVisibility(View.GONE);
 				mBalloonLayout.setAnimation(fadein);
+				isStart = true;
 			}
 		});
 	}
@@ -272,12 +278,12 @@ public class BalloonActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		if (isAnimation) {
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.BallonQuestionValues.pageNameValue,
-							ContextDataMode.BallonQuestionValues.pageSiteSubSectionValue,
-							ContextDataMode.BallonQuestionValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.BallonQuestionValues.pageNameValue,
+//							ContextDataMode.BallonQuestionValues.pageSiteSubSectionValue,
+//							ContextDataMode.BallonQuestionValues.pageSiteSectionValue,
+//							mContext);
 
 			BI_Tracking(BallonQuestionValues);
 		}
@@ -306,24 +312,24 @@ public class BalloonActivity extends BaseActivity {
 	@Override
 	public void onPause() {
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.BallonQuestionValues.pageNameValue,
-				ContextDataMode.BallonQuestionValues.pageSiteSubSectionValue,
-				ContextDataMode.BallonQuestionValues.pageSiteSectionValue,
-				mContext);
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.BalloonFailureValues.pageNameValue,
-				ContextDataMode.BalloonFailureValues.pageSiteSubSectionValue,
-				ContextDataMode.BalloonFailureValues.pageSiteSectionValue,
-				mContext);
-		if (mThornDown.isRunning()) {
-			onQuit();
-		}
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.BalloonSuccessValues.pageNameValue,
-				ContextDataMode.BalloonSuccessValues.pageSiteSubSectionValue,
-				ContextDataMode.BalloonSuccessValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.BallonQuestionValues.pageNameValue,
+//				ContextDataMode.BallonQuestionValues.pageSiteSubSectionValue,
+//				ContextDataMode.BallonQuestionValues.pageSiteSectionValue,
+//				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.BalloonFailureValues.pageNameValue,
+//				ContextDataMode.BalloonFailureValues.pageSiteSubSectionValue,
+//				ContextDataMode.BalloonFailureValues.pageSiteSectionValue,
+//				mContext);
+//		if (mThornDown.isRunning()) {
+//			onQuit();
+//		}
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.BalloonSuccessValues.pageNameValue,
+//				ContextDataMode.BalloonSuccessValues.pageSiteSubSectionValue,
+//				ContextDataMode.BalloonSuccessValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
@@ -828,12 +834,12 @@ public class BalloonActivity extends BaseActivity {
 							ContextDataMode.BalloonSuccessValues.pageSiteSubSectionValue,
 							ContextDataMode.BalloonSuccessValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.BalloonSuccessValues.pageNameValue,
-							ContextDataMode.BalloonSuccessValues.pageSiteSubSectionValue,
-							ContextDataMode.BalloonSuccessValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.BalloonSuccessValues.pageNameValue,
+//							ContextDataMode.BalloonSuccessValues.pageSiteSubSectionValue,
+//							ContextDataMode.BalloonSuccessValues.pageSiteSectionValue,
+//							mContext);
 			break;
 		case 3:
 			MobclickTracking.OmnitureTrack
@@ -842,12 +848,12 @@ public class BalloonActivity extends BaseActivity {
 							ContextDataMode.BalloonFailureValues.pageSiteSubSectionValue,
 							ContextDataMode.BalloonFailureValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.BalloonFailureValues.pageNameValue,
-							ContextDataMode.BalloonFailureValues.pageSiteSubSectionValue,
-							ContextDataMode.BalloonFailureValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.BalloonFailureValues.pageNameValue,
+//							ContextDataMode.BalloonFailureValues.pageSiteSubSectionValue,
+//							ContextDataMode.BalloonFailureValues.pageSiteSectionValue,
+//							mContext);
 			break;
 
 		case 4:

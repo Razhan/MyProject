@@ -44,7 +44,7 @@ public class ChunkDao {
     public int getAllChunkCount() {
 
         Map<String, Chunk> chunkMap = new HashMap<String, Chunk>();
-        LinkedList<Chunk> chunks = chunksHolder.getChunks();
+        List<Chunk> chunks = chunksHolder.getChunks();
         if (chunks == null || chunks.size() == 0) {
             return 0;
         }
@@ -100,7 +100,7 @@ public class ChunkDao {
 	}*/
 
     public boolean isChunkExit(String chunkCode) {
-        LinkedList<Chunk> chunks = chunksHolder.getChunks();
+        List<Chunk> chunks = chunksHolder.getChunks();
         if (chunks == null || chunks.size() == 0) {
             return false;
         }
@@ -123,7 +123,7 @@ public class ChunkDao {
      */
     public Chunk getChunkByCode(String chunkCode, String uid, String language) {
 
-        LinkedList<Chunk> chunks = chunksHolder.getChunks();
+        List<Chunk> chunks = chunksHolder.getChunks();
         if (chunks == null || chunks.size() == 0) {
             return null;
         }
@@ -571,7 +571,7 @@ public class ChunkDao {
 
 
         List<Chunk> selectedChunks=new LinkedList<Chunk>() ;
-        LinkedList<Chunk> chunks = chunksHolder.getChunks();
+        List<Chunk> chunks = chunksHolder.getChunks();
         if (chunks == null || chunks.size() == 0) {
             return selectedChunks;
         }

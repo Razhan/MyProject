@@ -10,7 +10,9 @@ import com.ef.bite.utils.StringUtils;
 import com.litesuits.android.async.AsyncTask;
 import com.litesuits.android.async.SimpleTask;
 import com.litesuits.android.async.TaskExecutor;
+import org.apache.http.message.BasicNameValuePair;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,10 +32,15 @@ public class HostCompetition {
 
 	public void start() {
 		taskList.clear();
-		SimpleTask<?> task1 = getTask(AppConst.EFAPIs.ETHost + "android/"
-				+ AppUtils.getVersion(context));
-		SimpleTask<?> task2 = getTask(AppConst.EFAPIs.HK_ETHost + "android/"
-				+ AppUtils.getVersion(context));
+//		SimpleTask<?> task1 = getTask(AppConst.EFAPIs.ETHost + "android/"
+//				+ AppUtils.getVersion(context));
+//		SimpleTask<?> task2 = getTask(AppConst.EFAPIs.HK_ETHost + "android/"
+//				+ AppUtils.getVersion(context));
+
+        SimpleTask<?> task1 = getTask("http://bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com/api/bella/2/config");
+        SimpleTask<?> task2 = getTask("http://42.96.250.52/api/bella/2/config");
+
+
 		taskList.add(task1);
 		taskList.add(task2);
 
@@ -69,8 +76,11 @@ public class HostCompetition {
 					return;
 				}
 				if (StringUtils.isEquals(serverAddress.status, "0")
-						&& !StringUtils.isBlank(serverAddress.data.host)) {
-					address = serverAddress.data.host;
+						&& !StringUtils.isBlank(serverAddress.data.domain)) {
+					address = serverAddress.data.domain;
+
+					//设置全局变量 判断是否显示忘记密码
+					AppConst.GlobalConfig.ForgetPassWord = serverAddress.data.enable_forget_password;
 //					 Log.v(TAG, "---return URL:"+url);
 					cancelTaskList();
 				}
@@ -89,8 +99,9 @@ public class HostCompetition {
 
 	private HttpServerAddress postRequest(String url) {
 //		 Log.v(TAG, "---post URL:" + url);
-		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Get(
-				url, HttpServerAddress.class);
+        ArrayList<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
+        pairs = null;
+		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Post(url, pairs, HttpServerAddress.class);
 		return address;
 	}
 

@@ -59,7 +59,7 @@ public class ChunkListActivity extends BaseActivity {
 	private int masteredCount;
 
 	ChunkBLL mChunkBLL;
-	List<HttpRehearsalListResponse.courseInfo> rehearsalChunkList = new ArrayList<>();
+	List<HttpRehearsalListResponse.courseInfo> rehearsalChunkList = new ArrayList<HttpRehearsalListResponse.courseInfo>();
 	List<HttpRehearsalListResponse.courseInfo> mAvaiableRehearseChunkList;
 	ChunkRehearseListAdapter mAvailableRehearseAdapter;
 	List<HttpRehearsalListResponse.courseInfo> mFutureRehearseChunkList;
@@ -73,6 +73,8 @@ public class ChunkListActivity extends BaseActivity {
 	private final static int VocabularylistTorehearseValues = 1;
 	private final static int VocabularylistMasteredValues = 2;
 	private final static int VocabularySearchValues = 3;
+    private final static int SearchLocation_mastered = 4;
+    private final static int SearchLocation_rehearse = 5;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +134,12 @@ public class ChunkListActivity extends BaseActivity {
 					@Override
 					public void onClick(View v) {
 						// 搜索
+
+                        if (type == CHUNK_LIST_TYPE_REHEARSE) {
+                            BI_Tracking(SearchLocation_rehearse);
+                        } else {
+                            BI_Tracking(SearchLocation_mastered);
+                        }
 
 						startActivity(new Intent(ChunkListActivity.this, ChunkListSearchActivity.class)
 								.putExtra(AppConst.BundleKeys.LIST_REHEARSAL, (Serializable) mAvaiableRehearseChunkList));
@@ -214,18 +222,18 @@ public class ChunkListActivity extends BaseActivity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.VocabularylistTorehearseValues.pageNameValue,
-						ContextDataMode.VocabularylistTorehearseValues.pageSiteSubSectionValue,
-						ContextDataMode.VocabularylistTorehearseValues.pageSiteSectionValue,
-						mContext);
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.VocabularylistMasteredValues.pageNameValue,
-						ContextDataMode.VocabularylistMasteredValues.pageSiteSubSectionValue,
-						ContextDataMode.VocabularylistMasteredValues.pageSiteSectionValue,
-						mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.VocabularylistTorehearseValues.pageNameValue,
+//						ContextDataMode.VocabularylistTorehearseValues.pageSiteSubSectionValue,
+//						ContextDataMode.VocabularylistTorehearseValues.pageSiteSectionValue,
+//						mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.VocabularylistMasteredValues.pageNameValue,
+//						ContextDataMode.VocabularylistMasteredValues.pageSiteSubSectionValue,
+//						ContextDataMode.VocabularylistMasteredValues.pageSiteSectionValue,
+//						mContext);
 	}
 
 	class ClickListener implements View.OnClickListener {
@@ -532,12 +540,12 @@ public class ChunkListActivity extends BaseActivity {
 							ContextDataMode.VocabularylistTorehearseValues.pageSiteSubSectionValue,
 							ContextDataMode.VocabularylistTorehearseValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.VocabularylistTorehearseValues.pageNameValue,
-							ContextDataMode.VocabularylistTorehearseValues.pageSiteSubSectionValue,
-							ContextDataMode.VocabularylistTorehearseValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.VocabularylistTorehearseValues.pageNameValue,
+//							ContextDataMode.VocabularylistTorehearseValues.pageSiteSubSectionValue,
+//							ContextDataMode.VocabularylistTorehearseValues.pageSiteSectionValue,
+//							mContext);
 			break;
 
 		case 2:
@@ -547,12 +555,12 @@ public class ChunkListActivity extends BaseActivity {
 							ContextDataMode.VocabularylistMasteredValues.pageSiteSubSectionValue,
 							ContextDataMode.VocabularylistMasteredValues.pageSiteSectionValue,
 							mContext);
-			MobclickTracking.UmengTrack
-					.setPageStart(
-							ContextDataMode.VocabularylistMasteredValues.pageNameValue,
-							ContextDataMode.VocabularylistMasteredValues.pageSiteSubSectionValue,
-							ContextDataMode.VocabularylistMasteredValues.pageSiteSectionValue,
-							mContext);
+//			MobclickTracking.UmengTrack
+//					.setPageStart(
+//							ContextDataMode.VocabularylistMasteredValues.pageNameValue,
+//							ContextDataMode.VocabularylistMasteredValues.pageSiteSubSectionValue,
+//							ContextDataMode.VocabularylistMasteredValues.pageSiteSectionValue,
+//							mContext);
 			break;
 		case 3:
 			MobclickTracking.OmnitureTrack
@@ -562,6 +570,12 @@ public class ChunkListActivity extends BaseActivity {
 							ContextDataMode.VocabularySearchValues.pageSiteSectionValue,
 							mContext);
 			break;
+        case 4:
+            MobclickTracking.OmnitureTrack.ActionSearchLocation(1);
+            break;
+        case 5:
+            MobclickTracking.OmnitureTrack.ActionSearchLocation(0);
+            break;
 		}
 	}
 

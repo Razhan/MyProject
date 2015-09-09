@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ef.bite"
-    android:versionCode="21"
-    android:versionName="1.2.2" >
+    android:versionCode="23"
+    android:versionName="1.2.4" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -59,9 +59,13 @@
             android:name="UMENG_APPKEY"
             android:value="548a9baafd98c5c91000104b" >
         </meta-data>
-        <meta-data android:name="UMENG_CHANNEL" android:value="wx_iwom"/>
+        <meta-data android:name="UMENG_CHANNEL" android:value="${UMENG_CHANNEL_VALUE}"/>
 
         <uses-library android:name="android.test.runner" />
+
+        <service
+            android:name=".business.VersionUpdateBLL" >
+        </service>
 
         <activity
             android:name=".ui.main.SplashActivity"
@@ -174,9 +178,10 @@
             android:screenOrientation="portrait" >
         </activity>
 
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="840080019363949" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+                   android:value="@string/fb_app_id" />
+        <meta-data android:name="com.facebook.sdk.ApplicationName"
+                   android:value="@string/fb_app_name" />
 
         <activity
             android:name=".ui.user.VersionAboutActivity"
@@ -282,6 +287,12 @@
                 android:screenOrientation="portrait" >
         </activity>
 
+        <activity android:name="com.facebook.FacebookActivity"
+                  android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:label="@string/app_name" />
+
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="7095000" />
@@ -322,11 +333,7 @@
                 <category android:name="com.ef.bite" />
             </intent-filter>
         </receiver>
-    </application>
 
-    <instrumentation
-        android:name="android.test.InstrumentationTestRunner"
-        android:label="Test for my app"
-        android:targetPackage="com.ef.myword2014" />
+    </application>
 
 </manifest>

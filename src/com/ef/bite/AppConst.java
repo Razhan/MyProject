@@ -72,6 +72,9 @@ public class AppConst {
 		public static int PageSize = 20;
 		/** Master欢迎页显示控制 **/
 		public static boolean TutorialConfig = false;
+		/**是否显示忘记密码**/
+		public static boolean ForgetPassWord = false;
+
 	}
 
 	/**
@@ -94,8 +97,8 @@ public class AppConst {
 		public final static String Publish_Host_CN = "42.96.250.52";// Product
 		public final static String Publish_Host_COM = "42.96.250.52";// Product
 
-		public final static String HOST_COM = "bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com";//amazon
-		public final static String HOST_CN = "42.96.250.52";//ali
+		public final static String HOST_COM = "http://bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com";//amazon
+		public final static String HOST_CN = "http://42.96.250.52";//ali
 
 		public final static String Internal_Address = "http://" + Internal_Host
 				+ "/api/bella/";
@@ -216,8 +219,10 @@ public class AppConst {
 		public final static String Storage_DownloadChunk = "download";
 		public final static String Storage_Course = "course";
 		public final static String Storage_Course_Preview = "course_preview";
-		public final static String Storage_Language = "language";
-		public final static String Default_Avatart = "default_avatar";
+		public final static String Storage_Language = "resource";
+        public final static String Storage_LanguageMaping = "language_mapping";
+
+        public final static String Default_Avatart = "default_avatar";
 		public final static String Storage_Log_Omniture = "omniture";
 		public final static String Facebook_Access_Token = "access_token";
 		public final static String Facebook_Access_Expires = "access_expires";

@@ -54,6 +54,8 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 	private TextView mCancel;
 	private ProgressDialog mProgress;
 
+	private String activityName;
+
 	enum ShareType {
 		Wechat, Weibo, Pengyouquan, QQ, Twitter, Facebook
 	}
@@ -64,6 +66,8 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 		mChunkName = chunkName;
 		mChunkCode = chunkCode;
 		mContext = context;
+
+		activityName = activity.getClass().getSimpleName();
 		// tracking
 		// TraceHelper.tracingPage(mActivity, TraceHelper.PAGE_WELL_DONE);
 	}
@@ -137,23 +141,29 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 								ContextDataMode.ShareListChinaValues.pageSiteSubSectionValue,
 								ContextDataMode.ShareListChinaValues.pageSiteSectionValue,
 								mContext);
-				MobclickTracking.UmengTrack
-						.setPageStart(
-								ContextDataMode.ShareListChinaValues.pageNameValue,
-								ContextDataMode.ShareListChinaValues.pageSiteSubSectionValue,
-								ContextDataMode.ShareListChinaValues.pageSiteSectionValue,
-								mContext);
-				MobclickTracking.UmengTrack
-						.setPageEnd(
-								ContextDataMode.ShareListChinaValues.pageNameValue,
-								ContextDataMode.ShareListChinaValues.pageSiteSubSectionValue,
-								ContextDataMode.ShareListChinaValues.pageSiteSectionValue,
-								mContext);
+//				MobclickTracking.UmengTrack
+//						.setPageStart(
+//								ContextDataMode.ShareListChinaValues.pageNameValue,
+//								ContextDataMode.ShareListChinaValues.pageSiteSubSectionValue,
+//								ContextDataMode.ShareListChinaValues.pageSiteSectionValue,
+//								mContext);
+//				MobclickTracking.UmengTrack
+//						.setPageEnd(
+//								ContextDataMode.ShareListChinaValues.pageNameValue,
+//								ContextDataMode.ShareListChinaValues.pageSiteSubSectionValue,
+//								ContextDataMode.ShareListChinaValues.pageSiteSectionValue,
+//								mContext);
 
-				MobclickTracking.OmnitureTrack.ActionPhraseLearnedMessage();
+				if (activityName.contains("ChunkPracticeActivity")) {
+					MobclickTracking.OmnitureTrack.ActionPhraseLearnedMessage(0);
+				} else {
+					MobclickTracking.OmnitureTrack.ActionPhraseLearnedMessage(1);
+				}
+
+
 				MobclickTracking.OmnitureTrack.ActionShareListChina(5);
 				MobclickTracking.OmnitureTrack.ActionTrackingUserRecordShare();
-				MobclickTracking.UmengTrack.ActionShareListChina(5, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(5, mContext);
 			}
 		});
 		
@@ -166,7 +176,7 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 				// TraceHelper.ACTION_CLICK, null,
 				// TraceHelper.TARGET_CANCEL);
 				MobclickTracking.OmnitureTrack.ActionShareListChina(6);
-				MobclickTracking.UmengTrack.ActionShareListChina(6, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(6, mContext);
 			}
 		});
 		mWechatShare
@@ -223,7 +233,7 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 				// TraceHelper.ACTION_CLICK, null,
 				// TraceHelper.TARGET_WECHAT);
 				MobclickTracking.OmnitureTrack.ActionShareListChina(1);
-				MobclickTracking.UmengTrack.ActionShareListChina(1, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(1, mContext);
 			} else if (mType == ShareType.Weibo) {
 				showShare(false, SinaWeibo.NAME, false);
 				// tracking
@@ -232,7 +242,7 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 				// TraceHelper.ACTION_CLICK, null,
 				// TraceHelper.TARGET_SINA);
 				MobclickTracking.OmnitureTrack.ActionShareListChina(2);
-				MobclickTracking.UmengTrack.ActionShareListChina(2, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(2, mContext);
 			} else if (mType == ShareType.Pengyouquan) {
 				showShare(false, WechatMoments.NAME, false);
 				// tracking
@@ -240,14 +250,14 @@ public class ChunkDonePopWindow extends BasePopupWindow {
 				// TraceHelper.ACTION_CLICK, null,
 				// TraceHelper.TARGET_WECHAT_MOMENTS);
 				MobclickTracking.OmnitureTrack.ActionShareListChina(3);
-				MobclickTracking.UmengTrack.ActionShareListChina(3, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(3, mContext);
 			} else if (mType == ShareType.QQ) {
 				showShare(false, QQ.NAME, false);
 				// tracking
 				// TraceHelper.tracingAction(mActivity, TraceHelper.PAGE_SHARE,
 				// TraceHelper.ACTION_CLICK, null, TraceHelper.TARGET_QQ);
 				MobclickTracking.OmnitureTrack.ActionShareListChina(4);
-				MobclickTracking.UmengTrack.ActionShareListChina(4, mContext);
+//				MobclickTracking.UmengTrack.ActionShareListChina(4, mContext);
 			} else if (mType == ShareType.Twitter) {
 				showShare(false, Twitter.NAME, false);
 				// tracking

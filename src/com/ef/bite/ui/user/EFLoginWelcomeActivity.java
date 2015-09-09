@@ -28,12 +28,19 @@ import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.FontHelper;
 import com.ef.bite.utils.JsonSerializeHelper;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+//import com.facebook.android.AsyncFacebookRunner;
+//import com.facebook.android.DialogError;
+//import com.facebook.android.Facebook;
+//import com.facebook.android.FacebookError;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
@@ -50,16 +57,42 @@ public class EFLoginWelcomeActivity extends BaseActivity {
     private List<HttpCourseRequest> httpCourseRequests = new ArrayList<HttpCourseRequest>();
     private int flagout = 0;
     private final static int External_Home = 1;
-    private Facebook facebook = new Facebook(
-            AppConst.ThirdPart.Facebook_Login_Appkey);
+//    private Facebook facebook = new Facebook(AppConst.ThirdPart.Facebook_Login_Appkey);
     private String access_token;
     private long expires;
     private int curLoginTimes = 0;
 
+    CallbackManager callbackManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
         setContentView(R.layout.activity_eflogin_welcome);
+
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.i("onSuccess", "onSuccess");
+                String token = loginResult.getAccessToken().getToken();
+                attemp2Login(token);
+            }
+
+            @Override
+            public void onCancel() {
+                Log.i("onCancel", "onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.i("onError", "onError");
+            }
+        });
+
 
         progress = new ProgressDialog(this);
         progress.setCancelable(false);
@@ -68,15 +101,15 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         access_token = PreferencesUtils.getString(mContext, "access_token",
                 null);
         expires = PreferencesUtils.getLong(mContext, "access_expires", 0);
-        if (access_token != null) {
-            facebook.setAccessToken(access_token);
-            Log.i("access_token", access_token);
-        }
-
-        if (expires != 0) {
-            facebook.setAccessExpires(expires);
-            Log.i("access_expires", String.valueOf(expires));
-        }
+//        if (access_token != null) {
+//            facebook.setAccessToken(access_token);
+//            Log.i("access_token", access_token);
+//        }
+//
+//        if (expires != 0) {
+//            facebook.setAccessExpires(expires);
+//            Log.i("access_expires", String.valueOf(expires));
+//        }
 
         String textString = JsonSerializeHelper.JsonLanguageDeserialize(
                 mContext, "login_main_already_a_member");
@@ -149,68 +182,71 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         });
 
         mfacebook.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                AsyncFacebookRunner asyncFacebookRunner = new AsyncFacebookRunner(facebook);
+//                if (facebook.isSessionValid()) {
+//                    try {
+//
+//                    } catch (Exception e) {
+//                        // TODO: handle exception
+//                    }
+//                }
+//
+//                facebook.authorize(EFLoginWelcomeActivity.this,
+//                        new Facebook.DialogListener() {
+//
+//                            @Override
+//                            public void onComplete(Bundle values) {
+//                                // TODO Auto-generated method stub
+//                                progress.setMessage(JsonSerializeHelper
+//                                        .JsonLanguageDeserialize(mContext,
+//                                                "loading_data"));
+//                                Log.i("onComplete", "onComplete");
+//                                // if (access_token != null) {
+//                                // attemp2Login(access_token);
+//                                // } else {
+//                                progress.show();
+//                                PreferencesUtils
+//                                        .putString(
+//                                                mContext,
+//                                                AppConst.CacheKeys.Facebook_Access_Token,
+//                                                facebook.getAccessToken());
+//                                PreferencesUtils
+//                                        .putLong(
+//                                                mContext,
+//                                                AppConst.CacheKeys.Facebook_Access_Expires,
+//                                                facebook.getAccessExpires());
+//                                attemp2Login(facebook.getAccessToken());
+//                                // }
+//
+//                            }
+//
+//                            @Override
+//                            public void onFacebookError(FacebookError e) {
+//                                // TODO Auto-generated method stub
+//                                e.printStackTrace();
+//                            }
+//
+//                            @Override
+//                            public void onError(DialogError e) {
+//                                // TODO Auto-generated method stub
+//                                e.printStackTrace();
+//                            }
+//
+//                            @Override
+//                            public void onCancel() {
+//                                // TODO Auto-generated method stub
+//                                Log.i("onCancel", "onCancel");
+//                            }
+//                        });
+//                // }
+//            }
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                AsyncFacebookRunner asyncFacebookRunner = new AsyncFacebookRunner(
-                        facebook);
-                if (facebook.isSessionValid()) {
-                    try {
-
-                    } catch (Exception e) {
-                        // TODO: handle exception
-                    }
-                }
-
-                facebook.authorize(EFLoginWelcomeActivity.this,
-                        new Facebook.DialogListener() {
-
-                            @Override
-                            public void onComplete(Bundle values) {
-                                // TODO Auto-generated method stub
-                                progress.setMessage(JsonSerializeHelper
-                                        .JsonLanguageDeserialize(mContext,
-                                                "loading_data"));
-                                Log.i("onComplete", "onComplete");
-                                // if (access_token != null) {
-                                // attemp2Login(access_token);
-                                // } else {
-                                progress.show();
-                                PreferencesUtils
-                                        .putString(
-                                                mContext,
-                                                AppConst.CacheKeys.Facebook_Access_Token,
-                                                facebook.getAccessToken());
-                                PreferencesUtils
-                                        .putLong(
-                                                mContext,
-                                                AppConst.CacheKeys.Facebook_Access_Expires,
-                                                facebook.getAccessExpires());
-                                attemp2Login(facebook.getAccessToken());
-                                // }
-
-                            }
-
-                            @Override
-                            public void onFacebookError(FacebookError e) {
-                                // TODO Auto-generated method stub
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onError(DialogError e) {
-                                // TODO Auto-generated method stub
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onCancel() {
-                                // TODO Auto-generated method stub
-                                Log.i("onCancel", "onCancel");
-                            }
-                        });
-                // }
+                LoginManager.getInstance().logInWithReadPermissions(EFLoginWelcomeActivity.this, Arrays.asList("public_profile", "user_friends"));
             }
         });
     }
@@ -219,11 +255,11 @@ public class EFLoginWelcomeActivity extends BaseActivity {
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        MobclickTracking.UmengTrack.setPageStart(
-                ContextDataMode.ExternalHomeValues.pageNameValue,
-                ContextDataMode.ExternalHomeValues.pageSiteSubSectionValue,
-                ContextDataMode.ExternalHomeValues.pageSiteSectionValue,
-                mContext);
+//        MobclickTracking.UmengTrack.setPageStart(
+//                ContextDataMode.ExternalHomeValues.pageNameValue,
+//                ContextDataMode.ExternalHomeValues.pageSiteSubSectionValue,
+//                ContextDataMode.ExternalHomeValues.pageSiteSectionValue,
+//                mContext);
 
         BI_Tracking(External_Home);
     }
@@ -232,18 +268,19 @@ public class EFLoginWelcomeActivity extends BaseActivity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        MobclickTracking.UmengTrack.setPageEnd(
-                ContextDataMode.ExternalHomeValues.pageNameValue,
-                ContextDataMode.ExternalHomeValues.pageSiteSubSectionValue,
-                ContextDataMode.ExternalHomeValues.pageSiteSectionValue,
-                mContext);
+//        MobclickTracking.UmengTrack.setPageEnd(
+//                ContextDataMode.ExternalHomeValues.pageNameValue,
+//                ContextDataMode.ExternalHomeValues.pageSiteSubSectionValue,
+//                ContextDataMode.ExternalHomeValues.pageSiteSectionValue,
+//                mContext);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        facebook.authorizeCallback(requestCode, resultCode, data);
+//        facebook.authorizeCallback(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == AppConst.RequestCode.EF_LOGIN
                 && resultCode == AppConst.ResultCode.LOGIN_SUCCESS) {
@@ -293,6 +330,13 @@ public class EFLoginWelcomeActivity extends BaseActivity {
                             //Marked as logined
                             AppConst.CurrUserInfo.IsLogin = true;
                             AppConst.CurrUserInfo.UserId=result.data.bella_id;
+                            PreferencesUtils.putString(mContext, AppConst.CacheKeys.Facebook_Access_Token, access_token);
+
+                            if (result.data.is_new_user) {
+                                MobclickTracking.OmnitureTrack
+                                        .ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
+                            }
+
                             getUserProfile();
                         }
                     }

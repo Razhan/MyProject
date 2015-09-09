@@ -187,6 +187,25 @@ public class AppLanguageHelper {
 		}
 	}
 
+    public static void loadLanguageFromStorage(Context context, String languagePath, String country) {
+        String[] languageDirs = null;
+        try {
+            languageDirs = new File(languagePath).list();
+            for (String dir : languageDirs) {
+                Log.e("dir", dir);
+                Log.e("file", languagePath);
+                if (dir.contains(country)) {
+                    InputStream is = new FileInputStream(new File(languagePath + dir));
+                    loadLanguageStream(context, dir, languagePath
+                            + dir, is, false);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
 	private static boolean loadLanguageStream(Context context,
 			String languageFileName, String baseDir, InputStream is,
 			boolean preinstall) {
@@ -213,5 +232,7 @@ public class AppLanguageHelper {
 		}
 
 	}
+
+
 
 }

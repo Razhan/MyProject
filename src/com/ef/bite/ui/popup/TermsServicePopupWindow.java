@@ -2,16 +2,17 @@ package com.ef.bite.ui.popup;
 
 import android.app.Activity;
 
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.widget.*;
 import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.AssetResourceHelper;
@@ -30,6 +31,7 @@ public class TermsServicePopupWindow extends BasePopupWindow {
 	public final static String TERMS_SERVICE_PATH_ZH = "html/terms_service_zh.html";
 	public final static String TERMS_SERVICE_PATH = "policy/android/";
 
+	private RelativeLayout windows;
 	private ImageButton mCancel;
 	private LinearLayout mButtonBar;
 	private Button mAgree;
@@ -66,6 +68,8 @@ public class TermsServicePopupWindow extends BasePopupWindow {
 
 	@Override
 	protected void initViews(View layout) {
+
+		windows = (RelativeLayout)layout.findViewById(R.id.termswindows);
 		mTermsWeb = (WebView) layout.findViewById(R.id.popup_terms_webview);
 		mCancel = (ImageButton) layout.findViewById(R.id.popup_terms_cancel);
 		mButtonBar = (LinearLayout) layout
@@ -79,7 +83,18 @@ public class TermsServicePopupWindow extends BasePopupWindow {
 		mNotAgree.setText(JsonSerializeHelper.JsonLanguageDeserialize(
 				mActivity, "popup_term_Service_btn_not_agree"));
 		mPopuptermstitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-				mActivity, "popup_term_service_title"));
+                mActivity, "popup_term_service_title"));
+
+
+        windows.setFocusable(true);
+        windows.setFocusableInTouchMode(true);
+        windows.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				close();
+			}
+		});
+
 
 		// load terms & service html
 		mTermsWeb.getSettings().setLoadWithOverviewMode(true);

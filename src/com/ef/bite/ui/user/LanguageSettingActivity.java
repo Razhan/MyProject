@@ -104,24 +104,24 @@ public class LanguageSettingActivity extends BaseActivity {
 						ContextDataMode.SettingsSystemLanguageValues.pageSiteSubSectionValue,
 						ContextDataMode.SettingsSystemLanguageValues.pageSiteSectionValue,
 						mContext);
-		MobclickTracking.UmengTrack
-				.setPageStart(
-						ContextDataMode.SettingsSystemLanguageValues.pageNameValue,
-						ContextDataMode.SettingsSystemLanguageValues.pageSiteSubSectionValue,
-						ContextDataMode.SettingsSystemLanguageValues.pageSiteSectionValue,
-						mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageStart(
+//						ContextDataMode.SettingsSystemLanguageValues.pageNameValue,
+//						ContextDataMode.SettingsSystemLanguageValues.pageSiteSubSectionValue,
+//						ContextDataMode.SettingsSystemLanguageValues.pageSiteSectionValue,
+//						mContext);
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.SettingsSystemLanguageValues.pageNameValue,
-						ContextDataMode.SettingsSystemLanguageValues.pageSiteSubSectionValue,
-						ContextDataMode.SettingsSystemLanguageValues.pageSiteSectionValue,
-						mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//						ContextDataMode.SettingsSystemLanguageValues.pageNameValue,
+//						ContextDataMode.SettingsSystemLanguageValues.pageSiteSubSectionValue,
+//						ContextDataMode.SettingsSystemLanguageValues.pageSiteSectionValue,
+//						mContext);
 	}
 
 	private void getLanguageList(ConfigModel configModel) {

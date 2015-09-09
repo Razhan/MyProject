@@ -14,9 +14,9 @@ import com.ef.bite.AppConst;
 import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.LogManager;
 import com.ef.bite.utils.TraceHelper;
-import com.umeng.analytics.AnalyticsConfig;
-import com.umeng.analytics.MobclickAgent;
-import com.umeng.analytics.ReportPolicy;
+//import com.umeng.analytics.AnalyticsConfig;
+//import com.umeng.analytics.MobclickAgent;
+//import com.umeng.analytics.ReportPolicy;
 
 public class MobclickTracking {
 
@@ -233,6 +233,23 @@ public class MobclickTracking {
                             ContextDataMode.ActionDialogueKey.actionAudioPlayAgain,
                             actionDate);
                     break;
+                case 6:
+                    actionDate
+                            .put(ContextDataMode.ActionDialogueKey.actionAudioPlayLocation,
+                                    ContextDataMode.ActionAudioDialogueValues.audioPlayLocation_dialogue);
+                    Analytics.trackAction(
+                            ContextDataMode.ActionDialogueKey.actionAudioPlayLocation,
+                            actionDate);
+                    break;
+                case 7:
+                    actionDate
+                            .put(ContextDataMode.ActionDialogueKey.actionAudioPlayLocation,
+                                    ContextDataMode.ActionAudioDialogueValues.audioPlayLocation_phrase);
+                    Analytics.trackAction(
+                            ContextDataMode.ActionDialogueKey.actionAudioPlayLocation,
+                            actionDate);
+                    break;
+
             }
             LogManager.definedLog(String.valueOf(i));
         }
@@ -243,7 +260,7 @@ public class MobclickTracking {
                 case 1:
                     actionDate
                             .put(ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
-                                    ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay);
+                                    ContextDataMode.ActionPhrasepresentationValues.audioPlay);
                     Analytics
                             .trackAction(
                                     ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
@@ -406,13 +423,20 @@ public class MobclickTracking {
                     actionData);
         }
 
-        public static void ActionPhraseLearnedMessage() {
+        public static void ActionPhraseLearnedMessage(int index) {
             HashMap<String, Object> actionData = new HashMap<String, Object>();
+
             actionData
                     .put(ContextDataMode.ActionPhraseLearnedMessageKey.actionPhraseShare,
-                            ContextDataMode.ActionPhraseLearnedMessageKey.actionPhraseShare);
+                            ContextDataMode.ActionPhraseLearnedMessageValues.actionPhraseShare);
             Analytics.trackAction(
-                    ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare,
+                    ContextDataMode.ActionPhraseLearnedMessageKey.actionPhraseShare,
+                    actionData);
+            actionData
+                    .put(ContextDataMode.ActionPhraseLearnedMessageKey.actionPhraseShareLocation,
+                            ContextDataMode.ActionPhraseLearnedMessageValues.actionPhraseShareLocation[index]);
+            Analytics.trackAction(
+                    ContextDataMode.ActionPhraseLearnedMessageKey.actionPhraseShareLocation,
                     actionData);
         }
 
@@ -460,12 +484,46 @@ public class MobclickTracking {
                     break;
 
                 case 1:
+                    actionData
+                            .put(ContextDataMode.ActionSearchKey.actionSearchCancel,
+                                    ContextDataMode.ActionSearchVocabularylist.actionSearchcancel);
+                    Analytics.trackAction(
+                            ContextDataMode.ActionSearchKey.actionSearchCancel,
+                            actionData);
                     break;
 
                 case 2:
                     break;
             }
         }
+
+        public static void ActionSearchLocation(int i) {
+            HashMap<String, Object> actionData = new HashMap<String, Object>();
+            switch (i) {
+                case 0:
+                    actionData
+                            .put(ContextDataMode.ActionSearchLocationKey.actionSearchLocation,
+                                    ContextDataMode.ActionSearchVocabularylist.actionSearchLocation_rehearse);
+                    Analytics.trackAction(
+                            ContextDataMode.ActionSearchLocationKey.actionSearchLocation,
+                            actionData);
+                    break;
+
+                case 1:
+                    actionData
+                            .put(ContextDataMode.ActionSearchLocationKey.actionSearchLocation,
+                                    ContextDataMode.ActionSearchVocabularylist.actionSearchLocation_mastered);
+                    Analytics.trackAction(
+                            ContextDataMode.ActionSearchLocationKey.actionSearchLocation,
+                            actionData);
+                    break;
+
+                case 2:
+                    break;
+            }
+        }
+
+
 
         public static void ActionSettings(int i, int index) {
             HashMap<String, Object> actionData = new HashMap<String, Object>();
@@ -594,17 +652,28 @@ public class MobclickTracking {
                     ContextDataMode.ActionReviewValues.actionrate);
             Analytics.trackAction(ContextDataMode.ActionReviewKey.actionrate,
                     actionData);
+
             TraceHelper.tracingOmnAction(context,
                     ContextDataMode.ActionReviewKey.actionrate,
                     ContextDataMode.ActionReviewValues.actionrate);
         }
 
-        public static void ActionTrackingRecording() {
+        public static void ActionTrackingRecording(int i) {
             HashMap<String, Object> actionData = new HashMap<String, Object>();
-            actionData.put(ContextDataMode.ActionRecordingKey.actionrecordStatus,
-                    ContextDataMode.ActionRecordingValues.actionrecordStatus);
-            Analytics.trackAction(ContextDataMode.ActionReviewKey.actionrate,
-                    actionData);
+            switch (i) {
+                case 0:
+                actionData.put(ContextDataMode.ActionRecordingKey.actionrecordStatus,
+                        ContextDataMode.ActionRecordingValues.actionrecordStatus);
+                Analytics.trackAction(ContextDataMode.ActionRecordingKey.actionrecordStatus,
+                        actionData);
+                    break;
+                case 1:
+                    actionData.put(ContextDataMode.ActionRecordingKey.actionrecord,
+                            ContextDataMode.ActionRecordingValues.actionrecord);
+                    Analytics.trackAction(ContextDataMode.ActionRecordingKey.actionrecord,
+                            actionData);
+                    break;
+            }
         }
 
         public static void ActionTrackingRecordingSuccessful(Context context) {
@@ -633,6 +702,18 @@ public class MobclickTracking {
                     actionData);
         }
 
+        public static void ActionTrackingBallonIntroduction() {
+            HashMap<String, Object> actionData = new HashMap<String, Object>();
+            actionData.put(
+                    ContextDataMode.BalloonIntroductionkeys.actionTabCancelLocationKey,
+                    ContextDataMode.BalloonIntroductionValues.actionTabCancelLocationValue);
+            Analytics.trackAction(
+                    ContextDataMode.BalloonIntroductionkeys.actionTabCancelLocationKey,
+                    actionData);
+        }
+
+
+
         public static void actionFormErrorType(String ErrorType) {
             HashMap<String, Object> actionData = new HashMap<String, Object>();
             actionData.put("action.formErrorType", ErrorType);
@@ -640,342 +721,342 @@ public class MobclickTracking {
         }
     }
 
-    public static class UmengTrack {
-        static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-        public static void openDurationTrack(boolean isDuration,
-                                             Context context, boolean isDebugMode) {
-            MobclickAgent.openActivityDurationTrack(isDuration);
-            MobclickAgent.updateOnlineConfig(context);
-            AnalyticsConfig.setReportPolicy(ReportPolicy.BATCH_AT_LAUNCH,
-                    ReportPolicy.REALTIME);
-            MobclickAgent.setDebugMode(isDebugMode);
-        }
-
-        public static void setResume(Context context) {
-            MobclickAgent.onResume(context);
-
-        }
-
-        public static void setPause(Context context) {
-
-            MobclickAgent.onPause(context);
-
-        }
-
-        public static void setPageStart(String PageName,
-                                        String PageSiteSubSection, String PageSiteSection,
-                                        Context context) {
-            MobclickAgent.onPageStart(PageName);
-            MobclickAgent.onPageStart(PageSiteSubSection);
-            MobclickAgent.onPageStart(PageSiteSection);
-            MobclickAgent.onPageStart(ContextDataMode.pagePreviousNameString);
-            MobclickAgent.onPageStart(AppConst.CurrUserInfo.UserId);
-            MobclickAgent.onPageStart(AppLanguageHelper
-                    .getSystemLaunguage(context));
-            MobclickAgent.onPageStart(ContextDataMode.globalAppNameValue);
-            MobclickAgent.onPageStart(ContextDataMode.globalPlatformNameValue);
-            MobclickAgent.onPageStart(formatter.format(new Date()));
-        }
-
-        public static void setPageEnd(String PageName,
-                                      String PageSiteSubSection, String PageSiteSection,
-                                      Context context) {
-            MobclickAgent.onPageEnd(PageName);
-            MobclickAgent.onPageEnd(PageSiteSubSection);
-            MobclickAgent.onPageEnd(PageSiteSection);
-            MobclickAgent.onPageEnd(ContextDataMode.pagePreviousNameString);
-            MobclickAgent.onPageEnd(AppConst.CurrUserInfo.UserId);
-            MobclickAgent.onPageEnd(AppLanguageHelper
-                    .getSystemLaunguage(context));
-            MobclickAgent.onPageEnd(ContextDataMode.globalAppNameValue);
-            MobclickAgent.onPageEnd(ContextDataMode.globalPlatformNameValue);
-            MobclickAgent.onPageEnd(formatter.format(new Date()));
-        }
-
-        public static void ActionDialogue(int i, Context context) {
-            HashMap<String, String> actionDate = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionDate
-                            .put(ContextDataMode.actionTabCancelLocation,
-                                    ContextDataMode.ActionAudioDialogueValues.TabCancelLocation);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.actionTabCancelLocation, actionDate);
-                    break;
-                case 2:
-                    actionDate
-                            .put(ContextDataMode.ActionDialogueKey.actionParagraphOpen,
-                                    ContextDataMode.ActionAudioDialogueValues.paragraphOpen);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.ActionDialogueKey.actionParagraphOpen,
-                            actionDate);
-                    break;
-                case 3:
-                    actionDate.put(
-                            ContextDataMode.ActionDialogueKey.actionAudioPlay,
-                            ContextDataMode.ActionAudioDialogueValues.audioPlay);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.ActionDialogueKey.actionAudioPlay,
-                            actionDate);
-                    break;
-                case 4:
-                    actionDate.put(
-                            ContextDataMode.ActionDialogueKey.actionAudioPause,
-                            ContextDataMode.ActionAudioDialogueValues.audioPause);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.ActionDialogueKey.actionAudioPause,
-                            actionDate);
-                    break;
-                case 5:
-                    actionDate
-                            .put(ContextDataMode.ActionDialogueKey.actionAudioPlayAgain,
-                                    ContextDataMode.ActionAudioDialogueValues.audioPlayAgain);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.ActionDialogueKey.actionAudioPlayAgain,
-                            actionDate);
-                    break;
-            }
-        }
-
-        public static void ActionPhrasepresentation(int i, Context context) {
-            HashMap<String, String> actionDate = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionDate
-                            .put(ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
-                                    ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
-                                    actionDate);
-                    break;
-
-                case 2:
-                    actionDate
-                            .put(ContextDataMode.ActionPhrasepresentationKey.actionTranslationSee,
-                                    ContextDataMode.ActionPhrasepresentationValues.translationSee);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionPhrasepresentationKey.actionTranslationSee,
-                                    actionDate);
-                    break;
-                case 3:
-                    actionDate
-                            .put(ContextDataMode.ActionPhrasepresentationKey.actionScrollNavigation,
-                                    ContextDataMode.ActionPhrasepresentationValues.scrollNavigation);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionPhrasepresentationKey.actionScrollNavigation,
-                                    actionDate);
-                    break;
-            }
-
-        }
-
-        public static void ActionBallonQuestion(int i, Context context) {
-            HashMap<String, String> actionDate = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionDate
-                            .put(ContextDataMode.actionTabCancelLocation,
-                                    ContextDataMode.ActionBalloonQuestionValues.TabCancelLocation);
-                    MobclickAgent.onEvent(context,
-                            ContextDataMode.actionTabCancelLocation, actionDate);
-                    break;
-
-                case 2:
-                    actionDate
-                            .put(ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksIncorrect,
-                                    ContextDataMode.ActionBalloonQuestionValues.BallonClicksIncorrect);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksIncorrect,
-                                    actionDate);
-                    break;
-                case 3:
-                    actionDate
-                            .put(ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksCorrect,
-                                    ContextDataMode.ActionBalloonQuestionValues.BallonClicksCorrect);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksCorrect,
-                                    actionDate);
-                    break;
-            }
-        }
-
-        public static void ActionBalloonFailure(int i, Context context) {
-            HashMap<String, String> actionDate = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionDate
-                            .put(ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
-                                    ContextDataMode.ActionBalloonFailureValues.timeUpChoice_TryAgain);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
-                                    actionDate);
-                    break;
-
-                case 2:
-                    actionDate
-                            .put(ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
-                                    ContextDataMode.ActionBalloonFailureValues.timeUpchoice_Learn);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
-                                    actionDate);
-                    break;
-            }
-        }
-
-        /**
-         * @param i 1:Wechatfriends 2:Weibo 3:Wechatmoments 4:QQ
-         */
-        public static void ActionShareListChina(int i, Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_WeChatfriends);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    actionData);
-                    break;
-
-                case 2:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_Weibo);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    actionData);
-                    break;
-                case 3:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_Wechatmoments);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    actionData);
-                    break;
-                case 4:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_QQ);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
-                                    actionData);
-                    break;
-                case 5:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShare,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialShare);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialShare,
-                                    actionData);
-                    break;
-                case 6:
-                    actionData
-                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialMessageCancel,
-                                    ContextDataMode.ActionShareListChinaValues.actionSocialMessageCancel);
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionShareListChinaKey.actionSocialMessageCancel,
-                                    actionData);
-                    break;
-            }
-            LogManager.definedLog(String.valueOf(i));
-        }
-
-        public static void ActionLevelUpMessage(Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            actionData
-                    .put(ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare,
-                            ContextDataMode.ActionLevelUpMessageValues.actionLevelUpShare);
-            MobclickAgent.onEvent(context,
-                    ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare,
-                    actionData);
-        }
-
-        public static void ActionInbox(Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            actionData.put(ContextDataMode.ActionInboxKey.actionFriendsAdd,
-                    ContextDataMode.ActionInboxValues.actionFriendsAdd);
-            MobclickAgent
-                    .onEvent(context,
-                            ContextDataMode.ActionInboxKey.actionFriendsAdd,
-                            actionData);
-        }
-
-        public static void ActionFriendsList(Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            actionData
-                    .put(ContextDataMode.ActionFriendsLisKey.actionAlphabetClick,
-                            ContextDataMode.ActionFriendsListValues.actionAlphabetClick);
-            MobclickAgent.onEvent(context,
-                    ContextDataMode.ActionFriendsLisKey.actionAlphabetClick,
-                    actionData);
-        }
-
-        public static void ActionSearch(Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            actionData.put(ContextDataMode.ActionSearchKey.actionSearch,
-                    ContextDataMode.ActionSearchVocabularylist.actionSearch);
-            MobclickAgent.onEvent(context,
-                    ContextDataMode.ActionSearchKey.actionSearch, actionData);
-        }
-
-        public static void actionInviteaFriend(int i, Context context) {
-            HashMap<String, String> actionData = new HashMap<String, String>();
-            switch (i) {
-                case 1:
-                    actionData
-                            .put(ContextDataMode.ActionInviteaFriendKey.actionWechatInvite,
-                                    "1");
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionInviteaFriendKey.actionWechatInvite,
-                                    actionData);
-                    break;
-
-                case 2:
-                    actionData
-                            .put(ContextDataMode.ActionInviteaFriendKey.actionFriendSearch,
-                                    "1");
-                    MobclickAgent
-                            .onEvent(
-                                    context,
-                                    ContextDataMode.ActionInviteaFriendKey.actionFriendSearch,
-                                    actionData);
-                    break;
-            }
-        }
-
-        public static void onKillProcess(Context context) {
-            MobclickAgent.onKillProcess(context);
-        }
-    }
+//    public static class UmengTrack {
+//        static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//
+//        public static void openDurationTrack(boolean isDuration,
+//                                             Context context, boolean isDebugMode) {
+//            MobclickAgent.openActivityDurationTrack(isDuration);
+//            MobclickAgent.updateOnlineConfig(context);
+//            AnalyticsConfig.setReportPolicy(ReportPolicy.BATCH_AT_LAUNCH,
+//                    ReportPolicy.REALTIME);
+//            MobclickAgent.setDebugMode(isDebugMode);
+//        }
+//
+//        public static void setResume(Context context) {
+//            MobclickAgent.onResume(context);
+//
+//        }
+//
+//        public static void setPause(Context context) {
+//
+//            MobclickAgent.onPause(context);
+//
+//        }
+//
+//        public static void setPageStart(String PageName,
+//                                        String PageSiteSubSection, String PageSiteSection,
+//                                        Context context) {
+//            MobclickAgent.onPageStart(PageName);
+//            MobclickAgent.onPageStart(PageSiteSubSection);
+//            MobclickAgent.onPageStart(PageSiteSection);
+//            MobclickAgent.onPageStart(ContextDataMode.pagePreviousNameString);
+//            MobclickAgent.onPageStart(AppConst.CurrUserInfo.UserId);
+//            MobclickAgent.onPageStart(AppLanguageHelper
+//                    .getSystemLaunguage(context));
+//            MobclickAgent.onPageStart(ContextDataMode.globalAppNameValue);
+//            MobclickAgent.onPageStart(ContextDataMode.globalPlatformNameValue);
+//            MobclickAgent.onPageStart(formatter.format(new Date()));
+//        }
+//
+//        public static void setPageEnd(String PageName,
+//                                      String PageSiteSubSection, String PageSiteSection,
+//                                      Context context) {
+//            MobclickAgent.onPageEnd(PageName);
+//            MobclickAgent.onPageEnd(PageSiteSubSection);
+//            MobclickAgent.onPageEnd(PageSiteSection);
+//            MobclickAgent.onPageEnd(ContextDataMode.pagePreviousNameString);
+//            MobclickAgent.onPageEnd(AppConst.CurrUserInfo.UserId);
+//            MobclickAgent.onPageEnd(AppLanguageHelper
+//                    .getSystemLaunguage(context));
+//            MobclickAgent.onPageEnd(ContextDataMode.globalAppNameValue);
+//            MobclickAgent.onPageEnd(ContextDataMode.globalPlatformNameValue);
+//            MobclickAgent.onPageEnd(formatter.format(new Date()));
+//        }
+//
+//        public static void ActionDialogue(int i, Context context) {
+//            HashMap<String, String> actionDate = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionDate
+//                            .put(ContextDataMode.actionTabCancelLocation,
+//                                    ContextDataMode.ActionAudioDialogueValues.TabCancelLocation);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.actionTabCancelLocation, actionDate);
+//                    break;
+//                case 2:
+//                    actionDate
+//                            .put(ContextDataMode.ActionDialogueKey.actionParagraphOpen,
+//                                    ContextDataMode.ActionAudioDialogueValues.paragraphOpen);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.ActionDialogueKey.actionParagraphOpen,
+//                            actionDate);
+//                    break;
+//                case 3:
+//                    actionDate.put(
+//                            ContextDataMode.ActionDialogueKey.actionAudioPlay,
+//                            ContextDataMode.ActionAudioDialogueValues.audioPlay);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.ActionDialogueKey.actionAudioPlay,
+//                            actionDate);
+//                    break;
+//                case 4:
+//                    actionDate.put(
+//                            ContextDataMode.ActionDialogueKey.actionAudioPause,
+//                            ContextDataMode.ActionAudioDialogueValues.audioPause);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.ActionDialogueKey.actionAudioPause,
+//                            actionDate);
+//                    break;
+//                case 5:
+//                    actionDate
+//                            .put(ContextDataMode.ActionDialogueKey.actionAudioPlayAgain,
+//                                    ContextDataMode.ActionAudioDialogueValues.audioPlayAgain);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.ActionDialogueKey.actionAudioPlayAgain,
+//                            actionDate);
+//                    break;
+//            }
+//        }
+//
+//        public static void ActionPhrasepresentation(int i, Context context) {
+//            HashMap<String, String> actionDate = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionDate
+//                            .put(ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
+//                                    ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionPhrasepresentationKey.actionAudioPlay,
+//                                    actionDate);
+//                    break;
+//
+//                case 2:
+//                    actionDate
+//                            .put(ContextDataMode.ActionPhrasepresentationKey.actionTranslationSee,
+//                                    ContextDataMode.ActionPhrasepresentationValues.translationSee);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionPhrasepresentationKey.actionTranslationSee,
+//                                    actionDate);
+//                    break;
+//                case 3:
+//                    actionDate
+//                            .put(ContextDataMode.ActionPhrasepresentationKey.actionScrollNavigation,
+//                                    ContextDataMode.ActionPhrasepresentationValues.scrollNavigation);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionPhrasepresentationKey.actionScrollNavigation,
+//                                    actionDate);
+//                    break;
+//            }
+//
+//        }
+//
+//        public static void ActionBallonQuestion(int i, Context context) {
+//            HashMap<String, String> actionDate = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionDate
+//                            .put(ContextDataMode.actionTabCancelLocation,
+//                                    ContextDataMode.ActionBalloonQuestionValues.TabCancelLocation);
+//                    MobclickAgent.onEvent(context,
+//                            ContextDataMode.actionTabCancelLocation, actionDate);
+//                    break;
+//
+//                case 2:
+//                    actionDate
+//                            .put(ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksIncorrect,
+//                                    ContextDataMode.ActionBalloonQuestionValues.BallonClicksIncorrect);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksIncorrect,
+//                                    actionDate);
+//                    break;
+//                case 3:
+//                    actionDate
+//                            .put(ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksCorrect,
+//                                    ContextDataMode.ActionBalloonQuestionValues.BallonClicksCorrect);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionBalloonQuestionKey.actionBallonClicksCorrect,
+//                                    actionDate);
+//                    break;
+//            }
+//        }
+//
+//        public static void ActionBalloonFailure(int i, Context context) {
+//            HashMap<String, String> actionDate = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionDate
+//                            .put(ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
+//                                    ContextDataMode.ActionBalloonFailureValues.timeUpChoice_TryAgain);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
+//                                    actionDate);
+//                    break;
+//
+//                case 2:
+//                    actionDate
+//                            .put(ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
+//                                    ContextDataMode.ActionBalloonFailureValues.timeUpchoice_Learn);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionBalloonFailureKey.actionTimeUpChoice,
+//                                    actionDate);
+//                    break;
+//            }
+//        }
+//
+//        /**
+//         * @param i 1:Wechatfriends 2:Weibo 3:Wechatmoments 4:QQ
+//         */
+//        public static void ActionShareListChina(int i, Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_WeChatfriends);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    actionData);
+//                    break;
+//
+//                case 2:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_Weibo);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    actionData);
+//                    break;
+//                case 3:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_Wechatmoments);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    actionData);
+//                    break;
+//                case 4:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialShareType_QQ);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialShareType,
+//                                    actionData);
+//                    break;
+//                case 5:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialShare,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialShare);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialShare,
+//                                    actionData);
+//                    break;
+//                case 6:
+//                    actionData
+//                            .put(ContextDataMode.ActionShareListChinaKey.actionSocialMessageCancel,
+//                                    ContextDataMode.ActionShareListChinaValues.actionSocialMessageCancel);
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionShareListChinaKey.actionSocialMessageCancel,
+//                                    actionData);
+//                    break;
+//            }
+//            LogManager.definedLog(String.valueOf(i));
+//        }
+//
+//        public static void ActionLevelUpMessage(Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            actionData
+//                    .put(ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare,
+//                            ContextDataMode.ActionLevelUpMessageValues.actionLevelUpShare);
+//            MobclickAgent.onEvent(context,
+//                    ContextDataMode.ActionLevelUpMessageKey.actionLevelUpShare,
+//                    actionData);
+//        }
+//
+//        public static void ActionInbox(Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            actionData.put(ContextDataMode.ActionInboxKey.actionFriendsAdd,
+//                    ContextDataMode.ActionInboxValues.actionFriendsAdd);
+//            MobclickAgent
+//                    .onEvent(context,
+//                            ContextDataMode.ActionInboxKey.actionFriendsAdd,
+//                            actionData);
+//        }
+//
+//        public static void ActionFriendsList(Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            actionData
+//                    .put(ContextDataMode.ActionFriendsLisKey.actionAlphabetClick,
+//                            ContextDataMode.ActionFriendsListValues.actionAlphabetClick);
+//            MobclickAgent.onEvent(context,
+//                    ContextDataMode.ActionFriendsLisKey.actionAlphabetClick,
+//                    actionData);
+//        }
+//
+//        public static void ActionSearch(Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            actionData.put(ContextDataMode.ActionSearchKey.actionSearch,
+//                    ContextDataMode.ActionSearchVocabularylist.actionSearch);
+//            MobclickAgent.onEvent(context,
+//                    ContextDataMode.ActionSearchKey.actionSearch, actionData);
+//        }
+//
+//        public static void actionInviteaFriend(int i, Context context) {
+//            HashMap<String, String> actionData = new HashMap<String, String>();
+//            switch (i) {
+//                case 1:
+//                    actionData
+//                            .put(ContextDataMode.ActionInviteaFriendKey.actionWechatInvite,
+//                                    "1");
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionInviteaFriendKey.actionWechatInvite,
+//                                    actionData);
+//                    break;
+//
+//                case 2:
+//                    actionData
+//                            .put(ContextDataMode.ActionInviteaFriendKey.actionFriendSearch,
+//                                    "1");
+//                    MobclickAgent
+//                            .onEvent(
+//                                    context,
+//                                    ContextDataMode.ActionInviteaFriendKey.actionFriendSearch,
+//                                    actionData);
+//                    break;
+//            }
+//        }
+//
+//        public static void onKillProcess(Context context) {
+//            MobclickAgent.onKillProcess(context);
+//        }
+//    }
 
 }

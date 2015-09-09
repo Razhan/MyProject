@@ -58,22 +58,22 @@ public class LocationSettingActivity extends BaseActivity {
 				ContextDataMode.SettingsLocationValues.pageSiteSubSectionValue,
 				ContextDataMode.SettingsLocationValues.pageSiteSectionValue,
 				mContext);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.SettingsLocationValues.pageNameValue,
-				ContextDataMode.SettingsLocationValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsLocationValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.SettingsLocationValues.pageNameValue,
+//				ContextDataMode.SettingsLocationValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsLocationValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.SettingsLocationValues.pageNameValue,
-				ContextDataMode.SettingsLocationValues.pageSiteSubSectionValue,
-				ContextDataMode.SettingsLocationValues.pageSiteSectionValue,
-				mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.SettingsLocationValues.pageNameValue,
+//				ContextDataMode.SettingsLocationValues.pageSiteSubSectionValue,
+//				ContextDataMode.SettingsLocationValues.pageSiteSectionValue,
+//				mContext);
 	}
 
 	/**

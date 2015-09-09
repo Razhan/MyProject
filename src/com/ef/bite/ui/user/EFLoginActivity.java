@@ -56,6 +56,13 @@ public class EFLoginActivity extends BaseActivity {
         mLogin.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
                 "login_ef_login_button"));
         mForget = (TextView) findViewById(R.id.login_ef_forgot_pwd);
+
+        //设置忘记密码功能是否可用
+        if (!AppConst.GlobalConfig.ForgetPassWord) {
+            mForget.setVisibility(View.INVISIBLE);
+        }
+
+
         mSignUpLayout = (LinearLayout) findViewById(R.id.login_ef_signup_layout);
         mSignUp = (TextView) findViewById(R.id.login_ef_signup);
         login_main_not_registered = (TextView) findViewById(R.id.login_main_not_registered);
@@ -107,10 +114,10 @@ public class EFLoginActivity extends BaseActivity {
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-        MobclickTracking.UmengTrack.setPageStart(
-                ContextDataMode.LoginValues.pageNameValue_phone,
-                ContextDataMode.LoginValues.pageSiteSubSectionValue,
-                ContextDataMode.LoginValues.pageSiteSectionValue, mContext);
+//        MobclickTracking.UmengTrack.setPageStart(
+//                ContextDataMode.LoginValues.pageNameValue_phone,
+//                ContextDataMode.LoginValues.pageSiteSubSectionValue,
+//                ContextDataMode.LoginValues.pageSiteSectionValue, mContext);
         BI_Tracking(Login_Phone);
     }
 
@@ -118,10 +125,10 @@ public class EFLoginActivity extends BaseActivity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        MobclickTracking.UmengTrack.setPageEnd(
-                ContextDataMode.LoginValues.pageNameValue_phone,
-                ContextDataMode.LoginValues.pageSiteSubSectionValue,
-                ContextDataMode.LoginValues.pageSiteSectionValue, mContext);
+//        MobclickTracking.UmengTrack.setPageEnd(
+//                ContextDataMode.LoginValues.pageNameValue_phone,
+//                ContextDataMode.LoginValues.pageSiteSubSectionValue,
+//                ContextDataMode.LoginValues.pageSiteSectionValue, mContext);
     }
 
     @Override

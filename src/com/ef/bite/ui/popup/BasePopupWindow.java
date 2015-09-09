@@ -2,6 +2,7 @@ package com.ef.bite.ui.popup;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,9 @@ public abstract class BasePopupWindow {
 		initViews(layout);
 		mPopUpWindow = new PopupWindow(layout, LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT, true);
+
+        mPopUpWindow.setBackgroundDrawable(new BitmapDrawable());
+        mPopUpWindow.setOutsideTouchable(true);
 		mPopUpWindow.showAtLocation(layout, Gravity.CENTER, 0, 0);
 	}
 
@@ -61,4 +65,7 @@ public abstract class BasePopupWindow {
 	public interface OnCloseListener {
 		void onClose();
 	}
+
+
+
 }

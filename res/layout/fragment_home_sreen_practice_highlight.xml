@@ -8,6 +8,8 @@
         android:id="@+id/home_screen_learn_layout"
         android:layout_width="match_parent"
         android:layout_height="0dip"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_weight="1.2" >
 
         <TextView
@@ -31,6 +33,8 @@
                 android:layout_marginRight="20dp"
                 android:background="@drawable/button_go_ahead_enable"
                 android:src="@drawable/arrow_goahead"
+                android:clickable="false"
+                android:focusable="false"
                 android:visibility="visible"/>
 
         <LinearLayout
@@ -118,6 +122,9 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:layout_marginTop="5dp"
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:clickable="true"
                 android:background="@drawable/button_go_ahead_enable"
                 android:src="@drawable/arrow_goahead" />
         </LinearLayout>

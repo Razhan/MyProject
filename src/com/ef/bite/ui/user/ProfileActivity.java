@@ -1,38 +1,38 @@
 package com.ef.bite.ui.user;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.*;
 import com.ef.bite.R;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ef.bite.AppConst;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
+import com.ef.bite.business.CountryBLL;
 import com.ef.bite.business.GlobalConfigBLL;
 import com.ef.bite.business.UserScoreBiz;
-import com.ef.bite.business.task.AddFriendTask;
-import com.ef.bite.business.task.CheckIsMyFriendTask;
-import com.ef.bite.business.task.GetFriendCountTask;
-import com.ef.bite.business.task.PostExecuting;
+import com.ef.bite.business.task.*;
 import com.ef.bite.dataacces.mode.httpMode.HttpBaseMessage;
 import com.ef.bite.dataacces.mode.httpMode.HttpFriendCount;
 import com.ef.bite.dataacces.mode.httpMode.HttpIsMyFriend;
+import com.ef.bite.dataacces.mode.httpMode.HttpProfile;
 import com.ef.bite.model.ProfileModel;
 import com.ef.bite.ui.BaseActivity;
-import com.ef.bite.utils.AvatarHelper;
-import com.ef.bite.utils.FontHelper;
-import com.ef.bite.utils.JsonSerializeHelper;
-import com.ef.bite.utils.ScoreLevelHelper;
+import com.ef.bite.utils.*;
 import com.ef.bite.widget.RoundedImageView;
 import com.ef.bite.widget.UserLevelView;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.PriorityQueue;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -51,6 +51,11 @@ public class ProfileActivity extends BaseActivity {
 	LinearLayout mPharaseLayout;
 	LinearLayout mFriendLayout;
 	TextView mFriendNum; // 收集到的礼物
+
+    TextView country_name;
+    ImageView country_flag;
+    String country;
+    RelativeLayout rl_country;
 
 	ProfileModel mProfileModel; // 当前的profile信息
 	GlobalConfigBLL configBLL;
@@ -87,7 +92,12 @@ public class ProfileActivity extends BaseActivity {
 		mFriendLayout = (LinearLayout) findViewById(R.id.profile_friends_layout);
 		mScoreLevelInfoLayout = (LinearLayout) findViewById(R.id.profile_score_level_layout);
 		mScoreXP = (TextView) findViewById(R.id.profile_level_points);
-		mScoreLevelInfoLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+
+        country_name = (TextView)this.findViewById(R.id.country_name);
+        country_flag = (ImageView)this.findViewById(R.id.country_flag);
+        rl_country = (RelativeLayout)this.findViewById(R.id.country);
+
+        mScoreLevelInfoLayout.getViewTreeObserver().addOnGlobalLayoutListener(
 				new OnGlobalLayoutListener() {
 					@SuppressWarnings("deprecation")
 					@Override
@@ -123,27 +133,34 @@ public class ProfileActivity extends BaseActivity {
 		loadingPersonInfo(mProfileModel);
 	}
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getCountryInfo(mProfileModel.UID);
+    }
+
+
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.FriendsProfileMyValues.pageNameValue,
-				ContextDataMode.FriendsProfileMyValues.pageSiteSubSectionValue,
-				ContextDataMode.FriendsProfileMyValues.pageSiteSectionValue,
-				mContext);
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.FriendsProfileFriendsValues.pageNameValue,
-						ContextDataMode.FriendsProfileFriendsValues.pageSiteSubSectionValue,
-						ContextDataMode.FriendsProfileFriendsValues.pageSiteSectionValue,
-						mContext);
-		MobclickTracking.UmengTrack
-				.setPageEnd(
-						ContextDataMode.FriendsProfileOthersValues.pageNameValue,
-						ContextDataMode.FriendsProfileOthersValues.pageSiteSubSectionValue,
-						ContextDataMode.FriendsProfileOthersValues.pageSiteSectionValue,
-						mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.FriendsProfileMyValues.pageNameValue,
+//				ContextDataMode.FriendsProfileMyValues.pageSiteSubSectionValue,
+//				ContextDataMode.FriendsProfileMyValues.pageSiteSectionValue,
+//				mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//                        ContextDataMode.FriendsProfileFriendsValues.pageNameValue,
+//                        ContextDataMode.FriendsProfileFriendsValues.pageSiteSubSectionValue,
+//                        ContextDataMode.FriendsProfileFriendsValues.pageSiteSectionValue,
+//                        mContext);
+//		MobclickTracking.UmengTrack
+//				.setPageEnd(
+//                        ContextDataMode.FriendsProfileOthersValues.pageNameValue,
+//                        ContextDataMode.FriendsProfileOthersValues.pageSiteSubSectionValue,
+//                        ContextDataMode.FriendsProfileOthersValues.pageSiteSectionValue,
+//                        mContext);
 	}
 
 	@Override
@@ -160,7 +177,7 @@ public class ProfileActivity extends BaseActivity {
 	private void loadingPersonInfo(final ProfileModel profile) {
 		if (profile != null) {
 			AvatarHelper.LoadLargeAvatar(mAvatar, profile.UID,
-					profile.AvatarPath);
+                    profile.AvatarPath);
 			mName.setText(profile.Alias == null ? "" : profile.Alias);
 			mFriendNum.setText(Integer.toString(profile.FriendsNum));
 			friendNum = profile.FriendsNum;
@@ -172,6 +189,10 @@ public class ProfileActivity extends BaseActivity {
 			if (profile.UID.equals(AppConst.CurrUserInfo.UserId)) {
 				mSetting.setVisibility(View.VISIBLE);
 				mDashBoard.setImageResource(R.drawable.actionbar_home);
+
+//                country_flag.setVisibility(View.INVISIBLE);
+//                country_name.setVisibility(View.INVISIBLE);
+
 				mSetting.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -198,19 +219,20 @@ public class ProfileActivity extends BaseActivity {
 								ContextDataMode.FriendsProfileMyValues.pageSiteSubSectionValue,
 								ContextDataMode.FriendsProfileMyValues.pageSiteSectionValue,
 								mContext);
-				MobclickTracking.UmengTrack
-						.setPageStart(
-								ContextDataMode.FriendsProfileMyValues.pageNameValue,
-								ContextDataMode.FriendsProfileMyValues.pageSiteSubSectionValue,
-								ContextDataMode.FriendsProfileMyValues.pageSiteSectionValue,
-								mContext);
-			} else { // 不是本人
+//				MobclickTracking.UmengTrack
+//						.setPageStart(
+//								ContextDataMode.FriendsProfileMyValues.pageNameValue,
+//								ContextDataMode.FriendsProfileMyValues.pageSiteSubSectionValue,
+//								ContextDataMode.FriendsProfileMyValues.pageSiteSectionValue,
+//								mContext);
+            } else { // 不是本人
 				mSetting.setVisibility(View.GONE);
-				mDashBoard.setImageResource(R.drawable.arrow_goback_black);
+                mDashBoard.setImageResource(R.drawable.arrow_goback_black);
 				mLevelInfo.setVisibility(View.GONE);
 				mScoreXP.setText(profile.Score + "xp");
 				mLevel.initialize(profile.Score);
 				mPharaseLayout.setVisibility(View.GONE);
+
 				if (profile.IsFriend) // 已经是朋友
 				{
 					mAvatarEdit
@@ -221,12 +243,12 @@ public class ProfileActivity extends BaseActivity {
 									ContextDataMode.FriendsProfileFriendsValues.pageSiteSubSectionValue,
 									ContextDataMode.FriendsProfileFriendsValues.pageSiteSectionValue,
 									mContext);
-					MobclickTracking.UmengTrack
-							.setPageStart(
-									ContextDataMode.FriendsProfileFriendsValues.pageNameValue,
-									ContextDataMode.FriendsProfileFriendsValues.pageSiteSubSectionValue,
-									ContextDataMode.FriendsProfileFriendsValues.pageSiteSectionValue,
-									mContext);
+//					MobclickTracking.UmengTrack
+//							.setPageStart(
+//									ContextDataMode.FriendsProfileFriendsValues.pageNameValue,
+//									ContextDataMode.FriendsProfileFriendsValues.pageSiteSubSectionValue,
+//									ContextDataMode.FriendsProfileFriendsValues.pageSiteSectionValue,
+//									mContext);
 				} else {
 					mAvatarEdit
 							.setImageResource(R.drawable.leaderboard_invite_friend);
@@ -237,35 +259,57 @@ public class ProfileActivity extends BaseActivity {
 									ContextDataMode.FriendsProfileOthersValues.pageSiteSubSectionValue,
 									ContextDataMode.FriendsProfileOthersValues.pageSiteSectionValue,
 									mContext);
-					MobclickTracking.UmengTrack
-							.setPageStart(
-									ContextDataMode.FriendsProfileOthersValues.pageNameValue,
-									ContextDataMode.FriendsProfileOthersValues.pageSiteSubSectionValue,
-									ContextDataMode.FriendsProfileOthersValues.pageSiteSectionValue,
-									mContext);
+//					MobclickTracking.UmengTrack
+//							.setPageStart(
+//									ContextDataMode.FriendsProfileOthersValues.pageNameValue,
+//									ContextDataMode.FriendsProfileOthersValues.pageSiteSubSectionValue,
+//									ContextDataMode.FriendsProfileOthersValues.pageSiteSectionValue,
+//									mContext);
 				}
 			}
 			// 查看朋友列表
 			mFriendLayout.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (friendNum <= 0) {
-						Toast.makeText(mContext,
-								getString(R.string.profile_no_friend),
-								Toast.LENGTH_SHORT).show();
-						return;
-					}
-					Intent intent = new Intent(mContext,
-							FriendListActivity.class);
-					if (mProfileModel != null)
-						intent.putExtra(
-								AppConst.BundleKeys.Get_Friend_List_Profile,
-								mProfileModel.toJson());
-					startActivity(intent);
-				}
-			});
+                @Override
+                public void onClick(View v) {
+                    if (friendNum <= 0) {
+                        Toast.makeText(mContext,
+                                getString(R.string.profile_no_friend),
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Intent intent = new Intent(mContext,
+                            FriendListActivity.class);
+                    if (mProfileModel != null)
+                        intent.putExtra(
+                                AppConst.BundleKeys.Get_Friend_List_Profile,
+                                mProfileModel.toJson());
+                    startActivity(intent);
+                }
+            });
 		}
 	}
+
+    private void getCountryInfo(String id) {
+        GetProfileTask profileTask = new GetProfileTask(mContext,
+                new PostExecuting<HttpProfile>() {
+                    @Override
+                    public void executing(HttpProfile result) {
+                        if (result != null && result.status != null && result.status.equals("0") && result.data != null) {
+                            country = result.data.market_code;
+
+                            String path = android.os.Environment.getExternalStorageDirectory()
+                                    + File.separator + AppConst.CacheKeys.RootStorage + File.separator
+                                    + AppConst.CacheKeys.Storage_Language + File.separator + "country"
+                                    + File.separator;
+
+                            rl_country.setVisibility(View.VISIBLE);
+                            country_name.setText(CountryBLL.getLocalCountry(country, path, mContext));
+                            country_flag.setImageBitmap(CountryBLL.getLoacalBitmap(country, path));
+                        }
+                    }
+                });
+        profileTask.execute(id);
+    }
 
 	/** 打开设置页面 **/
 	private void onSettingClick() {

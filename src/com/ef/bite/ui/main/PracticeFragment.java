@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.ef.bite.R;
 import com.ef.bite.business.task.GetUnlockChunkTask;
@@ -49,7 +50,8 @@ public class PracticeFragment extends BaseDashboardFragment {
             getmMasteredCount().setAlpha(0.5f);
         }
 
-        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
+//        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
+        RelativeLayout unlockBtn = (RelativeLayout) root.findViewById(R.id.home_screen_learn_layout);
         unlockBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

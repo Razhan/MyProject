@@ -1,5 +1,7 @@
 package com.ef.bite.adapters;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -35,7 +37,11 @@ public class ChunkLearnListAdapter extends
 	private boolean closeAllGif = true;
 	private int mPosition;
 
-	public ChunkLearnListAdapter(Context context,
+    private HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    private boolean isFirstTime = true;
+
+
+    public ChunkLearnListAdapter(Context context,
 			List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
@@ -55,6 +61,25 @@ public class ChunkLearnListAdapter extends
 		this.notifyDataSetChanged();
 	}
 
+    //new added
+    public int findRecord(int position) {
+        if(map.containsKey(position)) {
+            int value = map.get(position) == 0 ? 0: 1;
+            map.put(position, 1 - value);
+
+        } else {
+            map.put(position, 0);
+        }
+
+        return map.get(position);
+    }
+
+    public void doubleClick() {
+        isFirstTime = false;
+        this.notifyDataSetChanged();
+    }
+
+
 	public void setSwipSupported(boolean support) {
 		isSwipSuppported = support;
 	}
@@ -62,7 +87,10 @@ public class ChunkLearnListAdapter extends
 	public void StopGif(int position, boolean status) {
 		this.isGifStatus = status;
 		this.mPosition = position;
-		this.notifyDataSetChanged();
+        this.closeAllGif = true;
+        this.isFirstTime = true;
+
+        this.notifyDataSetChanged();
 	}
 
 	private Bitmap getBitmapAvater(int position) {
@@ -79,7 +107,7 @@ public class ChunkLearnListAdapter extends
 	public void setTranslationMorn(boolean isShow, int position) {
 		this.textview_source_status = isShow;
 		this.mPosition = position;
-		this.closeAllGif = true;
+        this.closeAllGif = true;
 		this.notifyDataSetChanged();
 	}
 
@@ -140,19 +168,33 @@ public class ChunkLearnListAdapter extends
 		// holder.voicegifplay = null;
 		// }
 		FontHelper.applyFont(mContext, holder.textview, FontHelper.FONT_OpenSans);
+
+        if (!isFirstTime) {
+            if (mPosition == position) {
+                holder.textview_source.setVisibility(View.GONE);
+                holder.moreView.setVisibility(View.VISIBLE);
+                holder.voicegifplay.setVisibility(View.INVISIBLE);
+            }
+
+            return;
+        }
+
+
 		if (!textview_source_status && mPosition == position) {
 			holder.textview_source.setVisibility(View.VISIBLE);
 			holder.moreView.setVisibility(View.GONE);
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio);
-			if (mPosition != position) {
-				holder.textview_source.setVisibility(View.GONE);
-				holder.voicegifplay
-						.setMovieResource(R.drawable.wechat_audio_off);
-			}
+//			if (mPosition != position) {
+//				holder.textview_source.setVisibility(View.GONE);
+//				holder.voicegifplay
+//						.setMovieResource(R.drawable.wechat_audio_off);
+//			}
 		} else {
-			holder.textview_source.setVisibility(View.GONE);
-			holder.moreView.setVisibility(View.VISIBLE);
+//			holder.textview_source.setVisibility(View.GONE);
+//			holder.moreView.setVisibility(View.VISIBLE);
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
+
+
 		}
 
 		if (!closeAllGif) {

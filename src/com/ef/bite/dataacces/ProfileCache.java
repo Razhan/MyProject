@@ -27,6 +27,8 @@ public class ProfileCache {
         AppConst.CurrUserInfo.Avatar = profile.data.avatar_url;
         AppConst.CurrUserInfo.FirstName = profile.data.given_name;
         AppConst.CurrUserInfo.LastName = profile.data.family_name;
+        AppConst.CurrUserInfo.Location = profile.data.market_code;
+
         AppConst.CurrUserInfo.Phone = profile.data.phone;
         AppConst.CurrUserInfo.Score = profile.data.score;
         AppConst.CurrUserInfo.Level = profile.data.Level;

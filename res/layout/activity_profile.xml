@@ -84,6 +84,41 @@
                 android:textSize="30sp" />
 
             <RelativeLayout
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_margin="10dp"
+                    android:visibility="invisible"
+                    >
+                <ImageView
+                        android:id="@+id/country_flag"
+                        android:layout_width="42dp"
+                        android:layout_height="26dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|right"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/white"
+                        android:scaleType="centerCrop"
+                        />
+
+                <TextView
+                        android:id="@+id/country_name"
+                        android:layout_width="70dp"
+                        android:layout_height="26dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|center"
+                        android:layout_toRightOf="@+id/country_flag"
+                        android:maxLines="1"
+                        android:text="China"
+                        android:textSize="16sp" />
+            </RelativeLayout>
+
+
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp" >
@@ -159,12 +194,12 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/profile_line"
-                android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="1"
-                android:src="@drawable/chunk_line" />
+            <!--<ImageView-->
+                <!--android:id="@+id/profile_line"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dip"-->
+                <!--android:layout_weight="1"-->
+                <!--android:src="@drawable/chunk_line" />-->
 
             <LinearLayout
                 android:id="@+id/linearLayout1"

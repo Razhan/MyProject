@@ -78,20 +78,20 @@ public class FriendNotificationActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		BI_Tracking(IndexDashboardValues);
-		MobclickTracking.UmengTrack.setPageStart(
-				ContextDataMode.DashboardValues.pageNameValue,
-				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
-				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setPageStart(
+//				ContextDataMode.DashboardValues.pageNameValue,
+//				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
+//				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		MobclickTracking.UmengTrack.setPageEnd(
-				ContextDataMode.DashboardValues.pageNameValue,
-				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
-				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
+//		MobclickTracking.UmengTrack.setPageEnd(
+//				ContextDataMode.DashboardValues.pageNameValue,
+//				ContextDataMode.DashboardValues.pageSiteSubSectionValue,
+//				ContextDataMode.DashboardValues.pageSiteSectionValue, mContext);
 	}
 
 	/**
@@ -129,15 +129,15 @@ public class FriendNotificationActivity extends BaseActivity {
 						HttpNotification.Notification_type_ReView)) {
 					Chunk chunk = new ChunkBiz(mContext)
 							.getChunkByCode(data.course_id);
-					if (chunk == null) {
-						// toast("No Chunk");
-						return;
-					}
+//					if (chunk == null) {
+//						// toast("No Chunk");
+//						return;
+//					}
 					startActivity(new Intent(mContext,
 							UserRecordingActivity.class).putExtra(
 							AppConst.BundleKeys.Chunk, chunk).putExtra(
 							AppConst.BundleKeys.BELLAID,
-							AppConst.CurrUserInfo.UserId));
+							AppConst.CurrUserInfo.UserId).putExtra(AppConst.BundleKeys.Course_id_list, data.course_id));
 				}
 			}
 		});
@@ -237,7 +237,8 @@ public class FriendNotificationActivity extends BaseActivity {
 
 	private void link(String link) {
 		// Add tracing
-		TraceHelper.tracingADsUpsell(mContext);
+		TraceHelper.tracingADsCall(mContext);
+
 
 		String site = link;
 		Intent intent = new Intent("android.intent.action.VIEW",
@@ -248,7 +249,8 @@ public class FriendNotificationActivity extends BaseActivity {
 
 	private void call(String phone) {
 		// Add tracing
-		TraceHelper.tracingADsCall(mContext);
+		TraceHelper.tracingADsUpsell(mContext);
+
 		Intent intent = new Intent("android.intent.action.CALL",
 				Uri.parse("tel:" + phone));
 		startActivity(intent);

@@ -145,7 +145,9 @@ public class ChunkLoader {
                 AppConst.CacheKeys.Storage_Course);
 
         // 分配时间戳为文件名
-        String key = KeyGenerator.getKeyFromDateTime();
+//        String key = KeyGenerator.getKeyFromDateTime();
+        String key = request.getChunkID();
+
         // 创建文件
         File saveFile = new File(downloadStorage.getStorageFolder(), key);
         // 通过url开始下载文件

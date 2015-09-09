@@ -61,7 +61,8 @@ public class GetServerAddressTask {
 
     private void setServerAddress(String host) {
 //        Log.v("EF_HOST","setServerAddress:"+host);
-        AppConst.EFAPIs.BaseHost = "http://" + host;
+//        AppConst.EFAPIs.BaseHost = "http://" + host;
+        AppConst.EFAPIs.BaseHost = host;
         AppConst.EFAPIs.BaseAddress = AppConst.EFAPIs.BaseHost + "/api/bella/";
 
 //        Log.v("EF_HOST", "BaseAddress :" + AppConst.EFAPIs.BaseAddress);
