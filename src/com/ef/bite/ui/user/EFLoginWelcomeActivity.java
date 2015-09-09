@@ -247,6 +247,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logInWithReadPermissions(EFLoginWelcomeActivity.this, Arrays.asList("public_profile", "user_friends"));
+//                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", "123"));
             }
         });
     }
@@ -333,8 +334,9 @@ public class EFLoginWelcomeActivity extends BaseActivity {
                             PreferencesUtils.putString(mContext, AppConst.CacheKeys.Facebook_Access_Token, access_token);
 
                             if (result.data.is_new_user) {
-                                MobclickTracking.OmnitureTrack
-                                        .ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
+                                MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
+                                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", access_token));
+                                return;
                             }
 
                             getUserProfile();

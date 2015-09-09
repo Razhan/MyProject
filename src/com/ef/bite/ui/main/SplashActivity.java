@@ -141,15 +141,14 @@ public class SplashActivity extends BaseActivity {
                 AppConst.GlobalConfig.Notification_Enable = appConfig.IsNotificationOn;
                 AppConst.GlobalConfig.SoundEffect_Enable = appConfig.IsSoundEffectOn;
                 AppConst.GlobalConfig.LanguageType = appConfig.MultiLanguageType;
+                AppConst.CurrUserInfo.CourseLevel = appConfig.CourseLevel;
 
                 if (appConfig.MultiLanguageType != AppConst.MultiLanguageType.Default)
                     AppLanguageHelper.loadLanguageFirstTime(mContext,
                             appConfig.MultiLanguageType);
-                AppConst.GlobalConfig.Language = AppLanguageHelper
-                        .getSystemLaunguage(mContext);
+                AppConst.GlobalConfig.Language = AppLanguageHelper.getSystemLaunguage(mContext);
             } else
-                AppConst.GlobalConfig.Language = AppLanguageHelper
-                        .getSystemLaunguage(mContext);
+                AppConst.GlobalConfig.Language = AppLanguageHelper.getSystemLaunguage(mContext);
 
             profileCache.loadUserProfile();
 
@@ -263,6 +262,20 @@ public class SplashActivity extends BaseActivity {
         String sys_language = AppLanguageHelper.getSystemLaunguage(mContext);
         sys_language = CountryBLL.countryMapping(sys_language);
         AppLanguageHelper.loadLanguageFromStorage(mContext, languageStorage.getStorageFolder() + "/system_text/", sys_language);
+
+        initStudyPlanMap();
+    }
+
+
+    private void initStudyPlanMap() {
+        if (AppConst.GlobalConfig.StudyPlans != null && AppConst.GlobalConfig.StudyPlansMap != null && AppConst.GlobalConfig.StudyPlansMap.size() <= 0) {
+
+            for (int i = 0; i < AppConst.GlobalConfig.StudyPlans.size(); i++) {
+                String studyplan = AppConst.GlobalConfig.StudyPlans.get(i);
+                String temp = JsonSerializeHelper.JsonLanguageDeserialize(mContext, studyplan);
+                AppConst.GlobalConfig.StudyPlansMap.put(studyplan, temp);
+            }
+        }
     }
 
     private String getTranslationVersion(){

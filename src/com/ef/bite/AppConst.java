@@ -1,5 +1,9 @@
 package com.ef.bite;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * 系统变量
  * 
@@ -28,6 +32,8 @@ public class AppConst {
 		public static int Score ;
 		public static int Level ;
 		public static String RegisterDate = null;
+		/**课程难度 0 - beginner 1 - advanced**/
+		public static String CourseLevel = "";
 	}
 
 	/**
@@ -74,6 +80,9 @@ public class AppConst {
 		public static boolean TutorialConfig = false;
 		/**是否显示忘记密码**/
 		public static boolean ForgetPassWord = false;
+        /**课程难度列表**/
+		public static List<String> StudyPlans = new ArrayList<String>();
+		public static HashMap<String , String> StudyPlansMap = new HashMap<String , String>();
 
 	}
 

@@ -1,7 +1,5 @@
 package com.ef.bite.adapters;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -33,23 +31,18 @@ public class ChunkLearnListAdapter extends
 	private List<PresentationConversation> mdataList;
 	boolean isSwipSuppported = false; // 是否支持来回的分段切换播放音频
 	private boolean textview_source_status = true;
-	private boolean isGifStatus;
 	private boolean closeAllGif = true;
 	private int mPosition;
 
-    private HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-    private boolean isFirstTime = true;
-
-
-    public ChunkLearnListAdapter(Context context,
-			List<PresentationConversation> dataList, Chunk chunk) {
+	public ChunkLearnListAdapter(Context context,
+								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		this.mdataList = dataList;
 	}
 
 	public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
-			List<PresentationConversation> dataList, Chunk chunk) {
+								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		mAudioView = audioView;
@@ -61,36 +54,14 @@ public class ChunkLearnListAdapter extends
 		this.notifyDataSetChanged();
 	}
 
-    //new added
-    public int findRecord(int position) {
-        if(map.containsKey(position)) {
-            int value = map.get(position) == 0 ? 0: 1;
-            map.put(position, 1 - value);
-
-        } else {
-            map.put(position, 0);
-        }
-
-        return map.get(position);
-    }
-
-    public void doubleClick() {
-        isFirstTime = false;
-        this.notifyDataSetChanged();
-    }
-
-
 	public void setSwipSupported(boolean support) {
 		isSwipSuppported = support;
 	}
 
-	public void StopGif(int position, boolean status) {
-		this.isGifStatus = status;
+	public void initGif(int position) {
+        this.closeAllGif = false;
 		this.mPosition = position;
-        this.closeAllGif = true;
-        this.isFirstTime = true;
-
-        this.notifyDataSetChanged();
+		this.notifyDataSetChanged();
 	}
 
 	private Bitmap getBitmapAvater(int position) {
@@ -101,23 +72,19 @@ public class ChunkLearnListAdapter extends
 
 	/**
 	 * 更多显示隐藏
-	 * 
+	 *
 	 * true:隐藏 false:显示
 	 */
 	public void setTranslationMorn(boolean isShow, int position) {
 		this.textview_source_status = isShow;
 		this.mPosition = position;
-        this.closeAllGif = true;
+		this.closeAllGif = true;
 		this.notifyDataSetChanged();
 	}
 
 	public void closeTranslationGif(boolean isShow) {
 		this.closeAllGif = isShow;
 		this.notifyDataSetChanged();
-	}
-
-	public boolean getTranslationMornStatus() {
-		return this.textview_source_status;
 	}
 
 	private static class ViewHolder {
@@ -127,13 +94,12 @@ public class ChunkLearnListAdapter extends
 		ImageView speakerB;
 		ImageView left_talk;
 		ImageView right_talk;
-		ImageView moreView;
 		GifMovieView voicegifplay;
 	}
 
 	@Override
 	public void getView(View layout, final int position,
-			final PresentationConversation data) {
+						final PresentationConversation data) {
 		final ViewHolder holder;
 		if (layout.getTag() == null) {
 			holder = new ViewHolder();
@@ -148,72 +114,28 @@ public class ChunkLearnListAdapter extends
 			holder.left_talk = (ImageView) layout.findViewById(R.id.left_talk);
 			holder.right_talk = (ImageView) layout
 					.findViewById(R.id.right_talk);
-			holder.moreView = (ImageView) layout
-					.findViewById(R.id.imageview_more);
 			holder.voicegifplay = (GifMovieView) layout
 					.findViewById(R.id.voicegifplay);
 			layout.setTag(holder);
 		} else {
 			holder = (ViewHolder) layout.getTag();
 		}
-		//
-		// if (mPosition == position && isGifStatus) {
-		// // holder.voicegifplay.startGifFromAsset("gif/wechat_audio.gif",
-		// // true);
-		// holder.voicegifplay.setMovieResource(R.drawable.wechat_audio);
-		// }
-		//
-		// if (mPosition == position && !isGifStatus) {
-		//
-		// holder.voicegifplay = null;
-		// }
+
 		FontHelper.applyFont(mContext, holder.textview, FontHelper.FONT_OpenSans);
 
-        if (!isFirstTime) {
-            if (mPosition == position) {
-                holder.textview_source.setVisibility(View.GONE);
-                holder.moreView.setVisibility(View.VISIBLE);
-                holder.voicegifplay.setVisibility(View.INVISIBLE);
-            }
-
-            return;
-        }
-
-
-		if (!textview_source_status && mPosition == position) {
-			holder.textview_source.setVisibility(View.VISIBLE);
-			holder.moreView.setVisibility(View.GONE);
+		if (mPosition == position) {
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio);
-//			if (mPosition != position) {
-//				holder.textview_source.setVisibility(View.GONE);
-//				holder.voicegifplay
-//						.setMovieResource(R.drawable.wechat_audio_off);
-//			}
+			if (mPosition != position) {
+				holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
+			}
 		} else {
-//			holder.textview_source.setVisibility(View.GONE);
-//			holder.moreView.setVisibility(View.VISIBLE);
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
-
-
 		}
 
-		if (!closeAllGif) {
-			holder.voicegifplay.setVisibility(View.INVISIBLE);
+		if (closeAllGif) {
+            holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
 		}
 
-		// if (position % 2 == 0) {
-		// speakerB.setVisibility(View.GONE);
-		// if (data.getCharacterAvater().equals("male.png"))
-		// speakerA.setImageResource(R.drawable.dialogue_speaker_a);
-		// else if (data.getCharacterAvater().equals("female.png"))
-		// speakerA.setImageResource(R.drawable.dialogue_speaker_b);
-		// } else {
-		// speakerA.setVisibility(View.GONE);
-		// if (data.getCharacterAvater().equals("male.png"))
-		// speakerB.setImageResource(R.drawable.dialogue_speaker_a);
-		// else if (data.getCharacterAvater().equals("female.png"))
-		// speakerB.setImageResource(R.drawable.dialogue_speaker_b);
-		// }
 
 		if (position % 2 == 0) {
 			holder.speakerA.setVisibility(View.VISIBLE);

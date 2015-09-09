@@ -32,6 +32,10 @@ public class ConfigModel extends BaseJsonModel {
 	 */
 	public boolean IsSoundEffectOn = true;
 	/**
+	 **课程难度 0 - beginner 1 - advanced
+	 **/
+	public String CourseLevel = "";
+	/**
 	 * App多语言设置，
 	 * 0 - 随系统
 	 * 1 - 英语
@@ -49,7 +53,8 @@ public class ConfigModel extends BaseJsonModel {
 			this.IsSoundEffectOn = config.IsSoundEffectOn;
 			this.MultiLanguageType = config.MultiLanguageType;
 			this.IsPreinstallChunksLoaded = config.IsPreinstallChunksLoaded;
-		}catch(Exception ex){
+            this.CourseLevel = config.CourseLevel;
+        }catch(Exception ex){
 			ex.printStackTrace();
 		}
 	}

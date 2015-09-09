@@ -59,6 +59,24 @@ public class UserServerAPI extends BaseServerAPI {
 		}
 	}
 
+	// update用户的 profile *
+	public HttpBaseMessage updateUserProfile(JSONObject profileData) {
+		try {
+			String dataString = profileData.toString();
+			String userProfile = HttpRestfulClient.JsonPost(
+					AppConst.EFAPIs.BaseAddress + "/profile/save", dataString,
+					headerMap);
+			HttpBaseMessage user = (HttpBaseMessage) JsonSerializeHelper
+					.JsonDeserialize(userProfile, HttpBaseMessage.class);
+			return user;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			TraceHelper.tracingErrorLog(context, ex.getMessage());
+			return null;
+		}
+	}
+
+
 	// 3.1.2 获取自己的friends profile friendsView *
 	public HttpGetFriends GetAllFiendsProfile(String id) {
 		try {
@@ -666,6 +684,8 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			JSONObject param = new JSONObject();
 			param.put("bella_id", AppConst.CurrUserInfo.UserId);
+            param.put("plan_id", AppConst.CurrUserInfo.CourseLevel);
+
 //			param.put("new_lesson_max_count", 5);
 //			param.put("new_rehearsal_max_count", 10);
 //			param.put("rank_friend_max_count", 4);
@@ -721,4 +741,22 @@ public class UserServerAPI extends BaseServerAPI {
 			return null;
 		}
 	}
+
+	//获取fb图片
+    public HttpGetFBImageResponse getFBImage() {
+        try {
+            JSONObject param = new JSONObject();
+            String result = HttpRestfulClient.JsonPost(
+                    AppConst.EFAPIs.BaseAddress + "banner/facebook_invite_image/", param.toString(),
+                    headerMap);
+            HttpGetFBImageResponse fbImageResponse = (HttpGetFBImageResponse) JsonSerializeHelper
+                    .JsonDeserialize(result, HttpGetFBImageResponse.class);
+            return fbImageResponse;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            TraceHelper.tracingErrorLog(context, ex.getMessage());
+            return null;
+        }
+    }
+
 }

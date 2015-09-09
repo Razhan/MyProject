@@ -88,7 +88,7 @@ public class ProfileActivity extends BaseActivity {
 		profile_friends = (TextView) findViewById(R.id.profile_friends);
 		profile_friends.setText(JsonSerializeHelper.JsonLanguageDeserialize(
 				mContext, "profile_friends"));
-		mPharaseLayout = (LinearLayout) findViewById(R.id.profile_phrase_layout);
+		mPharaseLayout = (LinearLayout) findViewById(R.id.profile_recordings_layout);
 		mFriendLayout = (LinearLayout) findViewById(R.id.profile_friends_layout);
 		mScoreLevelInfoLayout = (LinearLayout) findViewById(R.id.profile_score_level_layout);
 		mScoreXP = (TextView) findViewById(R.id.profile_level_points);
@@ -181,6 +181,8 @@ public class ProfileActivity extends BaseActivity {
 			mName.setText(profile.Alias == null ? "" : profile.Alias);
 			mFriendNum.setText(Integer.toString(profile.FriendsNum));
 			friendNum = profile.FriendsNum;
+
+//			mChunksNum.setText(String.valueOf(profile.ChunkNum));
 			// 重新获得好友数量
 			if (profile.FriendsNum <= 0) {
 				getFriendCount(profile.UID, mFriendNum);
@@ -231,7 +233,7 @@ public class ProfileActivity extends BaseActivity {
 				mLevelInfo.setVisibility(View.GONE);
 				mScoreXP.setText(profile.Score + "xp");
 				mLevel.initialize(profile.Score);
-				mPharaseLayout.setVisibility(View.GONE);
+//				mPharaseLayout.setVisibility(View.GONE);
 
 				if (profile.IsFriend) // 已经是朋友
 				{
@@ -294,7 +296,7 @@ public class ProfileActivity extends BaseActivity {
                 new PostExecuting<HttpProfile>() {
                     @Override
                     public void executing(HttpProfile result) {
-                        if (result != null && result.status != null && result.status.equals("0") && result.data != null) {
+                        if (result != null && result.status != null && result.status.equals("0") && result.data != null && result.data.market_code != null) {
                             country = result.data.market_code;
 
                             String path = android.os.Environment.getExternalStorageDirectory()
