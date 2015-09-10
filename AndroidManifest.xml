@@ -342,6 +342,17 @@
             android:name=".ui.user.ThirdPartyLogInActivity"
             android:label="@string/title_activity_third_party_log_in" >
         </activity>
+
+
+        <!-- 配置第三方Receiver -->
+        <receiver
+            android:name="com.ef.bite.receiver.GeTuiReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.igexin.sdk.action.${GETUI_APP_ID}" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

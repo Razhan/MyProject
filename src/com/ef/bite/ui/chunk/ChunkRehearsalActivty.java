@@ -134,7 +134,7 @@ public class ChunkRehearsalActivty extends BaseMultiChoiceActivity {
 		// Assemble achievement
 		Achievement achievement = new Achievement();
 		achievement.setBella_id(AppConst.CurrUserInfo.UserId);
-		achievement.setPlan_id("");
+		achievement.setPlan_id(AppConst.CurrUserInfo.CourseLevel);
 		achievement.setCourse_id(mChunkModel.getChunkCode());
 		achievement.setScore(0);
 		achievement.setStart_client_date(PreferencesUtils.getString(this, AppConst.CacheKeys.TIME_START));
@@ -207,7 +207,7 @@ public class ChunkRehearsalActivty extends BaseMultiChoiceActivity {
 		// Assemble achievement
 		Achievement achievement = new Achievement();
 		achievement.setBella_id(AppConst.CurrUserInfo.UserId);
-		achievement.setPlan_id("");
+		achievement.setPlan_id(AppConst.CurrUserInfo.CourseLevel);
 		achievement.setCourse_id(mChunkModel.getChunkCode());
 		achievement.setScore(ScoreLevelHelper.MAXIMUN_SCORE_PRACTICE_FORM);
 		achievement.setStart_client_date(PreferencesUtils.getString(this, AppConst.CacheKeys.TIME_START));

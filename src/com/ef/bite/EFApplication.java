@@ -2,6 +2,8 @@ package com.ef.bite;
 
 import android.app.Application;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.util.Log;
 import com.adobe.mobile.Config;
@@ -14,13 +16,15 @@ import com.ef.bite.dataacces.DashboardCache;
 import com.ef.bite.model.SMSRecord;
 import com.ef.bite.model.ServerErrorLog;
 import com.ef.bite.utils.AppUtils;
+import com.igexin.sdk.PushManager;
 import com.parse.*;
 
 public class EFApplication extends Application {
 	//Live push key
 	private final static String APP_ID = "1Io6EnfkDiIEBpSQSzrgJjnQX9NgB6wLQxAhuBQm";
 	private final static String CLIENT_ID = "J2s697NE70y2jY5Obt1cJefvBE6n6wmxOyaN4f2i";
-	//Dev
+
+    //Dev
 //	private final static String APP_ID = "oripCYXbBQNGR42KSwYIp3BkmcNzsWn9uSKQ1HEv";
 //	private final static String CLIENT_ID = "BHXcbWYYL4EjAScqtWLzU7U7dISYmjhux0XoPDTe";
 
@@ -63,7 +67,11 @@ public class EFApplication extends Application {
 				}
 			});
 
-		} catch (Exception e) {
+            // SDK初始化，第三方程序启动时，都要进行SDK初始化工作
+            Log.d("GetuiSdkDemo", "initializing sdk...");
+            PushManager.getInstance().initialize(this.getApplicationContext());
+
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (AppUtils.UmengOmnitureInfo.isOpen) {
@@ -84,7 +92,8 @@ public class EFApplication extends Application {
 		initDashboardCache();
 	}
 
-	/**
+
+    /**
 	 * ChunksLoader initialization Created by Yang.
 	 */
 
