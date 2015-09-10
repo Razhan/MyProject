@@ -2,6 +2,7 @@ package com.ef.bite.ui.main;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity {
 
 	private LinearLayout mPhraseLayout;
 	private int currentIndex;
+    private ProgressDialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -365,14 +367,20 @@ public class MainActivity extends BaseActivity {
 						if ( httpDashboard != null && httpDashboard.data !=null) {
 							dashboardCache.save(httpDashboard);
 							updateDashboard(httpDashboard);
-							executePushAction();
-						}
+                            progress.dismiss();
+                            executePushAction();
+                        }
 					}
 				});
 		task.execute();
 	}
 
 	private void postUserAchievement() {
+        progress = ProgressDialog.show(MainActivity.this, null, getResources().getString(R.string.loading_data));
+        progress.setIndeterminate(false);
+        progress.setCancelable(true);
+        progress.setCanceledOnTouchOutside(false);
+
 		AchievementCache.getInstance().postCache(new AchievementCache.OnFinishListener() {
             @Override
             public void doOnfinish(boolean result) {

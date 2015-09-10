@@ -468,7 +468,7 @@ public class SettingsActivity extends BaseActivity {
                 builder.setTitle("Change Course");
 
                 List<String> valueset = new ArrayList<String>();
-                valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap);
+                valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, false);
 
                 builder.setSingleChoiceItems(valueset.toArray(new CharSequence[valueset.size()]),
                         -1, new DialogInterface.OnClickListener() {

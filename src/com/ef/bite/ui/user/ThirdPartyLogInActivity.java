@@ -72,16 +72,18 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mPhoneLayout = (LinearLayout)findViewById(R.id.ThirdParty_login_ef_phone_layout);
         mSkip = (TextView)findViewById(R.id.ThirdParty_login_ef_phone_skip);
 
-        mPhoneInput.addTextChangedListener(new TextWatcher(){
+        mPhoneInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mNextBtn2.setClickable(true);
+                mNextBtn2.setEnabled(true);
             }
         });
 
@@ -148,7 +150,6 @@ public class ThirdPartyLogInActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mLevelLayout.setVisibility(View.GONE);
-                mNextBtn2.setClickable(false);
             }
         });
         mLevelLayout.startAnimation(fadeout);
@@ -198,7 +199,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
     private void SetupSpinner() {
 
         List<String> valueset = new ArrayList<String>();
-        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap);
+        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true);
 
         final ArrayAdapter<String> adapter_level = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, valueset);
         adapter_level.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -207,8 +208,13 @@ public class ThirdPartyLogInActivity extends BaseActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // TODO Auto-generated method stub
-                mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(position);
-                mPositionLevel = position;
+                mPositionLevel = position - 1;
+                if (mPositionLevel > -1) {
+                    mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(mPositionLevel);
+                    mNextBtn.setEnabled(true);
+                } else {
+                    mNextBtn.setEnabled(false);
+                }
             }
 
             @Override
