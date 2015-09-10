@@ -252,7 +252,7 @@ public class EFRegisterActivity extends BaseActivity {
 
         final ArrayAdapter<String> adapter_age = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, spinnerList);
-		/* set方法是来设置spinner中每个条目的样式 */
+
         adapter_age.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter_age);
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
@@ -271,7 +271,7 @@ public class EFRegisterActivity extends BaseActivity {
         });
 
         List<String> valueset = new ArrayList<String>();
-        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap);
+        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true);
 
         final ArrayAdapter<String> adapter_level = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, valueset);
@@ -283,8 +283,13 @@ public class EFRegisterActivity extends BaseActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 // TODO Auto-generated method stub
-                mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(position);
-                mPositionLevel = position;
+                mPositionLevel = position - 1;
+                if (mPositionLevel > -1) {
+                    mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(mPositionLevel);
+                    next2.setEnabled(true);
+                } else {
+                    next2.setEnabled(false);
+                }
             }
 
             @Override
@@ -397,6 +402,7 @@ public class EFRegisterActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 mEnterNameLayout.setVisibility(View.GONE);
+                next2.setEnabled(false);
             }
         });
         mEnterNameLayout.startAnimation(fadeout);

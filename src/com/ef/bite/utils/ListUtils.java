@@ -254,7 +254,7 @@ public class ListUtils {
         return invertList;
     }
 
-    public static List<String> getValues(HashMap<String, String> map) {
+    public static List<String> getValues(HashMap<String, String> map, boolean head) {
         if (map.equals(null)) {
             return null;
         }
@@ -263,6 +263,10 @@ public class ListUtils {
         for (Map.Entry<String, String> entry : map.entrySet()) {
 
             result.add(entry.getValue());
+        }
+
+        if (head) {
+            result.add("Choose Level");
         }
         ArrayList<String> rlist = new ArrayList<String>(result);
 
