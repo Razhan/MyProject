@@ -16,6 +16,8 @@ import com.ef.bite.model.ServerErrorLog;
 import com.ef.bite.utils.AppUtils;
 import com.parse.*;
 
+import cn.jpush.android.api.JPushInterface;
+
 public class EFApplication extends Application {
 	//Live push key
 	private final static String APP_ID = "1Io6EnfkDiIEBpSQSzrgJjnQX9NgB6wLQxAhuBQm";
@@ -51,17 +53,20 @@ public class EFApplication extends Application {
             Parse.initialize(this, APP_ID, CLIENT_ID);
 			ParseUser.enableAutomaticUser();
 			ParsePush.subscribeInBackground("", new SaveCallback() {
-				@Override
-				public void done(ParseException e) {
-					if (e == null) {
-						Log.d("com.parse.push",
-								"successfully subscribed to the broadcast channel.");
-					} else {
-						Log.e("com.parse.push", "failed to subscribe for push",
-								e);
-					}
-				}
-			});
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Log.d("com.parse.push",
+                                "successfully subscribed to the broadcast channel.");
+                    } else {
+                        Log.e("com.parse.push", "failed to subscribe for push",
+                                e);
+                    }
+                }
+            });
+
+			JPushInterface.setDebugMode(true); 	// 设置开启日志,发布时请关闭日志
+			JPushInterface.init(this);     		// 初始化 JPush
 
 		} catch (Exception e) {
 			e.printStackTrace();
