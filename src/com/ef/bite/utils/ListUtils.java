@@ -255,7 +255,7 @@ public class ListUtils {
     }
 
     public static List<String> getValues(HashMap<String, String> map, boolean head) {
-        if (map.equals(null)) {
+        if (map == null) {
             return null;
         }
 
