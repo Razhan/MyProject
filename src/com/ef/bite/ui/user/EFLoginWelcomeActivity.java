@@ -335,7 +335,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
 
                             if (result.data.is_new_user) {
                                 MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
-                                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", access_token));
+                                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class));
                                 return;
                             }
 

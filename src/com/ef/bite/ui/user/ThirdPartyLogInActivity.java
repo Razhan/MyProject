@@ -60,8 +60,6 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third_party_log_in);
 
-        final String token = getIntent().getStringExtra("token");
-
         mPhoneInput = (TextView)findViewById(R.id.ThirdParty_login_ef_phone);
         level_spinner = (Spinner)findViewById(R.id.ThirdParty_login_level_spinner);
         mNextBtn = (Button)findViewById(R.id.ThirdParty_login_ef_btn_next);
