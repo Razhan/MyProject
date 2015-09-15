@@ -213,9 +213,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-
-
-
 	/**
 	 * execute action with different type
 	 */

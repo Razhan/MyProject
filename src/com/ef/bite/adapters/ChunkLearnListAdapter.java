@@ -33,15 +33,27 @@ public class ChunkLearnListAdapter extends
 	private boolean textview_source_status = true;
 	private boolean closeAllGif = true;
 	private int mPosition;
+    private String language;
 
 	public ChunkLearnListAdapter(Context context,
 								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		this.mdataList = dataList;
-	}
+        this.language = chunk.getLanguage();
 
-	public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
+        checkSource(chunk);
+    }
+
+    private void checkSource(Chunk chunk) {
+        if (chunk != null && this.language.equals("en")) {
+            for (int i = 0; i < chunk.getChunkPresentation().getPresentationConversations().size(); i++) {
+                chunk.getChunkPresentation().getPresentationConversations().get(i).setContent_src("");
+            }
+        }
+    }
+
+    public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
 								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
