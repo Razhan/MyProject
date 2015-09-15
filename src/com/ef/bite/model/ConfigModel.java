@@ -35,6 +35,10 @@ public class ConfigModel extends BaseJsonModel {
 	 **课程难度 0 - beginner 1 - advanced
 	 **/
 	public String CourseLevel = "";
+    /**
+     **是否跳过upsell
+     **/
+    public boolean SkipPhoneNum = true;
 	/**
 	 * App多语言设置，
 	 * 0 - 随系统

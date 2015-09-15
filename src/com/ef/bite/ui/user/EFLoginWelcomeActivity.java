@@ -18,12 +18,14 @@ import com.ef.bite.AppSession;
 import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
+import com.ef.bite.business.GlobalConfigBLL;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.task.LoginTask;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.dataacces.mode.LoginMode;
 import com.ef.bite.dataacces.mode.httpMode.HttpCourseRequest;
 import com.ef.bite.dataacces.mode.httpMode.HttpLogin;
+import com.ef.bite.model.ConfigModel;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.FontHelper;
@@ -62,6 +64,10 @@ public class EFLoginWelcomeActivity extends BaseActivity {
     private long expires;
     private int curLoginTimes = 0;
 
+    private boolean skip = false;
+    private boolean show_level = false;
+    private boolean show_phone = false;
+
     CallbackManager callbackManager;
 
 
@@ -97,19 +103,6 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         progress = new ProgressDialog(this);
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
-
-        access_token = PreferencesUtils.getString(mContext, "access_token",
-                null);
-        expires = PreferencesUtils.getLong(mContext, "access_expires", 0);
-//        if (access_token != null) {
-//            facebook.setAccessToken(access_token);
-//            Log.i("access_token", access_token);
-//        }
-//
-//        if (expires != 0) {
-//            facebook.setAccessExpires(expires);
-//            Log.i("access_expires", String.valueOf(expires));
-//        }
 
         String textString = JsonSerializeHelper.JsonLanguageDeserialize(
                 mContext, "login_main_already_a_member");
@@ -247,7 +240,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logInWithReadPermissions(EFLoginWelcomeActivity.this, Arrays.asList("public_profile", "user_friends"));
-//                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", "123"));
+//                attemp2Login(null);
             }
         });
     }
@@ -328,18 +321,23 @@ public class EFLoginWelcomeActivity extends BaseActivity {
                         if (result != null && result.status != null
                                 && result.status.equals("0")) {
                             progress.setMessage(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "loging_getting_profile"));
-                            //Marked as logined
-                            AppConst.CurrUserInfo.IsLogin = true;
-                            AppConst.CurrUserInfo.UserId=result.data.bella_id;
-                            PreferencesUtils.putString(mContext, AppConst.CacheKeys.Facebook_Access_Token, access_token);
 
-                            if (result.data.is_new_user) {
+                            setParameter(result);
+
+                            if (result.data.is_new_user || show_level || show_phone) {
+//                            if (true) {
                                 MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
-                                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class));
-                                return;
+                                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class)
+                                                .putExtra("show_level", show_level)
+                                                .putExtra("show_phone", show_phone)
+                                                .putExtra("bella_id", result.data.bella_id)
+                                );
+                            } else {
+                                //Marked as logined
+                                AppConst.CurrUserInfo.UserId=result.data.bella_id;
+                                AppConst.CurrUserInfo.IsLogin = true;
+                                getUserProfile();
                             }
-
-                            getUserProfile();
                         }
                     }
                 });
@@ -348,6 +346,26 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         loginModel.login_type = LoginTask.LOGIN_TYPE_FACEBOOK;
         loginModel.provider_type = LoginTask.LOGIN_PROVIDER_FACEBOOK;
         loginModel.access_token = access_token;
+//        loginModel.access_token = "CAAL8DF8jGG0BABbLKanoMF3IesZBq1Iurc3FuxLF4Wa2BpZC8ivRcZABzvweAPnQZANVE0qHWhUMT2HZBVozfjOS5sIvsdiyaN9X3O9cIgT6MdZCD6oaLlZCPZAZB21ajtj4OyQ22PyKH4ZAgDMgTq1wqc5xnYPABOglZBhoUmsYu9ZA2nNlGgpBfdIAEwfzHb2CpUoZD";
         loginTask.execute(new LoginMode[]{loginModel});
+    }
+
+    private void setParameter(HttpLogin result) {
+        GlobalConfigBLL configbll = new GlobalConfigBLL(mContext);
+        ConfigModel appConfig = configbll.getConfigModel();
+
+        if (appConfig == null ) {
+            skip = false;
+        } else {
+            skip = appConfig.SkipPhoneNum;
+        }
+
+        if (result.data.phone == null || result.data.phone.equals("")) {
+            show_level = true;
+        }
+
+        if (!skip && (result.data.plan_id == null || result.data.plan_id.equals(""))) {
+            show_phone = true;
+        }
     }
 }

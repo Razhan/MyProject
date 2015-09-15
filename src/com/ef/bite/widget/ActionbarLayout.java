@@ -54,6 +54,9 @@ public class ActionbarLayout extends RelativeLayout {
 		progressbar = (DotProgressbar) findViewById(R.id.progressbar);
 	}
 
+    public ImageButton getLeftButton() {
+        return mLeft;
+    }
 	/**
 	 * 初始化Actionbar，中间是标题
 	 * 

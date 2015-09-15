@@ -21,6 +21,7 @@ import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.GlobalConfigBLL;
+import com.ef.bite.business.task.GetProfileTask;
 import com.ef.bite.business.task.LoginTask;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.UpdateUserProfile;
@@ -54,11 +55,21 @@ public class ThirdPartyLogInActivity extends BaseActivity {
     private TextView mSkip;
     private int step = 1;
 
+    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
+    private String bella_id = "";
+    private boolean show_level = true;
+    private boolean show_phone = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third_party_log_in);
+
+        bella_id = getIntent().getStringExtra("bella_id");
+        show_level = getIntent().getBooleanExtra("show_level", true);
+        show_phone = getIntent().getBooleanExtra("show_phone", true);
+
 
         mPhoneInput = (TextView)findViewById(R.id.ThirdParty_login_ef_phone);
         level_spinner = (Spinner)findViewById(R.id.ThirdParty_login_level_spinner);
@@ -69,6 +80,9 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mLevelLayout = (LinearLayout)findViewById(R.id.ThirdParty_login_ef_level_layout);
         mPhoneLayout = (LinearLayout)findViewById(R.id.ThirdParty_login_ef_phone_layout);
         mSkip = (TextView)findViewById(R.id.ThirdParty_login_ef_phone_skip);
+        mNextBtn.setEnabled(false);
+
+        choosePagesToShow();
 
         mPhoneInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -84,7 +98,6 @@ public class ThirdPartyLogInActivity extends BaseActivity {
                 mNextBtn2.setEnabled(true);
             }
         });
-
 
         mActionbar.initiWithTitle(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "register_ef_register_title"),
                 R.drawable.arrow_goback_black, -1, new View.OnClickListener() {
@@ -102,27 +115,84 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attempNext();
+                updateProfile(mLevelChoice, null, new CallBackInterface(){
+                    @Override
+                    public void exectueMethod(){
+                        if (!show_phone) {
+                            updateSccess(bella_id);
+                        }
+                    }
+                });
+
+                if (show_phone) {
+                    attempNext();
+                }
             }
         });
 
         mNextBtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String phoneNum = mPhoneInput.getText().toString();
-                updateProfile(mLevelChoice, mPhoneInput.getText().toString());
+                updateProfile(null, mPhoneInput.getText().toString(), new CallBackInterface() {
+                    @Override
+                    public void exectueMethod() {
+                        updateSccess(bella_id);
+                    }
+                });
             }
         });
 
         mSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateProfile(mLevelChoice, "");
+                updateProfile(null, null, new CallBackInterface() {
+                    @Override
+                    public void exectueMethod() {
+                        GlobalConfigBLL configbll = new GlobalConfigBLL(mContext);
+                        ConfigModel appConfig = configbll.getConfigModel();
+                        if (appConfig == null) {
+                            appConfig = new ConfigModel();
+                        }
+                        appConfig.SkipPhoneNum = true;
+                        configbll.setConfigModel(appConfig);
+
+                        updateSccess(bella_id);
+                    }
+                });
             }
         });
 
         SetupSpinner();
+    }
+
+    private void choosePagesToShow() {
+        if (!show_level && show_phone) {
+            mLevelLayout.setVisibility(View.GONE);
+            mPhoneLayout.setVisibility(View.VISIBLE);
+        } else if (show_level && !chooseLevel) {
+            studyPlan_OneChoice();
+        }
+    }
+
+    private void studyPlan_OneChoice() {
+        mLevelLayout.setVisibility(View.GONE);
+        mPhoneLayout.setVisibility(View.VISIBLE);
+        mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(0);
+
+        updateProfile(mLevelChoice, null, new CallBackInterface(){
+            @Override
+            public void exectueMethod(){
+                if (!show_phone) {
+                    updateSccess(bella_id);
+                }
+            }
+        });
+    }
+
+    private void updateSccess(String id) {
+        AppConst.CurrUserInfo.UserId=id;
+        AppConst.CurrUserInfo.IsLogin = true;
+        getUserProfile();
     }
 
     private void attempNext() {
@@ -222,23 +292,17 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         });
     }
 
-    private void updateProfile(final String level, String phoneNum) {
+    private void updateProfile(final String level, String phoneNum, final CallBackInterface callback) {
+        if (level == null && phoneNum == null) {
+            callback.exectueMethod();
+            return;
+        }
         UpdateUserProfile updateTask = new UpdateUserProfile(mContext,
                 new PostExecuting<HttpBaseMessage>() {
                     @Override
                     public void executing(HttpBaseMessage result) {
                         if (result != null && "0".equals(result.status)) {
-                            AppConst.CurrUserInfo.CourseLevel = level;
-
-                            GlobalConfigBLL configbll = new GlobalConfigBLL(mContext);
-                            ConfigModel appConfig = configbll.getConfigModel();
-                            if (appConfig == null) {
-                                appConfig = new ConfigModel();
-                            }
-                            appConfig.CourseLevel = level;
-                            configbll.setConfigModel(appConfig);
-
-                            getUserProfile();
+                            callback.exectueMethod();
                         } else {
                             Log.e("ThirdPartyLogin", "updateProfile error");
                             finish();
@@ -248,12 +312,16 @@ public class ThirdPartyLogInActivity extends BaseActivity {
 
         try{
             JSONObject jsonObj = new JSONObject();
-            jsonObj.put("bella_id", AppConst.CurrUserInfo.UserId);
+            jsonObj.put("bella_id", bella_id);
             jsonObj.put("plan_id", level);
             jsonObj.put("phone", phoneNum);
             updateTask.execute(jsonObj);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public interface CallBackInterface {
+        public void exectueMethod();
     }
 }

@@ -125,6 +125,10 @@ public class SettingsActivity extends BaseActivity {
                 }, null);
         configbll = new GlobalConfigBLL(mContext);
 
+        if (AppConst.GlobalConfig.StudyPlans.size() <= 1) {
+            mCourseLevel.setVisibility(View.GONE);
+        }
+
 
         MobclickTracking.OmnitureTrack.AnalyticsTrackState(
                 ContextDataMode.SettingsValues.pageNameValue,
@@ -134,6 +138,8 @@ public class SettingsActivity extends BaseActivity {
 //				ContextDataMode.SettingsValues.pageNameValue,
 //				ContextDataMode.SettingsValues.pageSiteSubSectionValue,
 //				ContextDataMode.SettingsValues.pageSiteSectionValue, mContext);
+
+
     }
 
 
@@ -528,19 +534,7 @@ public class SettingsActivity extends BaseActivity {
                     @Override
                     public void executing(HttpBaseMessage result) {
                         if (result != null && "0".equals(result.status)) {
-
-                            AppConst.CurrUserInfo.CourseLevel = courselevel;
-
-                            ConfigModel appConfig = configbll.getConfigModel();
-                            if (appConfig == null) {
-                                appConfig = new ConfigModel();
-                            }
-                            appConfig.CourseLevel = courselevel;
-                            configbll.setConfigModel(appConfig);
-
                             mCourseLevel.initiWithText("Course", AppConst.GlobalConfig.StudyPlansMap.get(courselevel), true, mItemClick);
-
-
                         } else {
                             Log.e("ThirdPartyLogin", "updateProfile error");
                             finish();

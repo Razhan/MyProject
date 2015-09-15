@@ -684,7 +684,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			JSONObject param = new JSONObject();
 			param.put("bella_id", AppConst.CurrUserInfo.UserId);
-            param.put("plan_id", AppConst.CurrUserInfo.CourseLevel);
+//            param.put("plan_id", AppConst.CurrUserInfo.CourseLevel);
 
 //			param.put("new_lesson_max_count", 5);
 //			param.put("new_rehearsal_max_count", 10);

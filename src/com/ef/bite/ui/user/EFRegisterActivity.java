@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -28,6 +29,7 @@ import com.ef.bite.utils.*;
 import com.ef.bite.widget.ActionbarLayout;
 import com.ef.bite.widget.LoginInputLayout;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -80,7 +82,9 @@ public class EFRegisterActivity extends BaseActivity {
     int step = 1;
     TermsServicePopupWindow popup;
 
-	@Override
+    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ef_register);
@@ -392,7 +396,12 @@ public class EFRegisterActivity extends BaseActivity {
         fadein.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                mEnterLevelLayout.setVisibility(View.VISIBLE);
+                if (!chooseLevel) {
+                    mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(0);
+                    next2.performClick();
+                } else {
+                    mEnterLevelLayout.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -487,6 +496,13 @@ public class EFRegisterActivity extends BaseActivity {
 		fadein.setAnimationListener(new Animation.AnimationListener() {
 			@Override
 			public void onAnimationStart(Animation animation) {
+                if (!chooseLevel) {
+                    mActionbar.getLeftButton().performClick();
+                    mEnterPhoneLayout.setVisibility(View.GONE);
+                    Log.d("onAnimationStart", "mEnterPhoneLayout.setVisibility(View.GONE)");
+                } else {
+                    mEnterLevelLayout.setVisibility(View.VISIBLE);
+                }
 			}
 
 			@Override
@@ -496,8 +512,8 @@ public class EFRegisterActivity extends BaseActivity {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				mEnterPhoneLayout.setVisibility(View.GONE);
-				mEnterLevelLayout.setVisibility(View.VISIBLE);
-			}
+                Log.d("onAnimationEnd", "mEnterPhoneLayout.setVisibility(View.GONE)");
+            }
 		});
 		mEnterPhoneLayout.startAnimation(fadeout);
         mEnterLevelLayout.startAnimation(fadein);
@@ -578,14 +594,14 @@ public class EFRegisterActivity extends BaseActivity {
 						if (result != null && result.status != null) {
 							if (result.status.equals("0")) {
 								mProgress.setMessage(JsonSerializeHelper
-										.JsonLanguageDeserialize(mContext,
-												"register_ef_success")
-										+ " "
-										+ JsonSerializeHelper
-												.JsonLanguageDeserialize(
-														mContext, "loging"));
+                                        .JsonLanguageDeserialize(mContext,
+                                                "register_ef_success")
+                                        + " "
+                                        + JsonSerializeHelper
+                                        .JsonLanguageDeserialize(
+                                                mContext, "loging"));
 
-                                setGlobleConfig();
+//                                setGlobleConfig();
 
 								login(phone, password);
 								MobclickTracking.OmnitureTrack

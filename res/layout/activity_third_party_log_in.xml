@@ -46,7 +46,6 @@
                 android:clickable="false"
                 android:background="@drawable/button_message_windows_background"
                 android:text="@string/login_main_sign_up"
-                android:enabled="false"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -104,6 +103,7 @@
                 android:layout_marginTop="30dp"
                 android:gravity="center"
                 android:text="Skip"
+                android:textStyle="bold"
                 android:textSize="20sp" />
 
 

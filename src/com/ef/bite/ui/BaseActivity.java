@@ -181,18 +181,7 @@ public class BaseActivity extends FragmentActivity {
 								&& result.data != null) {
 							profileCache.setUserProfile(result);
 
-                            AppConst.CurrUserInfo.CourseLevel = result.data.plan_id;
-
-                            GlobalConfigBLL configbll = new GlobalConfigBLL(mContext);
-                            ConfigModel appConfig = configbll.getConfigModel();
-                            if (appConfig == null) {
-                                appConfig = new ConfigModel();
-                            }
-                            appConfig.CourseLevel = result.data.plan_id;
-                            configbll.setConfigModel(appConfig);
-
-
-							startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data", getStringExtra("com.parse.Data")));
+							startActivity(new Intent(mContext, MainActivity.class));
 							finish();
 
 						} else {
