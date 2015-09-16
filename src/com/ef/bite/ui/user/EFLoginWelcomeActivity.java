@@ -334,6 +334,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
 
                             if (result.data.is_new_user || show_level || show_phone) {
 //                            if (true) {
+                                MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
                                 startActivity(new Intent(mContext, ThirdPartyLogInActivity.class)
                                                 .putExtra("show_level", show_level)
                                                 .putExtra("show_phone", show_phone)

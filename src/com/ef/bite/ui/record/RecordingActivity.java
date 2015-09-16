@@ -463,7 +463,7 @@ public class RecordingActivity extends BaseChunkActivity {
                             new Handler().postDelayed(new Runnable() {
                                 public void run() {
 //                                    openUsersRecordAct();
-                                    startActivity(new Intent(mContext, MainActivity.class));
+                                    startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data", getStringExtra("com.parse.Data")));
                                     finish();
                                 }
                             }, 500);

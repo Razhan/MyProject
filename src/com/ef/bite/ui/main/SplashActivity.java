@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +45,6 @@ public class SplashActivity extends BaseActivity {
     private ProgressDialog progress;
     private final static int Splash_Woo = 1;
     private final static int Splash_1 = 2;
-    private ImageView background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +71,6 @@ public class SplashActivity extends BaseActivity {
         mLoadingImage = (GifImageView) findViewById(R.id.splash_loading);
         mLoadingText = (TextView) findViewById(R.id.splash_loading_text);
         mWooLogoImage = (ImageView) findViewById(R.id.woo_store_logo);
-        background = (ImageView)findViewById(R.id.splash_light);
-
         FontHelper.applyFont(mContext, mLoadingText, FontHelper.FONT_OpenSans);
         mLoadingImage.startGifFromAsset("gif/loading_black_small.gif", true);
         progress = new ProgressDialog(SplashActivity.this);
@@ -86,13 +82,28 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        background.startAnimation(AnimationUtils.loadAnimation(this, R.anim.rotate_indefinitely) );
+//        MobclickTracking.UmengTrack.setPageStart(
+//                ContextDataMode.SplashValues.pageNameValue,
+//                ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
+
+        if (AppConst.HeaderStore.StoreName.equals("woo")) {
+//            MobclickTracking.UmengTrack
+//                    .setPageStart(
+//                            ContextDataMode.Keydata.splash_wo_store,
+//                            ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                            ContextDataMode.SplashValues.pageSiteSectionValue,
+//                            mContext);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
+//        MobclickTracking.UmengTrack.setPageEnd(
+//                ContextDataMode.SplashValues.pageNameValue,
+//                ContextDataMode.SplashValues.pageSiteSubSectionValue,
+//                ContextDataMode.SplashValues.pageSiteSectionValue, mContext);
     }
 
     // Woo商店Logo显示
