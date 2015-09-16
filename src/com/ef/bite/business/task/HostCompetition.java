@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.ef.bite.AppConst;
 import com.ef.bite.dataacces.mode.httpMode.HttpServerAddress;
+import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.AppUtils;
 import com.ef.bite.utils.HttpRestfulClient;
 import com.ef.bite.utils.JsonSerializeHelper;
@@ -14,8 +15,10 @@ import com.litesuits.android.async.TaskExecutor;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yang on 15/5/12.
@@ -106,9 +109,10 @@ public class HostCompetition {
 
 	private HttpServerAddress postRequest(String url) {
 //		 Log.v(TAG, "---post URL:" + url);
-        ArrayList<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
-        pairs = null;
-		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Post(url, pairs, HttpServerAddress.class);
+        Map<String, String> headerMap = new HashMap<String, String>();
+        headerMap.put("language", AppLanguageHelper.getSystemLaunguage(context));
+        headerMap.put("system", AppConst.GlobalConfig.OS);
+		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Post(url, headerMap, HttpServerAddress.class);
 		return address;
 	}
 

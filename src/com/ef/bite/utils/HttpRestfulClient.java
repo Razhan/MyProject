@@ -98,7 +98,7 @@ public class HttpRestfulClient {
 		}
 	}
 
-	public static Object Post(String url, List<BasicNameValuePair> params,
+	public static Object Post(String url, Map<String, String> headerMap,
 			Type returnType) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
@@ -110,8 +110,15 @@ public class HttpRestfulClient {
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.addHeader("Content-type",
 					"application/json; charset=utf-8");
-			if (params != null)
-				httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+            if (headerMap != null) {
+                for (String key : headerMap.keySet()) {
+                    httpPost.addHeader(key, headerMap.get(key));
+                }
+            }
+
+//			if (params != null)
+//				httpPost.setEntity(new UrlEncodedFormEntity(params));
 			response = httpClient.execute(httpPost);
 			HttpEntity entity = response.getEntity();
 			String jsonString = getUTF8ContentFromEntity(entity);

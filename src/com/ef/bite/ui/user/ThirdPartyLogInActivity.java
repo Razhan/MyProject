@@ -137,6 +137,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
                 updateProfile(null, mPhoneInput.getText().toString(), new CallBackInterface() {
                     @Override
                     public void exectueMethod() {
+                        MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
                         updateSccess(bella_id);
                     }
                 });
@@ -157,6 +158,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
                         appConfig.SkipPhoneNum = true;
                         configbll.setConfigModel(appConfig);
 
+                        MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
                         updateSccess(bella_id);
                     }
                 });

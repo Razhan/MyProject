@@ -59,7 +59,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
     private List<HttpCourseRequest> httpCourseRequests = new ArrayList<HttpCourseRequest>();
     private int flagout = 0;
     private final static int External_Home = 1;
-//    private Facebook facebook = new Facebook(AppConst.ThirdPart.Facebook_Login_Appkey);
+    //    private Facebook facebook = new Facebook(AppConst.ThirdPart.Facebook_Login_Appkey);
     private String access_token;
     private long expires;
     private int curLoginTimes = 0;
@@ -107,8 +107,15 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         access_token = PreferencesUtils.getString(mContext, "access_token",
                 null);
         expires = PreferencesUtils.getLong(mContext, "access_expires", 0);
-
-
+//        if (access_token != null) {
+//            facebook.setAccessToken(access_token);
+//            Log.i("access_token", access_token);
+//        }
+//
+//        if (expires != 0) {
+//            facebook.setAccessExpires(expires);
+//            Log.i("access_expires", String.valueOf(expires));
+//        }
 
         String textString = JsonSerializeHelper.JsonLanguageDeserialize(
                 mContext, "login_main_already_a_member");
@@ -246,7 +253,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 LoginManager.getInstance().logInWithReadPermissions(EFLoginWelcomeActivity.this, Arrays.asList("public_profile", "user_friends"));
-//                attemp2Login(null);
+//                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", "123"));
             }
         });
     }
@@ -328,13 +335,10 @@ public class EFLoginWelcomeActivity extends BaseActivity {
                                 && result.status.equals("0")) {
                             progress.setMessage(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "loging_getting_profile"));
 
-                            PreferencesUtils.putString(mContext, AppConst.CacheKeys.Facebook_Access_Token, access_token);
-
                             setParameter(result);
 
                             if (result.data.is_new_user || show_level || show_phone) {
 //                            if (true) {
-                                MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
                                 startActivity(new Intent(mContext, ThirdPartyLogInActivity.class)
                                                 .putExtra("show_level", show_level)
                                                 .putExtra("show_phone", show_phone)
@@ -369,11 +373,11 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         }
 
         if (result.data.phone == null || result.data.phone.equals("")) {
-            show_level = true;
+            show_phone = true;
         }
 
         if (!skip && (result.data.plan_id == null || result.data.plan_id.equals(""))) {
-            show_phone = true;
+            show_level = true;
         }
     }
 }
