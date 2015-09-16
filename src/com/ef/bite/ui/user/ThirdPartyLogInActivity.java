@@ -1,6 +1,7 @@
 package com.ef.bite.ui.user;
 
 import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;

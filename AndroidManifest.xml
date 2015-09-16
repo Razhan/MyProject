@@ -340,7 +340,8 @@
 
         <activity
             android:name=".ui.user.ThirdPartyLogInActivity"
-            android:label="@string/title_activity_third_party_log_in" >
+            android:label="@string/title_activity_third_party_log_in"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
