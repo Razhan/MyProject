@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 /**
@@ -254,7 +255,7 @@ public class ListUtils {
         return invertList;
     }
 
-    public static List<String> getValues(HashMap<String, String> map, boolean head) {
+    public static List<String> getValues(HashMap<String, String> map, boolean head, Context mContext) {
         if (map == null) {
             return null;
         }
@@ -266,7 +267,8 @@ public class ListUtils {
         }
 
         if (head) {
-            result.add("Choose Level");
+            String temp = JsonSerializeHelper.JsonLanguageDeserialize(mContext, "level_select");
+            result.add(temp);
         }
         ArrayList<String> rlist = new ArrayList<String>(result);
 

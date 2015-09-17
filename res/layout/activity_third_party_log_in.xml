@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="visible"
             android:padding="20dp">
 
             <Spinner
@@ -66,11 +67,20 @@
             android:padding="20dp">
 
             <TextView
+                android:id="@+id/ThirdParty_login_ef_phone_text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Title"
+                android:textStyle="bold"
+                android:textSize="20sp" />
+
+            <TextView
                 android:id="@+id/ThirdParty_login_ef_phone_text_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:gravity="center"
+                android:layout_marginTop="10dp"
                 android:text="@string/register_ef_premium_info"
                 android:textSize="16sp" />
 

@@ -104,19 +104,6 @@ public class EFLoginWelcomeActivity extends BaseActivity {
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
 
-        access_token = PreferencesUtils.getString(mContext, "access_token",
-                null);
-        expires = PreferencesUtils.getLong(mContext, "access_expires", 0);
-//        if (access_token != null) {
-//            facebook.setAccessToken(access_token);
-//            Log.i("access_token", access_token);
-//        }
-//
-//        if (expires != 0) {
-//            facebook.setAccessExpires(expires);
-//            Log.i("access_expires", String.valueOf(expires));
-//        }
-
         String textString = JsonSerializeHelper.JsonLanguageDeserialize(
                 mContext, "login_main_already_a_member");
         String[] texts = textString.split("<h>");

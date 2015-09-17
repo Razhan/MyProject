@@ -261,8 +261,10 @@ public class SettingsActivity extends BaseActivity {
                 AppLanguageHelper.getLanguageDisplayByType(mContext,
                         AppConst.GlobalConfig.LanguageType), true, mItemClick);
 
-        mCourseLevel.initiWithText("Course", JsonSerializeHelper.JsonLanguageDeserialize(
-                mContext, AppConst.CurrUserInfo.CourseLevel), true, mItemClick);
+        mCourseLevel.initiWithText(
+                JsonSerializeHelper.JsonLanguageDeserialize(mContext, "course_title"),
+                JsonSerializeHelper.JsonLanguageDeserialize(mContext, AppConst.CurrUserInfo.CourseLevel),
+                true, mItemClick);
 
         mNotificationItem.initWithSwitch(JsonSerializeHelper
                         .JsonLanguageDeserialize(mContext, "settings_notification"),
@@ -474,7 +476,7 @@ public class SettingsActivity extends BaseActivity {
                 builder.setTitle("Change Course");
 
                 List<String> valueset = new ArrayList<String>();
-                valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, false);
+                valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, false, mContext);
 
                 builder.setSingleChoiceItems(valueset.toArray(new CharSequence[valueset.size()]),
                         -1, new DialogInterface.OnClickListener() {

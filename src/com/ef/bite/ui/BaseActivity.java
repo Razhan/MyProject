@@ -181,7 +181,7 @@ public class BaseActivity extends FragmentActivity {
 								&& result.data != null) {
 							profileCache.setUserProfile(result);
 
-							startActivity(new Intent(mContext, MainActivity.class));
+							startActivity(new Intent(mContext, MainActivity.class).putExtra("com.parse.Data", getStringExtra("com.parse.Data")));
 							finish();
 
 						} else {

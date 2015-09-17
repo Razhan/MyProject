@@ -202,4 +202,9 @@ public class ActionbarLayout extends RelativeLayout {
 	public DotProgressbar getProgressbar() {
 		return progressbar;
 	}
+
+    public void ChangeTitle(String newTitle) {
+        mTitle.setVisibility(View.VISIBLE);
+        mTitle.setText(newTitle);
+    }
 }

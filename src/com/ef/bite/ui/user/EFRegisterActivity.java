@@ -2,7 +2,6 @@ package com.ef.bite.ui.user;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -147,6 +146,7 @@ public class EFRegisterActivity extends BaseActivity {
         level_spinner = (Spinner) findViewById(R.id.register_level_spinner);
         next2 = (Button) findViewById(R.id.register_ef_btn_next2);
         mLevelInfo = (TextView) findViewById(R.id.register_ef_level_text_info);
+        mLevelInfo.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "level_text"));
         mEnterLevelLayout = (LinearLayout)findViewById(R.id.register_ef_level_layout);
 
         // Font setting
@@ -276,7 +276,7 @@ public class EFRegisterActivity extends BaseActivity {
         });
 
         List<String> valueset = new ArrayList<String>();
-        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true);
+        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true, mContext);
 
         final ArrayAdapter<String> adapter_level = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, valueset);

@@ -1,7 +1,6 @@
 package com.ef.bite.ui.user;
 
 import android.app.ProgressDialog;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -54,6 +53,10 @@ public class ThirdPartyLogInActivity extends BaseActivity {
     private LinearLayout mLevelLayout;
     private LinearLayout mPhoneLayout;
     private TextView mSkip;
+    private TextView upsell_title;
+    private TextView upsell_info;
+    private TextView level_text;
+
     private int step = 1;
 
     private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
@@ -81,9 +84,18 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mLevelLayout = (LinearLayout)findViewById(R.id.ThirdParty_login_ef_level_layout);
         mPhoneLayout = (LinearLayout)findViewById(R.id.ThirdParty_login_ef_phone_layout);
         mSkip = (TextView)findViewById(R.id.ThirdParty_login_ef_phone_skip);
-        mNextBtn.setEnabled(false);
 
-        choosePagesToShow();
+        upsell_title = (TextView)findViewById(R.id.ThirdParty_login_ef_phone_text_title);
+        upsell_info = (TextView)findViewById(R.id.ThirdParty_login_ef_phone_text_info);
+        level_text = (TextView)findViewById(R.id.ThirdParty_login_ef_level_text_info);
+
+        String textString = JsonSerializeHelper.JsonLanguageDeserialize(mContext, "upsell_672715");
+        String[] texts = textString.split("</h>");
+        upsell_title.setText(texts[0].replace("<h>", ""));
+        upsell_info.setText(texts[1].replaceAll("<h>", ""));
+        level_text.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "level_text"));
+
+        mNextBtn.setEnabled(false);
 
         mPhoneInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -116,9 +128,9 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateProfile(mLevelChoice, null, new CallBackInterface(){
+                updateProfile(mLevelChoice, null, new CallBackInterface() {
                     @Override
-                    public void exectueMethod(){
+                    public void exectueMethod() {
                         if (!show_phone) {
                             updateSccess(bella_id);
                         }
@@ -166,12 +178,15 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         });
 
         SetupSpinner();
+
+        choosePagesToShow();
     }
 
     private void choosePagesToShow() {
         if (!show_level && show_phone) {
             mLevelLayout.setVisibility(View.GONE);
             mPhoneLayout.setVisibility(View.VISIBLE);
+            mActionbar.ChangeTitle(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "premium_headline"));
         } else if (show_level && !chooseLevel) {
             studyPlan_OneChoice();
         }
@@ -212,6 +227,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
             @Override
             public void onAnimationStart(Animation animation) {
                 mPhoneLayout.setVisibility(View.VISIBLE);
+                mActionbar.ChangeTitle(JsonSerializeHelper.JsonLanguageDeserialize(mContext, "premium_headline"));
             }
 
             @Override
@@ -270,7 +286,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
     private void SetupSpinner() {
 
         List<String> valueset = new ArrayList<String>();
-        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true);
+        valueset = ListUtils.getValues(AppConst.GlobalConfig.StudyPlansMap, true, mContext);
 
         final ArrayAdapter<String> adapter_level = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, valueset);
         adapter_level.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

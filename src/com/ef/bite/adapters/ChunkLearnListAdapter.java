@@ -39,15 +39,28 @@ public class ChunkLearnListAdapter extends
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		this.mdataList = dataList;
-	}
 
-	public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
+        checkLanguage(chunk);
+
+    }
+
+    public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
 								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		mAudioView = audioView;
 		this.mdataList = dataList;
-	}
+
+        checkLanguage(chunk);
+    }
+
+    private void checkLanguage(Chunk chunk) {
+        if(chunk != null && chunk.getLanguage().equals("en")) {
+            for (int i = 0; i < chunk.getChunkPresentation().getPresentationConversations().size(); i++) {
+                chunk.getChunkPresentation().getPresentationConversations().get(i).setContent_src("");
+            }
+        }
+    }
 
 	public void setHighLight(boolean isHighLight) {
 		mHighlight = isHighLight;
