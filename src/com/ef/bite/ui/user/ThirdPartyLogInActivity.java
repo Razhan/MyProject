@@ -1,9 +1,7 @@
 package com.ef.bite.ui.user;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -21,26 +19,19 @@ import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.GlobalConfigBLL;
-import com.ef.bite.business.task.GetProfileTask;
-import com.ef.bite.business.task.LoginTask;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.UpdateUserProfile;
-import com.ef.bite.dataacces.mode.LoginMode;
 import com.ef.bite.dataacces.mode.httpMode.HttpBaseMessage;
-import com.ef.bite.dataacces.mode.httpMode.HttpLogin;
 import com.ef.bite.model.ConfigModel;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.utils.ListUtils;
 import com.ef.bite.widget.ActionbarLayout;
-import com.ef.bite.widget.LoginInputLayout;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.trinea.android.common.util.PreferencesUtils;
 
 public class ThirdPartyLogInActivity extends BaseActivity {
     private TextView mPhoneInput;
@@ -119,7 +110,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
                         if (step == 2) {
                             attempBack();
                         } else {
-                            finish();
+//                            finish();
                         }
                         overridePendingTransition(R.anim.activity_in_from_left, R.anim.activity_out_to_right);
                     }

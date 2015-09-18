@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.trinea.android.common.util.PreferencesUtils;
+
 import com.ef.bite.AppConst;
 import com.ef.bite.AppSession;
 import com.ef.bite.R;
@@ -36,14 +36,15 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-//import com.facebook.android.AsyncFacebookRunner;
-//import com.facebook.android.DialogError;
-//import com.facebook.android.Facebook;
-//import com.facebook.android.FacebookError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+//import com.facebook.android.AsyncFacebookRunner;
+//import com.facebook.android.DialogError;
+//import com.facebook.android.Facebook;
+//import com.facebook.android.FacebookError;
 
 @SuppressWarnings("deprecation")
 public class EFLoginWelcomeActivity extends BaseActivity {
@@ -359,11 +360,11 @@ public class EFLoginWelcomeActivity extends BaseActivity {
             skip = appConfig.SkipPhoneNum;
         }
 
-        if (result.data.phone == null || result.data.phone.equals("")) {
+        if (!skip && (result.data.phone == null || result.data.phone.equals(""))) {
             show_phone = true;
         }
 
-        if (!skip && (result.data.plan_id == null || result.data.plan_id.equals(""))) {
+        if (result.data.plan_id == null || result.data.plan_id.equals("")) {
             show_level = true;
         }
     }
