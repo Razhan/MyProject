@@ -537,7 +537,10 @@ public class SettingsActivity extends BaseActivity {
                     public void executing(HttpBaseMessage result) {
                         if (result != null && "0".equals(result.status)) {
                             AppConst.CurrUserInfo.CourseLevel = courselevel;
-                            mCourseLevel.initiWithText("Course", AppConst.GlobalConfig.StudyPlansMap.get(courselevel), true, mItemClick);
+                            mCourseLevel.initiWithText(
+                                    JsonSerializeHelper.JsonLanguageDeserialize(mContext, "course_title"),
+                                    AppConst.GlobalConfig.StudyPlansMap.get(courselevel),
+                                    true, mItemClick);
                         } else {
                             Log.e("ThirdPartyLogin", "updateProfile error");
                             finish();

@@ -56,42 +56,53 @@ android {
 
     productFlavors {
 
-        woo {}
-        "91" {}
-        anzhuo {}
-        baidu {}
-        wandoujia {}
-        yingyh {}
-        jfsc {}
-        mmy {}
-        ndw {}
-        oppokksd {}
-        azy {}
-        lxkfpt {}
-        yiyh {}
-        mpw {}
-        sgsjzs {}
-        ucyysd {}
-        az {}
-        mz {}
-        et_hk_yh {}
-        et_hk_ggl {}
-        et_hk_fb {}
-        et_ee {}
-        tcl {}
-        "360" {}
-        google {}
-        wyyyzs {}
-        xmyysd {}
-        hwyysc {}
-        yysc {}
-        yyb {}
-        et_hk_gv {}
+//        woo {}
+//        "91" {}
+//        anzhuo {}
+//        baidu {}
+//        wandoujia {}
+//        yingyh {}
+//        jfsc {}
+//        mmy {}
+//        ndw {}
+//        oppokksd {}
+//        azy {}
+//        lxkfpt {}
+//        yiyh {}
+//        mpw {}
+//        sgsjzs {}
+//        ucyysd {}
+//        az {}
+//        mz {}
+//        et_hk_yh {}
+//        et_hk_ggl {}
+//        et_hk_fb {}
+//        et_ee {}
+//        tcl {}
+//        "360" {}
+//        google {}
+//        wyyyzs {}
+//        xmyysd {}
+//        hwyysc {}
+//        yysc {}
+//        yyb {}
+//        et_hk_gv {}
         snyysd {}
 
 
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                def newName = output.outputFile.name
+                newName = newName.replace("-release", "")
+                newName = newName.replace("-", "_")
+
+                //noinspection GroovyAssignabilityCheck
+                output.outputFile = new File(output.outputFile.parent, newName)
+            }
         }
 
     }
