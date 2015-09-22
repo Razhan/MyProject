@@ -65,7 +65,13 @@ public class BalloonSetLayout extends RelativeLayout {
 			}
 		}
 	}
-	
+
+    /**清理所有views**/
+    public void clearVIews() {
+        this.removeAllViews();
+    }
+
+
 	
 	/***
 	 * 下降时爆炸的第一个气球

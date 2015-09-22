@@ -533,6 +533,7 @@ public class BalloonActivity extends BaseActivity {
 						// mContext);
 						// to learn
 						mThornDown.clearAnimator();
+                        mBalloonLayout.clearVIews();
 						finish();
 					}
 				}, new View.OnClickListener() {
@@ -543,7 +544,8 @@ public class BalloonActivity extends BaseActivity {
 						// mContext);
 						// try again
 						mThornDown.clearAnimator();
-						curTryTimes++;
+                        mBalloonLayout.clearVIews();
+                        curTryTimes++;
 						initilaize();
 					}
 				});
