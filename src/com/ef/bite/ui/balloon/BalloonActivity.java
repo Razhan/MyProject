@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.SpannableStringBuilder;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -201,10 +202,14 @@ public class BalloonActivity extends BaseActivity {
 		fadein.setDuration(2000);
 		fadein.setFillAfter(true);
 
-		if (mChunkModel.getExplanation() != null)
-			mDescription.setText(mChunkModel.getExplanation());
-		else
-			mDescription.setText(mChunkModel.getChunkText());
+        SpannableStringBuilder spanStr = HighLightStringHelper
+                .getBoldString(mContext, mChunkModel.getExplanation());
+        if (spanStr != null) {
+            mDescription.setText(spanStr);
+        }
+        else {
+            mDescription.setText(mChunkModel.getChunkText());
+        }
 
 		startbButton.setOnClickListener(new OnClickListener() {
 

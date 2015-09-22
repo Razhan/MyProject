@@ -51,6 +51,8 @@ public class ProfileCache {
             AppConst.CurrUserInfo.Score = existedLogin.Score;
             AppConst.CurrUserInfo.Level = existedLogin.Level;
             AppConst.CurrUserInfo.Location = existedLogin.Location;
+            AppConst.CurrUserInfo.isFirstTimeLogin = existedLogin.isFirstTimeLogin;
+
 //            AppConst.CurrUserInfo.CourseLevel = existedLogin.Plan_ID;
 
         }
@@ -70,6 +72,7 @@ public class ProfileCache {
         existedLogin.Level = AppConst.CurrUserInfo.Level;
         existedLogin.Location = AppConst.CurrUserInfo.Location;
         existedLogin.Plan_ID = AppConst.CurrUserInfo.CourseLevel;
+        existedLogin.isFirstTimeLogin = AppConst.CurrUserInfo.isFirstTimeLogin;
 
         PreferencesUtils.putString(context, AppConst.CacheKeys.CACHE_DASHBOARD, JsonSerializeHelper.JsonSerializer(existedLogin));
     }
