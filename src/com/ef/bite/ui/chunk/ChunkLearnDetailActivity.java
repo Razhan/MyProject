@@ -255,7 +255,16 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 		if (chunk != null) {
 			mHintLayout.removeAllViewsInLayout();
 			mChunkText.setText(chunk.getChunkText());
-			mDefinition.setText(chunk.getExplanation());
+
+            SpannableStringBuilder spanStr = HighLightStringHelper
+                    .getBoldString(mContext, chunk.getExplanation());
+            if (spanStr != null) {
+                mDefinition.setText(spanStr);
+            }
+            else {
+                mDefinition.setText(chunk.getExplanation());
+            }
+
 			mPronounceText.setText(chunk.getPronounce());
 			List<HintDefinition> hints = chunk.getHintDefinitions();
 			if (hints != null && hints.size() > 0) {
@@ -272,7 +281,7 @@ public class ChunkLearnDetailActivity extends BaseChunkActivity {
 					title.setText(data.getContent());
 					if (data.getExample() != null
 							&& !data.getExample().isEmpty()) {
-						SpannableStringBuilder spanStr = HighLightStringHelper
+						spanStr = HighLightStringHelper
 								.getBoldString(mContext, data.getExample());
 						if (spanStr != null)
 							content.setText(spanStr);

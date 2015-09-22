@@ -20,14 +20,17 @@ import android.widget.*;
 import com.ef.bite.AppConst;
 import com.ef.bite.AppSession;
 import com.ef.bite.R;
+import com.ef.bite.business.GlobalConfigBLL;
 import com.ef.bite.business.LocalDashboardBLL;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.action.UserProfileOpenAction;
 import com.ef.bite.business.task.*;
 import com.ef.bite.dataacces.AchievementCache;
+import com.ef.bite.dataacces.ProfileCache;
 import com.ef.bite.dataacces.mode.PushData;
 import com.ef.bite.dataacces.mode.httpMode.HttpDashboard;
 import com.ef.bite.dataacces.mode.httpMode.HttpGetFriendData;
+import com.ef.bite.model.ConfigModel;
 import com.ef.bite.model.ProfileModel;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.ui.DashBoardFriendView;
@@ -219,7 +222,13 @@ public class MainActivity extends BaseActivity {
 	/**
 	 * execute action with different type
 	 */
-	private void executePushAction() {
+	private void executeAction() {
+        if (AppConst.CurrUserInfo.isFirstTimeLogin) {
+            AppConst.CurrUserInfo.isFirstTimeLogin = false;
+            profileCache.save();
+            ((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
+        }
+
 		PushData pushData = getPushData();
 		if (pushData == null) {
 			return;
@@ -368,7 +377,7 @@ public class MainActivity extends BaseActivity {
 							dashboardCache.save(httpDashboard);
 							updateDashboard(httpDashboard);
                             progress.dismiss();
-                            executePushAction();
+                            executeAction();
                         }
 					}
 				});
