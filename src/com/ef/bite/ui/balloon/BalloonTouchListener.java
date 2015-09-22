@@ -1,6 +1,7 @@
 package com.ef.bite.ui.balloon;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -103,16 +104,23 @@ public class BalloonTouchListener implements  OnTouchListener{
 	        	
 	        	// 判断move结束放掉的点,超过balloon_layout范围，则拖动到下层result_layout，如果没有，则恢复原来位置
 	        	mAnimationBalloon.getLocationOnScreen(up_location);
-	        	int y_position = up_location[1];
+
+                int y_position = up_location[1];
 	        	int balloonHeight = mAnimationBalloon.getMeasuredHeight();
 	        	// 成功拖下来
-	        	if(y_position + balloonHeight - 10 >= ResultLayoutTopY){
+	        	if(y_position + balloonHeight - 10 >= ResultLayoutTopY || System.currentTimeMillis() - touchTime < 100){
+
+	        		if (up_location[0] == 0 && up_location[1] == 0) {
+                        balloon.getLocationOnScreen(up_location);
+                    }
+
 	        		// 将气球从布局中删除
 	        		balloon.setOnTouchListener(null);
 	        		mBalloonLayout.removeView(balloon);
 	        		final BalloonView selectBalloon = selectRightBalloon(balloon,mResultLayout);
 	        		xDelta = SelectBalloonMargin - up_location[0];
 	        		yDelta = ResultLayoutTopY - up_location[1];
+
 	        		selectBalloon.setVisibility(View.INVISIBLE);
 	        		animateMoveView(mAnimationBalloon,xDelta,yDelta,new AnimationListener(){ 
 						@Override
@@ -131,7 +139,7 @@ public class BalloonTouchListener implements  OnTouchListener{
 	        		});
 	        	}else{
 	        		// 时间太短，看作单击事件
-		        	if(System.currentTimeMillis() - touchTime < 100){ 
+		        	if(System.currentTimeMillis() - touchTime < 100){
 		        		clearAnimLayout();
 						balloon.setVisibility(View.VISIBLE);
 						balloon.startShaking();
