@@ -32,7 +32,7 @@ public class ThornDownView extends View {
 	int toplayoutHeight = 0; // 气球布局的上层高度
 	int ballsetLayoutHeight = 0; // 气球布局高度
 	final static int ERROR_THORN_DOWN_TIME = 3 * 1000; // 选择了错误的气球，倒刺下降时间缩短3秒
-	final static int DURATION_THORN_DOWN = 200 * 1000; // 倒刺动画时间
+	final static int DURATION_THORN_DOWN = 20 * 1000; // 倒刺动画时间
 	final static int DURATION_EXPLISION = 1 * 1000; // 爆炸动画时间
 	ValueAnimator thornDownAnimator = null;
 	ValueAnimator explisionAnimator = null;

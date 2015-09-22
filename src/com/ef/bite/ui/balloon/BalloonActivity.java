@@ -390,10 +390,10 @@ public class BalloonActivity extends BaseActivity {
 		if (mChunkModel == null || mChunkModel.getChunkText() == null) {
 			return;
 		}
-		if (mChunkModel.getExplanation() != null)
-			mDescription.setText(mChunkModel.getExplanation());
-		else
-			mDescription.setText(mChunkModel.getChunkText());
+//		if (mChunkModel.getExplanation() != null)
+//			mDescription.setText(mChunkModel.getExplanation());
+//		else
+//			mDescription.setText(mChunkModel.getChunkText());
 		BalloonTouchListener.SelectBalloonMargin = 20;
 		arrayCorrectWords = mChunkModel.getChunkText().split(" ");
 		if (arrayCorrectWords == null || arrayCorrectWords.length <= 0)
