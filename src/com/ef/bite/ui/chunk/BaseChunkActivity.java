@@ -15,6 +15,7 @@ import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.ScoreLevelHelper;
 import com.ef.bite.widget.AudioPlayerView;
+import com.ef.bite.widget.AudioPlayerViewWithListener;
 import com.ef.bite.widget.DotProgressbar;
 import com.ef.bite.widget.HeaderView;
 import com.ef.bite.widget.UserLevelView;
@@ -27,7 +28,7 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 	protected ImageButton mGoBack;
 	protected UserLevelView mLevel;
 	protected RelativeLayout mBottomLayout;
-	protected AudioPlayerView mBottomPlayer;
+	protected AudioPlayerViewWithListener mBottomPlayer;
 	protected ImageButton mGoAHead;
 	protected DotProgressbar progressbar;
 
@@ -60,7 +61,7 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 		mLevel = headerView.getLevelView();
 		mBottomLayout = (RelativeLayout) this
 				.findViewById(R.id.chunk_bottom_layout);
-		mBottomPlayer = (AudioPlayerView) this
+		mBottomPlayer = (AudioPlayerViewWithListener) this
 				.findViewById(R.id.chunk_bottom_audioplayer);
 		mGoAHead = (ImageButton) this.findViewById(R.id.chunk_bottom_go_ahead);
 		mGoAHead.setOnClickListener(this);

@@ -9,6 +9,9 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ef.bite.AppConst;
@@ -29,17 +32,17 @@ public class ChunkLearnListAdapter extends
 	private Chunk mChunk;
 	private AudioPlayerView mAudioView;
 	private List<PresentationConversation> mdataList;
-	boolean isSwipSuppported = false; // 是否支持来回的分段切换播放音频
-	private boolean textview_source_status = true;
 	private boolean closeAllGif = true;
 	private int mPosition;
+    private int maxCount = 0;
+    private boolean isDisplayed = false;
 
 	public ChunkLearnListAdapter(Context context,
 								 List<PresentationConversation> dataList, Chunk chunk) {
 		super(context, R.layout.chunk_learn_dialogue_list_item, dataList);
 		mChunk = chunk;
 		this.mdataList = dataList;
-
+        this.maxCount = chunk.getChunkPresentation().getPresentationConversations().size() - 1;
         checkLanguage(chunk);
 
     }
@@ -62,14 +65,15 @@ public class ChunkLearnListAdapter extends
         }
     }
 
+    public void setisDisplayed(boolean isdisplayed) {
+        this.isDisplayed = isdisplayed;
+    }
+
 	public void setHighLight(boolean isHighLight) {
 		mHighlight = isHighLight;
 		this.notifyDataSetChanged();
 	}
 
-	public void setSwipSupported(boolean support) {
-		isSwipSuppported = support;
-	}
 
 	public void initGif(int position) {
         this.closeAllGif = false;
@@ -83,17 +87,6 @@ public class ChunkLearnListAdapter extends
 		return bitmap;
 	}
 
-	/**
-	 * 更多显示隐藏
-	 *
-	 * true:隐藏 false:显示
-	 */
-	public void setTranslationMorn(boolean isShow, int position) {
-		this.textview_source_status = isShow;
-		this.mPosition = position;
-		this.closeAllGif = true;
-		this.notifyDataSetChanged();
-	}
 
 	public void closeTranslationGif(boolean isShow) {
 		this.closeAllGif = isShow;
@@ -109,6 +102,30 @@ public class ChunkLearnListAdapter extends
 		ImageView right_talk;
 		GifMovieView voicegifplay;
 	}
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        convertView = super.getView(position, convertView, parent);
+        Animation animation;
+
+        if (!isDisplayed && position == (mdataList.size() - 1)) {
+            if (position % 2 == 0) {
+                animation = AnimationUtils.loadAnimation(mContext, R.anim.activity_in_from_left);
+            } else {
+                animation = AnimationUtils.loadAnimation(mContext, R.anim.activity_in_from_right);
+            }
+
+            animation.setDuration(1000);
+            convertView.startAnimation(animation);
+        }
+
+        if (position == maxCount) {
+            isDisplayed = true;
+        }
+
+        return convertView;
+    }
+
 
 	@Override
 	public void getView(View layout, final int position,
@@ -163,55 +180,54 @@ public class ChunkLearnListAdapter extends
 			holder.right_talk.setVisibility(View.VISIBLE);
 			holder.speakerB.setImageBitmap(getBitmapAvater(position));
 		}
-		String sentence = data.getSentence();
+
+
+        String sentence = data.getSentence();
 		String content_src = data.getContent_src();
-		if (mHighlight) {
-			if (isSwipSuppported) {
-				holder.textview.setText(HighLightStringHelper
-						.getHighLightString(mContext, sentence));
-				holder.textview_source.setText(HighLightStringHelper
-						.getHighLightString(mContext, content_src));
-			} else {
-				holder.textview.setMovementMethod(LinkMovementMethod
-						.getInstance());
-				holder.textview.setText(HighLightStringHelper
-						.getClickableHighLightString(mContext, sentence,
-								new View.OnClickListener() {
-									@Override
-									public void onClick(View v) {
-										if (mChunk != null) {
-											Intent intent = new Intent(
-													mContext,
-													ChunkLearnDetailActivity.class);
-											intent.putExtra(
-													AppConst.BundleKeys.Chunk,
-													mChunk);
-											intent.putExtra(
-													AppConst.BundleKeys.Is_Chunk_Learning,
-													true);
-											intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-											((FragmentActivity) mContext)
-													.startActivityForResult(
-															intent,
-															AppConst.RequestCode.CHUNK_LEARNING);
-											((FragmentActivity) mContext)
-													.overridePendingTransition(
-															R.anim.activity_in_from_right,
-															R.anim.activity_out_to_left);
-										}
-									}
-								}));
-				holder.textview.setDuplicateParentStateEnabled(true);
-			}
+
+        if (mHighlight) {
+
+            holder.textview.setMovementMethod(LinkMovementMethod
+                    .getInstance());
+            holder.textview.setText(HighLightStringHelper
+                    .getClickableHighLightString(mContext, sentence,
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (mChunk != null) {
+                                        Intent intent = new Intent(
+                                                mContext,
+                                                ChunkLearnDetailActivity.class);
+                                        intent.putExtra(
+                                                AppConst.BundleKeys.Chunk,
+                                                mChunk);
+                                        intent.putExtra(
+                                                AppConst.BundleKeys.Is_Chunk_Learning,
+                                                true);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        ((FragmentActivity) mContext)
+                                                .startActivityForResult(
+                                                        intent,
+                                                        AppConst.RequestCode.CHUNK_LEARNING);
+                                        ((FragmentActivity) mContext)
+                                                .overridePendingTransition(
+                                                        R.anim.activity_in_from_right,
+                                                        R.anim.activity_out_to_left);
+                                    }
+                                }
+                            }));
+            holder.textview.setDuplicateParentStateEnabled(true);
+
 		} else {
 			String show = sentence.replace("<h>", "");
 			show = show.replace("</h>", "");
 			holder.textview.setText(show);
-
-			String show_src = content_src.replace("<h>", "");
-			show_src = show_src.replace("</h>", "");
-			holder.textview_source.setText(show_src);
 		}
+
+        String show_src = content_src.replace("<h>", "");
+        show_src = show_src.replace("</h>", "");
+        holder.textview_source.setText(show_src);
+
 		FontHelper.applyFont(mContext, layout, FontHelper.FONT_OpenSans);
 	}
 }

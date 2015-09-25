@@ -13,21 +13,6 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/dialogue_speaker_a"/>
 
-    <TextView
-            android:id="@+id/dialogue_list_item_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/dialogue_list_item_speakerb"
-            android:layout_toRightOf="@+id/dialogue_list_item_speakera"
-            android:focusable="false"
-            android:text="M: I’m so confused!  I’m trying to figure out how this thing works. "
-            android:textColor="@color/bella_chunk_text_dark"
-            android:textSize="16sp"
-            android:visibility="gone"/>
-
     <ImageView
             android:id="@+id/dialogue_list_item_speakerb"
             android:layout_width="54dp"
@@ -75,13 +60,13 @@
                           android:layout_height="wrap_content"
                           android:layout_weight="1"
                           android:orientation="vertical">
-            <TextView
+                <TextView
                     android:id="@+id/dialogue_list_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="17dp"/>
 
-            <TextView
+                <TextView
                     android:id="@+id/textView_source"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,8 +81,6 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/wechat_audio"/>
         </LinearLayout>
-
-
 
     </RelativeLayout>
 

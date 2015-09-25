@@ -64,7 +64,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 	/** The front color */
 	private int fillColor;
 	/** The progress value (0 - 100) */
-	private int progress;
+	protected int progress;
 	/** The drawing area */
 	private RectF rectF;
 	/** Bar thickness */
@@ -73,8 +73,8 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 	/** 外面的环 */
 	private int ringColor;
 	// 播放器部分
-	private MediaPlayer mPlayer;
-	private long mAudioDuration;
+	protected MediaPlayer mPlayer;
+	protected long mAudioDuration;
 	private ScheduledExecutorService mPlayScheduler;
 	private ScheduledFuture mScheduledFuture;
 	private OnCompletionListener mCompletionListener;
@@ -83,12 +83,12 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 	private int mPlayStatus = Status_Ready; // 0 - Ready, 1 - Playing, 2 -
 											// Paused, 3 - PlayEnd
 	private Bitmap mPlaybackIcon;
-	private String mTimeLeft = "00:00";
+	protected String mTimeLeft = "00:00";
 	private boolean mAllowReload = true; // 是否允许反复播放
 	private boolean mShowTime = true; // 是否显示剩余时间
 	private boolean isMiniStatus = false; // 是否迷你显示
 	private int diameter; // 播放器的直径
-	private Context mContext;
+	protected Context mContext;
 	private int mEndtime;
 	private Timer mTimer;
 	private TimerTask mTimerTask;
@@ -99,12 +99,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		public void handleMessage(Message msg) {
 			try {
 				if (msg.what == Msg_SetProgress) {
-					long position = mPlayer.getCurrentPosition();
-					long prog = 100L * position / mAudioDuration;
-					progress = (int) prog;
-					long timeLeft = mAudioDuration - position;
-					mTimeLeft = TimeFormatUtil.convertSecondsToHMmSs(timeLeft);
-					invalidate();
+                    handleProcess();
 				}
 				if (msg.what == MSG_EndTime) {
 					if (mPlayer.getCurrentPosition() > mEndtime) {
@@ -121,7 +116,16 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		}
 	};
 
-	public AudioPlayerView(Context context) {
+    protected void handleProcess() {
+        long position = mPlayer.getCurrentPosition();
+        long prog = 100L * position / mAudioDuration;
+        progress = (int) prog;
+        long timeLeft = mAudioDuration - position;
+        mTimeLeft = TimeFormatUtil.convertSecondsToHMmSs(timeLeft);
+        invalidate();
+    }
+
+    public AudioPlayerView(Context context) {
 		super(context);
 		this.mContext = context;
 		initialize();
@@ -133,7 +137,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		initialize();
 	}
 
-	private void initialize() {
+	protected void initialize() {
 		paint = new Paint();
 		backColor = getContext().getResources().getColor(
 				R.color.bella_color_orange_light);
@@ -384,7 +388,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 	}
 
 	/*
-	 * 每秒显示进度
+	 * 每0.1秒显示进度
 	 */
 	private void showAudioProgress() {
 		mPlayScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -613,19 +617,23 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 			start();
 			break;
 		case 3: // finished
-			if (mAllowReload) {
-				start();
-				MobclickTracking.OmnitureTrack.ActionDialogue(5);
-//				MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
-			}
+            reload();
 
-			break;
+            break;
 		default:
 			break;
 		}
 	}
 
-	public interface OnCompletionListener {
+    protected void reload() {
+        if (mAllowReload) {
+            start();
+            MobclickTracking.OmnitureTrack.ActionDialogue(5);
+//				MobclickTracking.UmengTrack.ActionDialogue(5, mContext);
+        }
+    }
+
+    public interface OnCompletionListener {
 		public void OnCompletion();
 	}
 

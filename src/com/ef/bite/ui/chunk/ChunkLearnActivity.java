@@ -3,6 +3,8 @@ package com.ef.bite.ui.chunk;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,22 +29,23 @@ import com.ef.bite.widget.AudioPlayerView;
 import com.ef.bite.widget.AudioPlayerView.OnCompletionListener;
 import com.ef.bite.widget.AudioPlayerView.OnStopClickListener;
 import com.ef.bite.widget.ExpandButtonView;
+import com.ef.bite.widget.FlexiListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChunkLearnActivity extends BaseChunkActivity {
 
-	private AudioPlayerView mAudioPlayer;
 	private AudioPlayerView mWeChatPlayer;
 	int maxDiameter = 0; // 音频播放器最大的直径
 	int minDiameter = 0; // 音频播放器最小的直径
 	private RelativeLayout mTotalLayout;
 	private ImageView mTeacher;
-	private ImageView mCollapseButton;
-	private ExpandButtonView mExpandButton;
 	TextView mInfoText;
 	ChunkLearnListAdapter mDialogueAdapter;
 	private RelativeLayout mSlideTopLayout;
 	private RelativeLayout mSlideMidLayout;
-	ListView mDialogueListView;
+    FlexiListView mDialogueListView;
 	private LinearLayout mSlideBottomLayout;
 	ChunkBLL mChunkBll;
 
@@ -65,6 +68,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 	private final static int LearnAudioDialogueLookUpValues = 2;
 
 	private TutorialConfigSharedStorage configSharedStorage;
+    private List<PresentationConversation> mConversation;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +89,57 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 		configSharedStorage = new TutorialConfigSharedStorage(mContext,
 				AppConst.CurrUserInfo.UserId);
 
+        mBottomPlayer.init(getStartTImeList(mChunkModel),
+                new AdudioCallBack() {
+                    @Override
+                    public void postExec(String str, int pos) {
+                        if (pos == -1) {
+                            mConversation.clear();
+                            mDialogueAdapter.setisDisplayed(false);
+                        } else {
+                            mConversation.add(mChunkModel.getChunkPresentation().getPresentationConversations().get(pos));
+                        }
+                        mDialogueAdapter.notifyDataSetChanged();
+                        scrollMyListViewToBottom();
+                    }
+                }
+        );
+
+
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                mBottomPlayer.performClick();
+            }
+        }, 1000);
+
 	}
+
+    private List<Integer> getStartTImeList(Chunk chunk) {
+        if (chunk == null) {
+            return null;
+        }
+
+        List<Integer> res = new ArrayList<Integer>();
+        List<PresentationConversation> conversation = chunk.getChunkPresentation().getPresentationConversations();
+        for (int i = 0; i < conversation.size(); i++) {
+            res.add(conversation.get(i).getStartTime());
+        }
+
+        res.add(conversation.get(conversation.size() - 1).getEndTime());
+
+        return res;
+    }
+
+    private void scrollMyListViewToBottom() {
+        mDialogueListView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                mDialogueListView.setSelection(mConversation.size() - 1);
+            }
+        });
+    }
+
 
 	@Override
 	protected void onResume() {
@@ -135,16 +189,13 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 		mSlideTopLayout = (RelativeLayout) findViewById(R.id.chunk_lesson_side_top_layout);
 		mSlideMidLayout = (RelativeLayout) findViewById(R.id.chunk_lesson_slide_mid_layout);
 		mSlideBottomLayout = (LinearLayout) findViewById(R.id.chunk_lesson_side_bottom_layout);
-		mExpandButton = (ExpandButtonView) findViewById(R.id.chunk_lesson_expand);
-		mCollapseButton = (ImageView) findViewById(R.id.chunk_lesson_collapse);
-		mAudioPlayer = (AudioPlayerView) findViewById(R.id.chunk_lesson_audioplayer);
 		mWeChatPlayer = new AudioPlayerView(mContext);
-		mDialogueListView = (ListView) findViewById(R.id.chunk_lesson_dialogue_listview);
+		mDialogueListView = (FlexiListView) findViewById(R.id.chunk_lesson_dialogue_listview);
 		mBottomPlayer.setMiniStatus(true);
-		if (mChunkModel != null && mChunkModel.getChunkPresentation() != null)
-			mDialogueAdapter = new ChunkLearnListAdapter(this, mChunkModel
-					.getChunkPresentation().getPresentationConversations(),
-					mChunkModel);
+
+        mConversation = new ArrayList<PresentationConversation>();
+        if (mChunkModel != null && mChunkModel.getChunkPresentation() != null)
+			mDialogueAdapter = new ChunkLearnListAdapter(this, mConversation, mChunkModel);
 		mDialogueListView.setAdapter(mDialogueAdapter);
 
 		// 这个版本暂时不支持对话来回切换
@@ -174,7 +225,6 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 						}
 					});
 
-					mAudioPlayer.pause();
 					mBottomPlayer.pause();
 				}
 
@@ -225,15 +275,13 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 
 		if (mChunkModel != null && mChunkModel.getChunkPresentation() != null) {
 			if (mChunkModel.getIsPreinstall()) {
-				mAudioPlayer.prepareInAsset(mChunkModel.getChunkPresentation()
-						.getAudioFile());
+
 				mBottomPlayer.prepareInAsset(mChunkModel.getChunkPresentation()
 						.getAudioFile());
 				mWeChatPlayer.prepareInAsset(mChunkModel.getChunkPresentation()
 						.getAudioFile());
 			} else {
-				mAudioPlayer.prepareInStorage(mChunkModel
-						.getChunkPresentation().getAudioFile());
+
 				mBottomPlayer.prepareInStorage(mChunkModel
 						.getChunkPresentation().getAudioFile());
 				mWeChatPlayer.prepareInStorage(mChunkModel
@@ -241,7 +289,6 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 			}
 		}
 
-		mExpandButton.setDuration(ANIMATION_DURATION);
 		mBottomPlayer.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void OnCompletion() {
@@ -250,8 +297,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 			}
 		});
 
-		mBottomPlayer
-				.setOnCloseAudioListener(new AudioPlayerView.OnCloseAudioListener() {
+		mBottomPlayer.setOnCloseAudioListener(new AudioPlayerView.OnCloseAudioListener() {
 
 					@Override
 					public void OnClose() {
@@ -261,49 +307,6 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 					}
 				});
 
-		mAudioPlayer.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mExpanded == 0) {
-					expand();
-					mExpanded = 1;
-					if (mBottomPlayer.getStatus() != AudioPlayerView.Status_Playing) {
-						mBottomPlayer.start();
-					}
-					MobclickTracking.OmnitureTrack.ActionDialogue(3);
-                    MobclickTracking.OmnitureTrack.ActionDialogue(6);
-
-//                    MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
-				}
-			}
-		});
-
-		mExpandButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// made in Alan
-				// if (mExpanded == 0) {
-				// expand();
-				// mExpanded = 1;
-				// if (mBottomPlayer.getStatus() !=
-				// AudioPlayerView.Status_Playing) {
-				// mBottomPlayer.start();
-				// }
-				// }
-			}
-		});
-
-		mCollapseButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mAudioPlayer.pause();
-				mBottomPlayer.pause();
-				if (mExpanded == 2) {
-					collapse();
-					mExpanded = 1;
-				}
-			}
-		});
 		// 字体设置
 		FontHelper.applyFont(mContext, mInfoText, FontHelper.FONT_Museo300);
 	}
@@ -349,207 +352,11 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 		if(mWeChatPlayer!=null){
 			mWeChatPlayer.release();
 		}
-		if(mAudioPlayer!=null){
-			mAudioPlayer.stop();
-		}
 	}
 
 	@Override
 	public void onBackPressed() {
 		finish();
-	}
-
-	// 展开
-	private void expand() {
-		Animation tanimUp = new TranslateAnimation(0, 0, 0,
-				-topSlideLayoutHeight);
-		tanimUp.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-				mInfoText.setVisibility(View.INVISIBLE);
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				mSlideBottomLayout.setClickable(false);
-				mTotalLayout.setBackgroundColor(getResources().getColor(
-						R.color.white));
-				mTeacher.setVisibility(View.INVISIBLE);
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-		});
-		Animation tanimDown = new TranslateAnimation(0, 0, 0,
-				bottomSlideLayoutHeight);
-		tanimUp.setDuration(ANIMATION_DURATION);
-		tanimDown.setDuration(ANIMATION_DURATION);
-		mSlideTopLayout.startAnimation(tanimUp);
-		mSlideBottomLayout.startAnimation(tanimDown);
-		mExpandButton.startAnimation(tanimUp);
-		tanimUp.setFillAfter(true);
-		tanimDown.setFillAfter(true);
-		mExpandButton.startExpand();
-		movePlayer(mAudioPlayer, mBottomPlayer, true);
-	}
-
-	// 收拢
-	private void collapse() {
-		Animation tanimUp = new TranslateAnimation(0, 0, -topSlideLayoutHeight,
-				0);
-		Animation tanimDown = new TranslateAnimation(0, 0,
-				bottomSlideLayoutHeight, 0);
-		tanimUp.setAnimationListener(new AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-				mInfoText.setVisibility(View.VISIBLE);
-				mTeacher.setVisibility(View.VISIBLE);
-				mTotalLayout.setBackgroundColor(getResources().getColor(
-						R.color.bella_chunk_background));
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				mSlideMidLayout.setClickable(false);
-				mSlideBottomLayout.setClickable(true);
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-		});
-		tanimUp.setDuration(ANIMATION_DURATION);
-		tanimDown.setDuration(ANIMATION_DURATION);
-		mSlideBottomLayout.startAnimation(tanimDown);
-		mSlideTopLayout.startAnimation(tanimUp);
-		mExpandButton.startAnimation(tanimUp);
-		tanimUp.setFillAfter(true);
-		tanimDown.setFillAfter(true);
-		mExpandButton.startCollipse();
-		movePlayer(mBottomPlayer, mAudioPlayer, false);
-	}
-
-	/**
-	 * Move AudioPlayer
-	 * 
-	 * @param bigger
-	 * @param smaller
-	 */
-	private void movePlayer(AudioPlayerView bigger, AudioPlayerView smaller,
-			final boolean isExpanded) {
-		if (isExpanded) {
-			bigger.getLocationOnScreen(start_location);
-			smaller.getLocationOnScreen(end_location);
-		} else {
-			int[] tmp = new int[2];
-			tmp = start_location;
-			start_location = end_location;
-			end_location = tmp;
-		}
-
-		if (isExpanded) {
-			start_width = bigger.getWidth();
-			end_width = smaller.getWidth();
-			start_height = bigger.getHeight();
-			end_height = smaller.getHeight();
-		} else {
-			int tmp = start_width;
-			start_width = end_width;
-			end_width = tmp;
-			tmp = start_height;
-			start_height = end_height;
-			end_height = tmp;
-		}
-		anim_player = new AudioPlayerView(this);
-		if (anim_mask_layout == null)
-			anim_mask_layout = createAnimLayout();
-		anim_mask_layout.addView(anim_player);// 把动画小球添加到动画层
-		final View view = addViewToAnimLayout(anim_mask_layout, anim_player,
-				start_width, start_height, start_location);
-		// 计算位移
-		int endX = end_location[0] - start_location[0];// 动画位移的X坐标
-		int endY = end_location[1] - start_location[1];// 动画位移的y坐标
-		TranslateAnimation translateAnimationX = new TranslateAnimation(0,
-				endX, 0, 0);
-		translateAnimationX.setInterpolator(new LinearInterpolator());
-		translateAnimationX.setRepeatCount(0);// 动画重复执行的次数
-		translateAnimationX.setFillAfter(true);
-
-		TranslateAnimation translateAnimationY = new TranslateAnimation(0, 0,
-				0, endY);
-		translateAnimationY.setInterpolator(new AccelerateInterpolator());
-		translateAnimationY.setRepeatCount(0);// 动画重复执行的次数
-		translateAnimationX.setFillAfter(true);
-		final ResizeAnimation animation = new ResizeAnimation(anim_player,
-				(float) start_width, (float) start_height, (float) end_width,
-				(float) end_height);
-		animation.setDuration(ANIMATION_DURATION);
-		AnimationSet set = new AnimationSet(false);
-		set.setFillAfter(true);
-		set.addAnimation(translateAnimationY);
-		set.addAnimation(translateAnimationX);
-		set.addAnimation(animation);
-		set.setDuration(ANIMATION_DURATION);// 动画的执行时间
-		view.startAnimation(set);
-		// 动画监听事件
-		set.setAnimationListener(new AnimationListener() {
-			// 动画的开始
-			@Override
-			public void onAnimationStart(Animation animation) {
-				anim_player.setVisibility(View.VISIBLE);
-				if (isExpanded)
-					mAudioPlayer.setVisibility(View.GONE);
-				else
-					mBottomPlayer.setVisibility(View.GONE);
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			// 动画的结束
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				anim_mask_layout.removeView(anim_player);
-				if (isExpanded) {
-					mAudioPlayer.setVisibility(View.GONE);
-					mBottomPlayer.setVisibility(View.VISIBLE);
-					mExpanded = 2;
-				} else {
-					mBottomPlayer.setVisibility(View.GONE);
-					mAudioPlayer.setVisibility(View.VISIBLE);
-					mExpanded = 0;
-				}
-			}
-		});
-	}
-
-	// 创建动画层
-	private ViewGroup createAnimLayout() {
-		ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
-		LinearLayout animLayout = new LinearLayout(this);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT);
-		animLayout.setLayoutParams(lp);
-		animLayout.setId(Integer.MAX_VALUE);
-		animLayout.setBackgroundResource(android.R.color.transparent);
-		animLayout.setClickable(false);
-		rootView.addView(animLayout);
-		return animLayout;
-	}
-
-	private View addViewToAnimLayout(final ViewGroup vg, final View view,
-			int width, int height, int[] location) {
-		int x = location[0];
-		int y = location[1];
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(width,
-				height);
-		lp.leftMargin = x;
-		lp.topMargin = y;
-		view.setLayoutParams(lp);
-		return view;
 	}
 
 	@Override
@@ -576,5 +383,9 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 			break;
 		}
 	}
+
+    public interface AdudioCallBack {
+        void postExec(String str, int pos);
+    }
 
 }
