@@ -36,6 +36,7 @@ public class ChunkLearnListAdapter extends
 	private int mPosition;
     private int maxCount = 0;
     private boolean isDisplayed = false;
+    private String language;
 
 	public ChunkLearnListAdapter(Context context,
 								 List<PresentationConversation> dataList, Chunk chunk) {
@@ -43,8 +44,9 @@ public class ChunkLearnListAdapter extends
 		mChunk = chunk;
 		this.mdataList = dataList;
         this.maxCount = chunk.getChunkPresentation().getPresentationConversations().size() - 1;
-        checkLanguage(chunk);
+        this.language = chunk.getLanguage();
 
+//        checkLanguage(chunk);
     }
 
     public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
@@ -53,8 +55,9 @@ public class ChunkLearnListAdapter extends
 		mChunk = chunk;
 		mAudioView = audioView;
 		this.mdataList = dataList;
+        this.language = chunk.getLanguage();
 
-        checkLanguage(chunk);
+//        checkLanguage(chunk);
     }
 
     private void checkLanguage(Chunk chunk) {
@@ -119,7 +122,7 @@ public class ChunkLearnListAdapter extends
             convertView.startAnimation(animation);
         }
 
-        if (position == maxCount) {
+        if (position == (mdataList.size() - 1)) {
             isDisplayed = true;
         }
 
@@ -224,10 +227,14 @@ public class ChunkLearnListAdapter extends
 			holder.textview.setText(show);
 		}
 
-        String show_src = content_src.replace("<h>", "");
-        show_src = show_src.replace("</h>", "");
+        String show_src = "";
+        if (!language.equals("en")) {
+
+            show_src = content_src.replace("<h>", "");
+            show_src = show_src.replace("</h>", "");
+        }
         holder.textview_source.setText(show_src);
 
-		FontHelper.applyFont(mContext, layout, FontHelper.FONT_OpenSans);
+        FontHelper.applyFont(mContext, layout, FontHelper.FONT_OpenSans);
 	}
 }

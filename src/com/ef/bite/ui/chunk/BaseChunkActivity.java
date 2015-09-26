@@ -71,10 +71,13 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 		TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
 		interrupt = tutorialBiz
 				.interrupt(TutorialConfigBiz.TUTORIAL_TYPE_LERN_CHUNK);
+
 		if (!interrupt)
 			initComponents();
 
-		MobclickTracking.OmnitureTrack.CreateContext(mContext);
+//        initComponents();
+
+        MobclickTracking.OmnitureTrack.CreateContext(mContext);
 	}
 
 	protected void onResume() {
