@@ -28,7 +28,7 @@ public class LoginServerAPI extends BaseServerAPI {
 			String loginMesString = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/login", usermodeString,
 					headerMap);
-			Log.i("loginMesString", loginMesString);
+//			Log.i("loginMesString", loginMesString);
 			HttpLogin httpLogin = (HttpLogin) JsonSerializeHelper
 					.JsonDeserialize(loginMesString, HttpLogin.class);
 			return httpLogin;
@@ -158,7 +158,7 @@ public class LoginServerAPI extends BaseServerAPI {
 					headerMap);
 			HttpAppResourceResponse httpAppResourceResponse = (HttpAppResourceResponse) JsonSerializeHelper
 					.JsonDeserialize(language, HttpAppResourceResponse.class);
-			Log.i("language", language);
+//			Log.i("language", language);
 			return httpAppResourceResponse;
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -177,7 +177,7 @@ public class LoginServerAPI extends BaseServerAPI {
 
 			HttpVersionCheckResponse httpVersionCheckResponse = (HttpVersionCheckResponse) JsonSerializeHelper
 					.JsonDeserialize(version, HttpVersionCheckResponse.class);
-			Log.i("version", version);
+//			Log.i("version", version);
 
 			return httpVersionCheckResponse;
 		} catch (Exception e) {

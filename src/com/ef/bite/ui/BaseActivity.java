@@ -5,7 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
-import com.apptentive.android.sdk.Log;
+//import com.apptentive.android.sdk.Log;
 import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.apptentive.android.sdk.Apptentive;
+//import com.apptentive.android.sdk.Apptentive;
 import com.ef.bite.AppSession;
 import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.GlobalConfigBLL;
@@ -77,14 +77,14 @@ public class BaseActivity extends FragmentActivity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		Apptentive.onStart(this);
+//		Apptentive.onStart(this);
 	}
 
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
 		super.onStop();
-		Apptentive.onStop(this);
+//		Apptentive.onStop(this);
 	}
 
 	protected void mPageIndicat(LinearLayout layout, int index, int total) {

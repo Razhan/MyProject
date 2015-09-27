@@ -64,10 +64,10 @@ public class AppLanguageHelper {
 		String country = context.getResources().getConfiguration().locale
 				.getCountry().toLowerCase();
 		if (language.equals(country) || language.equals("en")) {
-			Log.i("language", language);
+//			Log.i("language", language);
 			return language;
 		} else {
-			Log.i("language", language + "-" + country);
+//			Log.i("language", language + "-" + country);
 			return language + "-" + country;
 		}
 	}

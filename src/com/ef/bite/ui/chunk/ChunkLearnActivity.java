@@ -23,6 +23,8 @@ import com.ef.bite.business.ChunkBLL;
 import com.ef.bite.dataacces.TutorialConfigSharedStorage;
 import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.dataacces.mode.PresentationConversation;
+import com.ef.bite.logger.LogLevel;
+import com.ef.bite.logger.Logger;
 import com.ef.bite.utils.FontHelper;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.widget.AudioPlayerView;
@@ -93,7 +95,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                 new AdudioCallBack() {
                     @Override
                     public void postExec(String str, int pos) {
-                        Log.d("postExec", str);
+//                        Log.d("postExec", str);
 
                         if (pos == -1) {
                             mConversation.clear();
@@ -103,6 +105,12 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                         mDialogueAdapter.setisDisplayed(false);
                         mDialogueAdapter.notifyDataSetChanged();
                         scrollMyListViewToBottom();
+
+						Logger.init("test")
+								.setMethodCount(2)
+              					.hideThreadInfo()
+								.setLogLevel(LogLevel.FULL);
+						Logger.d("hello");
                     }
                 }
         );
@@ -137,7 +145,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
             @Override
             public void run() {
                 // Select the last row so it will scroll into view...
-                mDialogueListView.setSelection(mConversation.size() - 1);
+                mDialogueListView.smoothScrollToPosition(mConversation.size() - 1);
             }
         });
     }

@@ -142,7 +142,6 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		Log.v("EnglishBite","Bella_id: "+AppConst.CurrUserInfo.UserId);
 	}
 
 	@Override
@@ -267,12 +266,12 @@ public class MainActivity extends BaseActivity {
 							// Toast toast = Toast.makeText(
 							// getApplicationContext(),
 							// "Push register failed", Toast.LENGTH_SHORT);
-							// toast.show();
-							Log.d("com.parse.push",
-									"save error:" + e.getMessage());
+//							// toast.show();
+//							Log.d("com.parse.push",
+//									"save error:" + e.getMessage());
 							e.printStackTrace();
 						} else {
-							Log.d("com.parse.push", "save done:");
+//							Log.d("com.parse.push", "save done:");
 						}
 					}
 				});

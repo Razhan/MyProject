@@ -9,7 +9,6 @@ import cn.trinea.android.common.util.PreferencesUtils;
 import com.ef.bite.AppConst;
 import com.ef.bite.business.CourseServerAPI;
 import com.ef.bite.business.LoginServerAPI;
-import com.ef.bite.dataacces.mode.httpMode.HttpAppResourceRequest;
 import com.ef.bite.dataacces.mode.httpMode.HttpAppResourceResponse;
 import com.ef.bite.dataacces.mode.httpMode.NewHttpAppResourceRequest;
 import com.ef.bite.utils.*;
