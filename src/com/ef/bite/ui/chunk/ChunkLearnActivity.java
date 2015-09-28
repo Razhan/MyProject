@@ -95,14 +95,13 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                 new AdudioCallBack() {
                     @Override
                     public void postExec(String str, int pos) {
-//                        Log.d("postExec", str);
-
                         if (pos == -1) {
                             mConversation.clear();
                         } else {
                             mConversation.add(mChunkModel.getChunkPresentation().getPresentationConversations().get(pos));
                         }
-                        mDialogueAdapter.setisDisplayed(false);
+                        mDialogueAdapter.setDisplayWithAnimation(false);
+                        mDialogueAdapter.setCloseAllGif(false);
                         mDialogueAdapter.notifyDataSetChanged();
                         scrollMyListViewToBottom();
 
@@ -233,9 +232,7 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 
 						@Override
 						public void OnStop() {
-							// TODO Auto-generated method stub
-							// mDialogueAdapter.StopGif(position, false);
-							mDialogueAdapter.closeTranslationGif(true);
+							mDialogueAdapter.closeGif();
 						}
 					});
 
@@ -306,7 +303,8 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 		mBottomPlayer.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void OnCompletion() {
-				enableNext(true);
+                mDialogueAdapter.closeGif();
+                enableNext(true);
 				mDialogueAdapter.setHighLight(true);
 			}
 		});

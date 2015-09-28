@@ -122,6 +122,13 @@ public class AudioPlayerView extends View implements View.OnClickListener {
         progress = (int) prog;
         long timeLeft = mAudioDuration - position;
         mTimeLeft = TimeFormatUtil.convertSecondsToHMmSs(timeLeft);
+
+        if (position == mAudioDuration) {
+            if (mPlayScheduler != null && !mPlayScheduler.isShutdown())
+                mScheduledFuture.cancel(true);
+            mPlayScheduler = null;
+        }
+
         invalidate();
     }
 

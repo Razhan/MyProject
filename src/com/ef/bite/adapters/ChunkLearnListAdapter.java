@@ -33,9 +33,10 @@ public class ChunkLearnListAdapter extends
 	private AudioPlayerView mAudioView;
 	private List<PresentationConversation> mdataList;
 	private boolean closeAllGif = true;
-	private int mPosition;
+    private boolean isClickEvent = false;
+	private int mPosition = -1;
     private int maxCount = 0;
-    private boolean isDisplayed = false;
+    private boolean DisplayWithAnimation = false;
     private String language;
 
 	public ChunkLearnListAdapter(Context context,
@@ -45,8 +46,6 @@ public class ChunkLearnListAdapter extends
 		this.mdataList = dataList;
         this.maxCount = chunk.getChunkPresentation().getPresentationConversations().size() - 1;
         this.language = chunk.getLanguage();
-
-//        checkLanguage(chunk);
     }
 
     public ChunkLearnListAdapter(Context context, AudioPlayerView audioView,
@@ -56,20 +55,13 @@ public class ChunkLearnListAdapter extends
 		mAudioView = audioView;
 		this.mdataList = dataList;
         this.language = chunk.getLanguage();
-
-//        checkLanguage(chunk);
     }
 
-    private void checkLanguage(Chunk chunk) {
-        if(chunk != null && chunk.getLanguage().equals("en")) {
-            for (int i = 0; i < chunk.getChunkPresentation().getPresentationConversations().size(); i++) {
-                chunk.getChunkPresentation().getPresentationConversations().get(i).setContent_src("");
-            }
-        }
+    public void setDisplayWithAnimation(boolean isdisplayed) {
+        this.DisplayWithAnimation = isdisplayed;
     }
-
-    public void setisDisplayed(boolean isdisplayed) {
-        this.isDisplayed = isdisplayed;
+    public void setCloseAllGif(boolean close) {
+        this.closeAllGif = close;
     }
 
 	public void setHighLight(boolean isHighLight) {
@@ -81,6 +73,7 @@ public class ChunkLearnListAdapter extends
 	public void initGif(int position) {
         this.closeAllGif = false;
 		this.mPosition = position;
+        this.isClickEvent = true;
 		this.notifyDataSetChanged();
 	}
 
@@ -91,8 +84,9 @@ public class ChunkLearnListAdapter extends
 	}
 
 
-	public void closeTranslationGif(boolean isShow) {
-		this.closeAllGif = isShow;
+	public void closeGif() {
+		this.closeAllGif = true;
+        this.isClickEvent = false;
 		this.notifyDataSetChanged();
 	}
 
@@ -111,7 +105,7 @@ public class ChunkLearnListAdapter extends
         convertView = super.getView(position, convertView, parent);
         Animation animation;
 
-        if (!isDisplayed && position == (mdataList.size() - 1)) {
+        if (!DisplayWithAnimation && position == (mdataList.size() - 1)) {
             if (position % 2 == 0) {
                 animation = AnimationUtils.loadAnimation(mContext, R.anim.activity_in_from_left);
             } else {
@@ -123,7 +117,7 @@ public class ChunkLearnListAdapter extends
         }
 
         if (position == (mdataList.size() - 1)) {
-            isDisplayed = true;
+            DisplayWithAnimation = true;
         }
 
         return convertView;
@@ -156,19 +150,22 @@ public class ChunkLearnListAdapter extends
 
 		FontHelper.applyFont(mContext, holder.textview, FontHelper.FONT_OpenSans);
 
-		if (mPosition == position) {
+        //针对点击事件，判断是否出现
+		if (mPosition == position && isClickEvent) {
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio);
-			if (mPosition != position) {
-				holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
-			}
 		} else {
 			holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
 		}
 
-		if (closeAllGif) {
-            holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
-		}
+        //针对直接播放，判断是否出现
+        if ((mdataList.size() - 1) == position && !isClickEvent) {
+            holder.voicegifplay.setMovieResource(R.drawable.wechat_audio);
+        }
 
+        //清除所有播放标志
+        if (closeAllGif) {
+            holder.voicegifplay.setMovieResource(R.drawable.wechat_audio_off);
+        }
 
 		if (position % 2 == 0) {
 			holder.speakerA.setVisibility(View.VISIBLE);

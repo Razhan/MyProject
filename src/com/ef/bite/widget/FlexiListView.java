@@ -12,7 +12,7 @@ import android.widget.ListView;
  */
 public class FlexiListView extends ListView{
     //初始可拉动Y轴方向距离
-    private static final int MAX_Y_OVERSCROLL_DISTANCE = 40;
+    private static final int MAX_Y_OVERSCROLL_DISTANCE = 30;
     //上下文环境
     private Context mContext;
     //实际可上下拉动Y轴上的距离
