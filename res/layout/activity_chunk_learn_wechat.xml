@@ -98,7 +98,7 @@
             android:src="@drawable/arrow_goahead" />
     </RelativeLayout>
 
-    <com.ef.bite.widget.AudioPlayerViewWithListener
+    <com.ef.bite.widget.AudioPlayerViewEx
         android:id="@+id/chunk_bottom_audioplayer"
         android:layout_width="90dp"
         android:layout_height="90dp"

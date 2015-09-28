@@ -106,11 +106,11 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                         mDialogueAdapter.notifyDataSetChanged();
                         scrollMyListViewToBottom();
 
-						Logger.init("test")
-								.setMethodCount(2)
-              					.hideThreadInfo()
-								.setLogLevel(LogLevel.FULL);
-						Logger.d("hello");
+//						Logger.init("test")
+//								.setMethodCount(2)
+//              					.hideThreadInfo()
+//								.setLogLevel(LogLevel.FULL);
+//						Logger.d("hello");
                     }
                 }
         );
@@ -150,8 +150,12 @@ public class ChunkLearnActivity extends BaseChunkActivity {
         });
     }
 
+    @Override
+    protected void showTutorial() {
+        initComponents();
+    }
 
-	@Override
+    @Override
 	protected void onResume() {
 		super.onResume();
 		if (configSharedStorage.get() != null) {

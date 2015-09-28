@@ -261,9 +261,9 @@
 
         <!-- The following is required -->
         <!-- Include your App's API key from Apptentive at "Settings -> API & Development" -->
-        <!--<meta-data-->
-            <!--android:name="apptentive_api_key"-->
-            <!--android:value="8346112617faceaf750ae81dc0b41015bb80d3639f37959e5fe373015f28cd70" />-->
+        <meta-data
+            android:name="apptentive_api_key"
+            android:value="8346112617faceaf750ae81dc0b41015bb80d3639f37959e5fe373015f28cd70" />
         <!-- This will prevent VERBOSE and DEBUG level logging. -->
         <!--
              <meta-data
@@ -271,10 +271,10 @@
             android:value="DEBUG" />
         -->
 
-        <!--<activity-->
-            <!--android:name="com.apptentive.android.sdk.ViewActivity"-->
-            <!--android:theme="@style/Apptentive.Theme.Transparent" />-->
-        <!--<activity android:name=".apptentive.SurveyActivity" />-->
+        <activity
+            android:name="com.apptentive.android.sdk.ViewActivity"
+            android:theme="@style/Apptentive.Theme.Transparent" />
+        <activity android:name=".apptentive.SurveyActivity" />
         <activity
             android:name=".ui.record.RecordingActivity"
             android:screenOrientation="portrait" >

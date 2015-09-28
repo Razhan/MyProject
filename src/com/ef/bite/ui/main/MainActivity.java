@@ -20,29 +20,25 @@ import android.widget.*;
 import com.ef.bite.AppConst;
 import com.ef.bite.AppSession;
 import com.ef.bite.R;
-import com.ef.bite.business.GlobalConfigBLL;
 import com.ef.bite.business.LocalDashboardBLL;
+import com.ef.bite.business.TutorialConfigBiz;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.action.UserProfileOpenAction;
 import com.ef.bite.business.task.*;
 import com.ef.bite.dataacces.AchievementCache;
-import com.ef.bite.dataacces.ProfileCache;
 import com.ef.bite.dataacces.mode.PushData;
 import com.ef.bite.dataacces.mode.httpMode.HttpDashboard;
 import com.ef.bite.dataacces.mode.httpMode.HttpGetFriendData;
-import com.ef.bite.model.ConfigModel;
 import com.ef.bite.model.ProfileModel;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.ui.DashBoardFriendView;
 import com.ef.bite.ui.user.FriendNotificationActivity;
 import com.ef.bite.ui.user.LeaderBoardActivity;
 import com.ef.bite.ui.user.SettingsActivity;
-import com.ef.bite.utils.FileUtils;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,11 +72,18 @@ public class MainActivity extends BaseActivity {
 	private int currentIndex;
     private ProgressDialog progress;
 
+    private boolean interrupt;
+    private int resumeTimes;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		init();
-		setContentView(R.layout.activity_home_screen);
+
+        TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
+        interrupt = tutorialBiz.interrupt(TutorialConfigBiz.TUTORIAL_TYPE_LERN_CHUNK);
+
+        setContentView(R.layout.activity_home_screen);
 		setupViews();
 		saveUserProfileForPush();
 
@@ -92,6 +95,9 @@ public class MainActivity extends BaseActivity {
 	private void init(){
 		dashboardBLL = new LocalDashboardBLL(mContext);
 		mScoreBiz = new UserScoreBiz(mContext);
+
+        interrupt = false;
+        resumeTimes = 0;
 	}
 
 	private void setupViews() {
@@ -146,9 +152,14 @@ public class MainActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
-		super.onResume();
+        resumeTimes++;
+        super.onResume();
 		updateDashboard(dashboardCache.load());
 		postUserAchievement();
+
+        if (resumeTimes == 2 && interrupt) {
+            ((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
+        }
 	}
 
 	private void  initFragment() {
@@ -222,12 +233,6 @@ public class MainActivity extends BaseActivity {
 	 * execute action with different type
 	 */
 	private void executeAction() {
-        if (AppConst.CurrUserInfo.isFirstTimeLogin) {
-            AppConst.CurrUserInfo.isFirstTimeLogin = false;
-            profileCache.save();
-            ((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
-        }
-
 		PushData pushData = getPushData();
 		if (pushData == null) {
 			return;
@@ -396,8 +401,6 @@ public class MainActivity extends BaseActivity {
             }
         });
 	}
-
-
 
 	private void updateDashboard(HttpDashboard httpDashboard){
 		if(httpDashboard == null || httpDashboard.data==null){

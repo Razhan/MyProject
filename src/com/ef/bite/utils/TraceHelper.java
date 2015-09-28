@@ -306,11 +306,12 @@ public class TraceHelper {
 				new PostExecuting<HttpBaseMessage>() {
 					@Override
 					public void executing(HttpBaseMessage result) {
-						if (result != null && result.status != null)
-							Log.i("PostTracingTask",
-									"The tracing sync result: "
-											+ (result.status.equals(0) ? "success!"
-													: "fail!"));
+						if (result != null && result.status != null) {
+//                            Log.i("PostTracingTask",
+//                                    "The tracing sync result: "
+//                                            + (result.status.equals(0) ? "success!"
+//                                            : "fail!"));
+                        }
 					}
 				});
 		postTracking

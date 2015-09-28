@@ -34,8 +34,6 @@ public class AppConst {
 		public static String RegisterDate = null;
 		/**课程难度 0 - beginner 1 - advanced**/
 		public static String CourseLevel = "";
-        /**是否首次登陆**/
-        public static boolean isFirstTimeLogin = true;
     }
 
 	/**

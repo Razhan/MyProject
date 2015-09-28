@@ -12,20 +12,20 @@ import java.util.List;
 /**
  * Created by ran on 9/25/15.
  */
-public class AudioPlayerViewWithListener extends AudioPlayerView{
+public class AudioPlayerViewEx extends AudioPlayerView{
 
     private List<Integer> timeStamps;
     private int indexOfTimeStamps = 0;
     private int lastEndTime;
     private ChunkLearnActivity.AdudioCallBack mCallBack;
 
-    public AudioPlayerViewWithListener(Context context) {
+    public AudioPlayerViewEx(Context context) {
         super(context);
         this.mContext = context;
         initialize();
     }
 
-    public AudioPlayerViewWithListener(Context context, AttributeSet attrs) {
+    public AudioPlayerViewEx(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
         initialize();

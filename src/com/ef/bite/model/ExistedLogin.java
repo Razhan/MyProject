@@ -36,8 +36,6 @@ public class ExistedLogin extends BaseJsonModel {
 
     public String Plan_ID;
 
-    public boolean isFirstTimeLogin;
-
 
 	@Override
 	public void parse(String json) {
@@ -58,7 +56,6 @@ public class ExistedLogin extends BaseJsonModel {
 			this.Location = login.Location;
 			this.RegisterDate = login.RegisterDate;
             this.Plan_ID = login.Plan_ID;
-            this.isFirstTimeLogin = login.isFirstTimeLogin;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

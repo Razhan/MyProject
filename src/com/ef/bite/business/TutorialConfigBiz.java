@@ -36,26 +36,26 @@ public class TutorialConfigBiz {
 			is_show = true;
 		else {
 			switch (tutorialType) {
-			case TUTORIAL_TYPE_LERN_CHUNK:
-				if (!tutorialConfig.Tutorial_Learn_Chunk)
-					is_show = true;
-				break;
-				
-			case TUTORIAL_TYPE_HOME_SCREEN:
-				if (!tutorialConfig.Tutorial_Home_Screen)
-					is_show = true;
-				break;
-				
-			case TUTORIAL_TYPE_REHEARSE_CHUNK:
-				if (!tutorialConfig.Tutorial_Rehearse_Chunk)
-					is_show = true;
-				break;
-				
-			case TUTORIAL_TYPE_MASTER_CHUNK:
-				if (!tutorialConfig.Tutorial_Master_Chunk)
-					is_show = true;
-				break;
-			}
+                case TUTORIAL_TYPE_LERN_CHUNK:
+                    if (!tutorialConfig.Tutorial_Learn_Chunk)
+                        is_show = true;
+                    break;
+
+                case TUTORIAL_TYPE_HOME_SCREEN:
+                    if (!tutorialConfig.Tutorial_Home_Screen)
+                        is_show = true;
+                    break;
+
+                case TUTORIAL_TYPE_REHEARSE_CHUNK:
+                    if (!tutorialConfig.Tutorial_Rehearse_Chunk)
+                        is_show = true;
+                    break;
+
+                case TUTORIAL_TYPE_MASTER_CHUNK:
+                    if (!tutorialConfig.Tutorial_Master_Chunk)
+                        is_show = true;
+                    break;
+                }
 		}
 
 		if (is_show) {

@@ -14,8 +14,7 @@ import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.ScoreLevelHelper;
-import com.ef.bite.widget.AudioPlayerView;
-import com.ef.bite.widget.AudioPlayerViewWithListener;
+import com.ef.bite.widget.AudioPlayerViewEx;
 import com.ef.bite.widget.DotProgressbar;
 import com.ef.bite.widget.HeaderView;
 import com.ef.bite.widget.UserLevelView;
@@ -28,7 +27,7 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 	protected ImageButton mGoBack;
 	protected UserLevelView mLevel;
 	protected RelativeLayout mBottomLayout;
-	protected AudioPlayerViewWithListener mBottomPlayer;
+	protected AudioPlayerViewEx mBottomPlayer;
 	protected ImageButton mGoAHead;
 	protected DotProgressbar progressbar;
 
@@ -61,26 +60,27 @@ public class BaseChunkActivity extends BaseActivity implements OnClickListener {
 		mLevel = headerView.getLevelView();
 		mBottomLayout = (RelativeLayout) this
 				.findViewById(R.id.chunk_bottom_layout);
-		mBottomPlayer = (AudioPlayerViewWithListener) this
+		mBottomPlayer = (AudioPlayerViewEx) this
 				.findViewById(R.id.chunk_bottom_audioplayer);
 		mGoAHead = (ImageButton) this.findViewById(R.id.chunk_bottom_go_ahead);
 		mGoAHead.setOnClickListener(this);
 		if (mUScoreBLL == null)
 			mUScoreBLL = new UserScoreBiz(mContext);
 
-		TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
-		interrupt = tutorialBiz
-				.interrupt(TutorialConfigBiz.TUTORIAL_TYPE_LERN_CHUNK);
-
-		if (!interrupt)
-			initComponents();
-
-//        initComponents();
+        showTutorial();
 
         MobclickTracking.OmnitureTrack.CreateContext(mContext);
 	}
 
-	protected void onResume() {
+     protected void showTutorial() {
+        TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
+        interrupt = tutorialBiz
+                .interrupt(TutorialConfigBiz.TUTORIAL_TYPE_LERN_CHUNK);
+        if (!interrupt)
+            initComponents();
+    }
+
+    protected void onResume() {
 		super.onResume();
 		int score = mUScoreBLL.getUserScore();
 		int level = ScoreLevelHelper.getDisplayLevel(score);
