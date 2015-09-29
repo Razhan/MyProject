@@ -185,7 +185,7 @@ public class ChunkLearnListAdapter extends
         String sentence = data.getSentence();
 		String content_src = data.getContent_src();
 
-        if (mHighlight) {
+        if (mHighlight && sentence.contains("<h>")) {
 
             holder.textview.setMovementMethod(LinkMovementMethod
                     .getInstance());
