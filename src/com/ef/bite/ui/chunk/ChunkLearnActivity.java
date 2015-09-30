@@ -72,7 +72,11 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 	private TutorialConfigSharedStorage configSharedStorage;
     private List<PresentationConversation> mConversation;
 
-	@Override
+    private final int REFRESH = -1;
+    private final int PAUSE = -2;
+    private final int RESUME = -3;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -95,11 +99,22 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                 new AdudioCallBack() {
                     @Override
                     public void postExec(String str, int pos) {
-                        if (pos == -1) {
+                        if (pos == REFRESH) {
                             mConversation.clear();
+                            return;
+                        } else if (pos == RESUME) {
+                            mDialogueAdapter.setCloseAllGif(false);
+                            mDialogueAdapter.setisClickEvent(false);
+                            mDialogueAdapter.notifyDataSetChanged();
+                            return;
+                        } else if (pos == PAUSE) {
+                            mDialogueAdapter.closeGif();
+                            mDialogueAdapter.notifyDataSetChanged();
+                            return;
                         } else {
                             mConversation.add(mChunkModel.getChunkPresentation().getPresentationConversations().get(pos));
                         }
+
                         mDialogueAdapter.setDisplayWithAnimation(false);
                         mDialogueAdapter.setCloseAllGif(false);
                         mDialogueAdapter.notifyDataSetChanged();
@@ -203,7 +218,15 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 		mSlideMidLayout = (RelativeLayout) findViewById(R.id.chunk_lesson_slide_mid_layout);
 		mSlideBottomLayout = (LinearLayout) findViewById(R.id.chunk_lesson_side_bottom_layout);
 		mWeChatPlayer = new AudioPlayerView(mContext);
-		mDialogueListView = (FlexiListView) findViewById(R.id.chunk_lesson_dialogue_listview);
+
+        mWeChatPlayer.setOnCompletionListener(new OnCompletionListener() {
+            @Override
+            public void OnCompletion() {
+                mDialogueAdapter.closeGif();
+            }
+        });
+
+        mDialogueListView = (FlexiListView) findViewById(R.id.chunk_lesson_dialogue_listview);
 		mBottomPlayer.setMiniStatus(true);
 
         mConversation = new ArrayList<PresentationConversation>();
@@ -225,15 +248,14 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 				Integer endTime = conversation.getEndTime();
 				mDialogueAdapter.initGif(position);
 				if (startTime != null && endTime != null) {
-					// mBottomPlayer.start(startTime);
-					// mBottomPlayer.stop(endTime);
+
 					mWeChatPlayer.start(startTime);
 					mWeChatPlayer.stop(endTime, new OnStopClickListener() {
 
-						@Override
-						public void OnStop() {
-							mDialogueAdapter.closeGif();
-						}
+                        @Override
+                        public void OnStop() {
+                            mDialogueAdapter.closeGif();
+                        }
 					});
 
 					mBottomPlayer.pause();

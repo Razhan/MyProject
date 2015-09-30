@@ -40,7 +40,9 @@ import com.ef.bite.utils.TimeFormatUtil;
  */
 public class AudioPlayerView extends View implements View.OnClickListener {
 	final static int Msg_SetProgress = 1;
-	private final int MSG_EndTime = 6;
+	protected final int MSG_EndTime = -1;
+    protected final int MSG_PAUSE= -2;
+    protected final int MSG_RESUME = -3;
 
 	/** 已准备播放状态 */
 	final public static int Status_Ready = 0;
@@ -99,10 +101,13 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		public void handleMessage(Message msg) {
 			try {
 				if (msg.what == Msg_SetProgress) {
-                    handleProcess();
-				}
-				if (msg.what == MSG_EndTime) {
-					if (mPlayer.getCurrentPosition() > mEndtime) {
+                    handleProcessMsg();
+				} else if (msg.what == MSG_PAUSE) {
+                    handlePauseMsg();
+                } else if (msg.what == MSG_RESUME) {
+                    handleResumeMsg();
+                } else if (msg.what == MSG_EndTime) {
+					if (mPlayer.getCurrentPosition() >= mEndtime) {
 						pause();
 						mTimer.cancel();
 						if (mOnStopClickListener != null) {
@@ -116,7 +121,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 		}
 	};
 
-    protected void handleProcess() {
+    protected void handleProcessMsg() {
         long position = mPlayer.getCurrentPosition();
         long prog = 100L * position / mAudioDuration;
         progress = (int) prog;
@@ -130,6 +135,12 @@ public class AudioPlayerView extends View implements View.OnClickListener {
         }
 
         invalidate();
+    }
+
+    protected void handlePauseMsg() {
+    }
+
+    protected void handleResumeMsg() {
     }
 
     public AudioPlayerView(Context context) {
@@ -314,6 +325,7 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 			if (mPlayScheduler != null && !mPlayScheduler.isShutdown())
 				mScheduledFuture.cancel(true);
 			mPlayScheduler = null;
+
 			if (mPlayer != null && mPlayer.isPlaying()) {
 				mPlayer.pause();
 				mPlayStatus = 2;
@@ -609,7 +621,9 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		switch (mPlayStatus) {
+        Message message = new Message();
+
+        switch (mPlayStatus) {
 		case 0: // Ready
 			start();
 			MobclickTracking.OmnitureTrack.ActionDialogue(3);
@@ -617,10 +631,15 @@ public class AudioPlayerView extends View implements View.OnClickListener {
 //			MobclickTracking.UmengTrack.ActionDialogue(3, mContext);
 			break;
 		case 1: // playing
+            message.what = MSG_PAUSE;
+            mHandler.sendMessage(message);
+
 			pause();
             MobclickTracking.OmnitureTrack.ActionDialogue(4);
 			break;
 		case 2: // paused
+            message.what = MSG_RESUME;
+            mHandler.sendMessage(message);
 			start();
 			break;
 		case 3: // finished
