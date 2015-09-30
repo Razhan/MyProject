@@ -69,6 +69,9 @@ public class ChunkLearnListAdapter extends
 		this.notifyDataSetChanged();
 	}
 
+    public void setisClickEvent(boolean is) {
+        this.isClickEvent = is;
+    }
 
 	public void initGif(int position) {
         this.closeAllGif = false;

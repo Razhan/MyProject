@@ -42,18 +42,26 @@ public class AudioPlayerViewEx extends AudioPlayerView{
     }
 
     @Override
-    protected void handleProcess() {
-        super.handleProcess();
+    protected void handleProcessMsg() {
+        super.handleProcessMsg();
         triggerDialogueItem((int) mPlayer.getCurrentPosition());
+    }
+
+    @Override
+    protected void handlePauseMsg() {
+        mCallBack.postExec(null, MSG_PAUSE);
+    }
+
+    @Override
+    protected void handleResumeMsg() {
+        mCallBack.postExec(null, MSG_RESUME);
     }
 
     private void triggerDialogueItem(final int pos) {
 
         if (indexOfTimeStamps < timeStamps.size()) {
             if (pos >= timeStamps.get(indexOfTimeStamps)) {
-                String temp = "Time Stamp = " + String.valueOf(timeStamps.get(indexOfTimeStamps)) + "   " +
-                              "Real position = " + String.valueOf(pos);
-                mCallBack.postExec(temp, indexOfTimeStamps);
+                mCallBack.postExec(null, indexOfTimeStamps);
                 indexOfTimeStamps++;
             }
         }
@@ -63,7 +71,7 @@ public class AudioPlayerViewEx extends AudioPlayerView{
     protected void reload() {
         super.reload();
 
-        mCallBack.postExec("", -1);
+        mCallBack.postExec(null, MSG_EndTime);
         indexOfTimeStamps = 0;
     }
 }
