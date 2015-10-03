@@ -109,7 +109,6 @@ public class ChunkLearnActivity extends BaseChunkActivity {
                             return;
                         } else if (pos == PAUSE) {
                             mDialogueAdapter.closeGif();
-                            mDialogueAdapter.notifyDataSetChanged();
                             return;
                         } else {
                             mConversation.add(mChunkModel.getChunkPresentation().getPresentationConversations().get(pos));
@@ -371,7 +370,8 @@ public class ChunkLearnActivity extends BaseChunkActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (mBottomPlayer.getStatus() == 1)
+        mDialogueAdapter.closeGif();
+        if (mBottomPlayer.getStatus() == 1)
 			mBottomPlayer.pause();
 		if (mWeChatPlayer != null) {
 			mWeChatPlayer.pause();

@@ -1,8 +1,13 @@
 package com.ef.bite.ui.main;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,16 +38,22 @@ public abstract class BaseDashboardFragment extends Fragment {
     private RelativeLayout mLearnPhraseLayout;
     private RelativeLayout mPracticePhraseLayout;
     private RelativeLayout mMasteredPhraseLayout;
-    private TextView mLearnCount;
-    private TextView mPracticeCount;
-    private TextView mMasteredCount;
-    private TextView mLearnTitle;
-    private TextView mPracticeTitle;
-    private TextView masteredTitle;
-    private TextView mLearnAvailableInfo;
-    private TextView mPracticeAvaiableInfo;
-    private HttpDashboard httpDashboard;
-    private ChunkLoader chunkLoader;
+    protected HttpDashboard httpDashboard;
+    protected ChunkLoader chunkLoader;
+    private TextView phrasesNum;
+    private TextView likesNum;
+
+    protected TextView practice_title;
+    protected TextView practice_info;
+    protected Button nextButton;
+
+    private LinearLayout courseInfo;
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        root = inflater.inflate(R.layout.fragment_home_sreen_all_done_more, container, false);
+        setupViews();
+        return root;
+    }
 
     public void setupViews() {
         if (root == null) {
@@ -50,147 +61,22 @@ public abstract class BaseDashboardFragment extends Fragment {
         }
         chunkLoader = new ChunkLoader(getActivity());
 
+
+        courseInfo = (LinearLayout)root.findViewById(R.id.home_screen_courses_info);
         mLearnPhraseLayout = (RelativeLayout) root
-                .findViewById(R.id.home_screen_learn_layout);
+                .findViewById(R.id.home_screen_progress_score_layout);
         mPracticePhraseLayout = (RelativeLayout) root
-                .findViewById(R.id.home_screen_practice_layout);
+                .findViewById(R.id.home_screen_learn_layout);
         mMasteredPhraseLayout = (RelativeLayout) root
                 .findViewById(R.id.home_screen_mastered_layout);
+        phrasesNum = (TextView)root.findViewById(R.id.home_screen_pharses_num);
+        likesNum = (TextView)root.findViewById(R.id.home_screen_likes_num);
 
-        mLearnPhraseLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (httpDashboard == null || httpDashboard.data ==null|| httpDashboard.data.new_lessons == null ||httpDashboard.data.new_lessons.isEmpty()) {
-                    return;
-                }
+        practice_title = (TextView)root.findViewById(R.id.home_screen_practice_title);
+        practice_info = (TextView)root.findViewById(R.id.home_screen_practice_available_info);
 
-                final HttpDashboard.Lesson lesson = httpDashboard.data.new_lessons.get(0);
-                chunkLoader.load(new ChunkLoader.Request(
-                                lesson.course_package_url,
-                                lesson.course_id,
-                                lesson.course_version),
-                        new ChunkLoader.OnFinishListener() {
-                            @Override
-                            public void doOnFinish(boolean isDone) {
-                                Chunk chunk = chunkLoader.getChunk(lesson.course_id);
-                                if (chunk != null) {
-                                    Intent intent = new Intent(getActivity(), ChunkLearnActivity.class);
-                                    intent.putExtra(AppConst.BundleKeys.Chunk, chunk);
-                                    getActivity().startActivity(intent);
-//                                    new NewChunkOpenAction().open(getActivity(), chunk);
-                                } else {
-                                    if(NetworkChecker.isConnected(getActivity())){
-                                        Toast.makeText(
-                                                getActivity(),
-                                                JsonSerializeHelper.JsonLanguageDeserialize(
-                                                        getActivity(), "home_screen_no_new_chunks"),
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(
-                                                getActivity(),
-                                                JsonSerializeHelper.JsonLanguageDeserialize(
-                                                        getActivity(), "error_check_network_available"),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
+        nextButton = (Button)root.findViewById(R.id.home_screen_next_button);
 
-                                }
-                            }
-                        });
-            }
-        });
-        mPracticePhraseLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (httpDashboard == null) {
-                    return;
-                }
-                final List<ChunkLoader.Request> requests = new ArrayList<ChunkLoader.Request>();
-                for (HttpDashboard.Lesson lesson : httpDashboard.data.new_rehearsals) {
-                    requests.add(new ChunkLoader.Request(
-                            lesson.course_package_url,
-                            lesson.course_id,
-                            lesson.course_version));
-                }
-
-                chunkLoader.load(requests,
-                        new ChunkLoader.OnFinishListener() {
-                            @Override
-                            public void doOnFinish(boolean isDone) {
-                                List<Chunk> chunks = chunkLoader.getChunkList(requests);
-                                addChunkStatus(chunks, httpDashboard);
-                                if (chunks != null && chunks.size() > 0) {
-                                    new RehearseChunkOpenAction().open(getActivity(), chunks);
-                                } else {
-                                    if(NetworkChecker.isConnected(getActivity())){
-                                        Toast.makeText(
-                                                getActivity(),
-                                                JsonSerializeHelper.JsonLanguageDeserialize(
-                                                        getActivity(), "home_screen_no_rehearse_chunks"),
-                                                Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(
-                                                getActivity(),
-                                                JsonSerializeHelper.JsonLanguageDeserialize(
-                                                        getActivity(), "error_check_network_available"),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }
-                            }
-                        });
-            }
-        });
-        mMasteredPhraseLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChunkListActivity.class);
-                intent.putExtra(AppConst.BundleKeys.Chunk_List_Type, 1);
-                getActivity().startActivity(intent);
-            }
-        });
-
-        mLearnCount = (TextView) root
-                .findViewById(R.id.home_screen_learn_count);
-        mPracticeCount = (TextView) root
-                .findViewById(R.id.home_sreen_practice_count);
-        mMasteredCount = (TextView) root
-                .findViewById(R.id.home_sreen_mastered_count);
-        mLearnTitle = (TextView) root
-                .findViewById(R.id.home_screen_learn_title);
-        mLearnTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                getActivity(), "home_screen_learn_title"));
-        mPracticeTitle = (TextView) root
-                .findViewById(R.id.home_screen_practice_title);
-        mPracticeTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                getActivity(), "home_screen_practice_title"));
-        masteredTitle = (TextView) root
-                .findViewById(R.id.home_sreen_mastered_title);
-        masteredTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                getActivity(), "profile_phrasses"));
-        mLearnAvailableInfo = (TextView) root
-                .findViewById(R.id.home_screen_learn_available_info);
-        mLearnAvailableInfo.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                getActivity(), "home_screen_all_done_avaiable_soon"));
-        mPracticeAvaiableInfo = (TextView) root
-                .findViewById(R.id.home_screen_practice_available_info);
-        mPracticeAvaiableInfo.setText(JsonSerializeHelper.JsonLanguageDeserialize(getActivity(),
-                "home_screen_all_done_avaiable_soon"));
-//        update(httpDashboard);
-    }
-
-    private void addChunkStatus(List<Chunk> chunks, HttpDashboard httpDashboard) {
-        if(chunks==null||httpDashboard==null){
-            return;
-        }
-        for (Chunk chunk : chunks) {
-            for (int i = 0; i < httpDashboard.data.new_rehearsals.size(); i++) {
-                HttpDashboard.Lesson lesson = httpDashboard.data.new_rehearsals.get(i);
-                if (chunk!=null && lesson!=null && StringUtils.isEquals(StringUtils.nullStrToEmpty(chunk.getChunkCode()), StringUtils.nullStrToEmpty(lesson.course_id))) {
-                    chunk.setRehearsalStatus(lesson.rehearsal_status);
-                    break;
-                }
-            }
-        }
     }
 
     protected void toast(String message) {
@@ -205,63 +91,19 @@ public abstract class BaseDashboardFragment extends Fragment {
         return mPracticePhraseLayout;
     }
 
-    public RelativeLayout getmMasteredPhraseLayout() {
-        return mMasteredPhraseLayout;
-    }
-
-    public TextView getmLearnCount() {
-        return mLearnCount;
-    }
-
-    public TextView getmPracticeCount() {
-        return mPracticeCount;
-    }
-
-    public TextView getmMasteredCount() {
-        return mMasteredCount;
-    }
-
-    public TextView getmLearnTitle() {
-        return mLearnTitle;
-    }
-
-    public TextView getmPracticeTitle() {
-        return mPracticeTitle;
-    }
-
-    public TextView getMasteredTitle() {
-        return masteredTitle;
-    }
-
-    public TextView getmLearnAvailableInfo() {
-        return mLearnAvailableInfo;
-    }
-
-    public TextView getmPracticeAvaiableInfo() {
-        return mPracticeAvaiableInfo;
-    }
-
-    public void update(HttpDashboard httpDashboard) {
-        this.httpDashboard = httpDashboard;
+    protected void update(HttpDashboard httpDashboard) {
         if (httpDashboard == null) {
             return;
         }
+        this.httpDashboard = httpDashboard;
 
-        getmLearnAvailableInfo().setText(getAvailableLeftTimeText(
-                (long) httpDashboard.data.new_lesson_unlocking_seconds * 1000, true));
-        getmPracticeAvaiableInfo().setText(getAvailableLeftTimeText(
-                (long) httpDashboard.data.new_rehearsal_unlocking_seconds * 1000, false));
-        getmLearnCount().setText(httpDashboard.data.new_lesson_count + "");
-        getmPracticeCount().setText(httpDashboard.data.new_rehearsals.size() + "");
-        getmMasteredCount().setText(httpDashboard.data.phrase_count + "");
+        courseInfo.setVisibility(View.VISIBLE);
+        phrasesNum.setText(String.valueOf(httpDashboard.data.phrase_count));
+        likesNum.setText(String.valueOf(httpDashboard.data.phrase_count));
     }
 
     public HttpDashboard getHttpDashboard() {
         return httpDashboard;
-    }
-
-    public void setHttpDashboard(HttpDashboard httpDashboard) {
-        this.httpDashboard = httpDashboard;
     }
 
     long ONE_MINITUE = 60 * 1000;
@@ -326,48 +168,4 @@ public abstract class BaseDashboardFragment extends Fragment {
         }
 
     }
-
-    public void getUnlockChunk(){
-        new GetUnlockChunkTask(getActivity(), new PostExecuting<HttpUnlockChunks>() {
-            @Override
-            public void executing(HttpUnlockChunks httpUnlockChunks) {
-                if(httpUnlockChunks!=null && httpUnlockChunks.status.equals("0")){
-                    if(httpUnlockChunks.data.size()<1){
-                        return;
-                    }
-
-                    final HttpDashboard.Lesson lesson = httpUnlockChunks.data.get(0);
-                    chunkLoader.load(new ChunkLoader.Request(lesson.course_package_url,lesson.course_id,lesson.course_version), new ChunkLoader.OnFinishListener() {
-                        @Override
-                        public void doOnFinish(boolean isDone) {
-                            Chunk chunk = chunkLoader.getChunk(lesson.course_id);
-                            if (chunk != null) {
-                                Intent intent = new Intent(getActivity(), ChunkLearnActivity.class);
-                                intent.putExtra(AppConst.BundleKeys.Chunk, chunk);
-                                getActivity().startActivity(intent);
-//                                    new NewChunkOpenAction().open(getActivity(), chunk);
-                            } else {
-                                if(NetworkChecker.isConnected(getActivity())){
-                                    Toast.makeText(
-                                            getActivity(),
-                                            JsonSerializeHelper.JsonLanguageDeserialize(
-                                                    getActivity(), "home_screen_no_new_chunks"),
-                                            Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(
-                                            getActivity(),
-                                            JsonSerializeHelper.JsonLanguageDeserialize(
-                                                    getActivity(), "error_check_network_available"),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        }
-                    });
-                }
-            }
-        }).execute(AppConst.CurrUserInfo.UserId);
-    }
-
-
 }

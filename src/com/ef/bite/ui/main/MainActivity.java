@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -154,7 +153,7 @@ public class MainActivity extends BaseActivity {
 	protected void onResume() {
         resumeTimes++;
         super.onResume();
-		updateDashboard(dashboardCache.load());
+//		updateDashboard(dashboardCache.load());
 		postUserAchievement();
 
         if (resumeTimes == 2 && interrupt) {
@@ -166,8 +165,9 @@ public class MainActivity extends BaseActivity {
 		fragments.clear();
 		fragments.add(new LearnFragment());
 		fragments.add(new PracticeFragment());
-		fragments.add(new AllDoneFragment());
-	}
+		fragments.add(new AllDoneFragmentMore());
+        fragments.add(new AllDoneFragmentNothing());
+    }
 
 	private void switchFragment(int index) {
 		if (null == mFragmentManager) {
@@ -226,9 +226,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-
-
-
 	/**
 	 * execute action with different type
 	 */
@@ -264,22 +261,22 @@ public class MainActivity extends BaseActivity {
 		ParseInstallation.getCurrentInstallation().put("device_id",
 				AppConst.GlobalConfig.DeviceID);
 		ParseInstallation.getCurrentInstallation().saveInBackground(
-				new SaveCallback() {
-					@Override
-					public void done(ParseException e) {
-						if (e != null) {
-							// Toast toast = Toast.makeText(
-							// getApplicationContext(),
-							// "Push register failed", Toast.LENGTH_SHORT);
+                new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            // Toast toast = Toast.makeText(
+                            // getApplicationContext(),
+                            // "Push register failed", Toast.LENGTH_SHORT);
 //							// toast.show();
 //							Log.d("com.parse.push",
 //									"save error:" + e.getMessage());
-							e.printStackTrace();
-						} else {
+                            e.printStackTrace();
+                        } else {
 //							Log.d("com.parse.push", "save done:");
-						}
-					}
-				});
+                        }
+                    }
+                });
 	}
 
 	/**
@@ -413,27 +410,24 @@ public class MainActivity extends BaseActivity {
 		//show friends list
 		convertFriends(httpDashboard.data.rank_friends);
 		mFriendContainer.initialize(mFriendLayout);
-
 	}
 
 	private void updateFragment(HttpDashboard httpDashboard){
-
+        int index;
 		//switch fragment by states
-		if(httpDashboard.data.new_lessons.size()>0){
-			switchFragment(0);
-		} else if (httpDashboard.data.new_rehearsals.size() >0){
-			switchFragment(1);
+		if(httpDashboard.data.new_lessons.size() > 0){
+            index = 0;
+		} else if (httpDashboard.data.new_rehearsals.size() > 0){
+            index = 0;
 		} else {
-			switchFragment(2);
+            index = 0;
 		}
 
-		List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
-		if(fragmentList!=null){
-			for (Fragment fragment : fragmentList) {
-				((BaseDashboardFragment) fragment).update(httpDashboard);
-			}
-		}
-	}
+        List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
+        ((BaseDashboardFragment) fragmentList.get(index)).update(httpDashboard);
+        switchFragment(index);
+
+    }
 
 
 	private void convertFriends(List<HttpDashboard.friend> friends){
@@ -449,16 +443,6 @@ public class MainActivity extends BaseActivity {
 			mFriendList.add(friendData);
 		}
 
-	}
-
-	private void onStartExecute(HttpDashboard httpDashboard){
-		if(httpDashboard.data.new_lessons.size()>0){
-
-		} else if (httpDashboard.data.new_rehearsals.size() >0){
-
-		} else {
-
-		}
 	}
 
 	private void showUpdateDialog() {
