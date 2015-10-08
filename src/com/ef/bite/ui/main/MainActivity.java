@@ -12,7 +12,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.*;
 
 
@@ -40,6 +44,7 @@ import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,13 +53,24 @@ import java.util.List;
  * MainScreen for dashboard
  */
 public class MainActivity extends BaseActivity {
+    private final String TAG = MainActivity.class.getSimpleName();
+
 	private ImageButton mSettingBtn;
 	private RelativeLayout inboxView;
 	private LinearLayout mFriendLayout; // 底部朋友layout
 	private FriendsContainer mFriendContainer;
 	private ImageButton mFirendMore;
 	private TextView home_screen_leaderboard_title;
-	private LocalDashboardBLL dashboardBLL;
+    private ScrollView scrollView;
+    private LinearLayout chunkInfo;
+    private LinearLayout leaderBoard;
+    private WebView webView;
+    private Button button;
+    private View inflatedView;
+
+
+
+    private LocalDashboardBLL dashboardBLL;
 	private UserScoreBiz mScoreBiz;
 	private HttpGetFriendData currentUserSelected;
 	private List<HttpGetFriendData> mFriendList = new ArrayList<HttpGetFriendData>();
@@ -77,6 +93,11 @@ public class MainActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        LayoutInflater inflater = getLayoutInflater();
+        this.inflatedView = inflater.inflate(R.layout.fragment_home_sreen_all_done_more, null);
+        button = (Button) inflatedView.findViewById(R.id.home_screen_next_button);
+
 		init();
 
         TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
@@ -118,7 +139,7 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(mContext,
-						FriendNotificationActivity.class));
+                        FriendNotificationActivity.class));
 			}
 		});
 
@@ -127,8 +148,8 @@ public class MainActivity extends BaseActivity {
 			public void onClick(View v) {
 				startActivity(new Intent(mContext, LeaderBoardActivity.class));
 				MainActivity.this.overridePendingTransition(
-						R.anim.activity_in_from_right,
-						R.anim.activity_out_to_left);
+                        R.anim.activity_in_from_right,
+                        R.anim.activity_out_to_left);
 
 
 			}
@@ -140,9 +161,36 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 		mPhraseLayout = (LinearLayout)findViewById(R.id.home_screen_chunk_layout);
-		initFragment();
+
+        scrollView = (ScrollView)findViewById(R.id.home_screen_scrollview);
+        chunkInfo = (LinearLayout)findViewById(R.id.home_screen_chunk_layout);
+        leaderBoard = (LinearLayout)findViewById(R.id.home_screen_leaderboard);
+        webView = (WebView) findViewById(R.id.home_screen_webView);
+        webView.loadUrl("http://www.baidu.com/");
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+
+        initFragment();
 		switchFragment(3);
 	}
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            int height = scrollView.getMeasuredHeight();
+
+            chunkInfo.getLayoutParams().height = height / 3 * 2;
+            chunkInfo.requestLayout();
+            leaderBoard.getLayoutParams().height = height / 3 * 1;
+            leaderBoard.requestLayout();
+        }
+    }
 
 	@Override
 	public void onStart() {
@@ -157,7 +205,7 @@ public class MainActivity extends BaseActivity {
 		postUserAchievement();
 
         if (resumeTimes == 2 && interrupt) {
-            ((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
+            ((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
         }
 	}
 
@@ -236,10 +284,10 @@ public class MainActivity extends BaseActivity {
 		}
 		switch (pushData.getType()) {
 			case new_lesson:
-				((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
+				((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
 				break;
 			case new_rehearsal:
-				((BaseDashboardFragment)fragments.get(currentIndex)).getmPracticePhraseLayout().performClick();
+				((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
 				break;
 			case recording_rate:
 				inboxView.performClick();
@@ -404,6 +452,7 @@ public class MainActivity extends BaseActivity {
 			return;
 		}
 		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count>0?View.VISIBLE:View.GONE);
+        webView.setVisibility(httpDashboard.data.new_lesson_count > 0 ? View.GONE : View.VISIBLE);
 		mNotificationCount.setText(httpDashboard.data.inbox_count + "");
 		masteredChunkNum=httpDashboard.data.master_count;
 		updateFragment(httpDashboard);

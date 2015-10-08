@@ -125,7 +125,7 @@
                 android:layout_height="50dp"
                 android:layout_margin="20dp"
                 android:text=""
-                android:background="@drawable/btn_round_orange"/>
+                android:background="@color/bella_ios_like_item_blue"/>
         </LinearLayout>
     </RelativeLayout>
 

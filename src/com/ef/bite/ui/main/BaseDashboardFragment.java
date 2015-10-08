@@ -87,6 +87,10 @@ public abstract class BaseDashboardFragment extends Fragment {
         return mLearnPhraseLayout;
     }
 
+    public Button getNextButton() {
+        return nextButton;
+    }
+
     public RelativeLayout getmPracticePhraseLayout() {
         return mPracticePhraseLayout;
     }

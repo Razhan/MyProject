@@ -67,62 +67,76 @@
             android:src="@drawable/eflogo" />
     </RelativeLayout>
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/home_screen_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/home_screen_chunk_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="4"
-            android:background="@color/white"
-            android:gravity="center"
-            android:orientation="vertical" >
-        </LinearLayout>
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="2"
-            android:background="@color/bella_chunk_background"
+            android:layout_height="match_parent"
             android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/home_screen_leaderboard_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                android:alpha="0.8"
-                android:text="@string/home_screen_leaderboard_title"
-                android:textColor="@color/bella_color_black_dark"
-                android:textSize="16sp" />
 
             <LinearLayout
+                android:id="@+id/home_screen_chunk_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:orientation="horizontal" >
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <WebView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/home_screen_webView"/>
+
+            <LinearLayout
+                android:id="@+id/home_screen_leaderboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bella_chunk_background"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/home_screen_leaderboard_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:alpha="0.8"
+                    android:text="@string/home_screen_leaderboard_title"
+                    android:textColor="@color/bella_color_black_dark"
+                    android:textSize="16sp" />
 
                 <LinearLayout
-                    android:id="@+id/home_screen_friend_layout"
-                    android:layout_width="0dip"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="4"
+                    android:layout_marginLeft="10dp"
                     android:orientation="horizontal" >
-                </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/home_screen_friend_more"
-                    android:layout_width="0dip"
-                    android:layout_height="80dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/button_action_bar_pink_background"
-                    android:src="@drawable/arrow_goahead_black" />
+                    <LinearLayout
+                        android:id="@+id/home_screen_friend_layout"
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="4"
+                        android:orientation="horizontal" >
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/home_screen_friend_more"
+                        android:layout_width="0dip"
+                        android:layout_height="80dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_action_bar_pink_background"
+                        android:src="@drawable/arrow_goahead_black" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+
     </LinearLayout>
+    </ScrollView>
+
+
 
 </LinearLayout>
