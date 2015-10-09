@@ -35,24 +35,7 @@ public class LearnFragment extends BaseDashboardFragment implements View.OnClick
     @Override
     public void setupViews() {
         super.setupViews();
-
         nextButton.setOnClickListener(this);
-
-//        getmLearnAvailableInfo().setText(JsonSerializeHelper.JsonLanguageDeserialize(getActivity(), "home_screen_everyday_learn_new"));
-//        FontHelper.applyFont(getActivity(), getmLearnTitle(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmPracticeCount(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmMasteredCount(),
-//                FontHelper.FONT_Museo500);
-//        if(getHttpDashboard()!=null && getHttpDashboard().data.new_rehearsal_count >0){
-//            getmPracticeCount().setTextColor(getResources().getColor(
-//                    R.color.bella_color_orange_light));
-//        }else {
-//            getmPracticeCount().setTextColor(getResources().getColor(
-//                    R.color.bella_color_black_dark));
-//            getmPracticeCount().setAlpha(0.5f);
-//        }
     }
 
     @Override
@@ -98,7 +81,7 @@ public class LearnFragment extends BaseDashboardFragment implements View.OnClick
     protected void update(HttpDashboard httpDashboard) {
         super.update(httpDashboard);
 
-        practice_title.setText(httpDashboard.data.new_lessons.get(0).course_name.toUpperCase());
+        practice_title.setText("\"" + httpDashboard.data.new_lessons.get(0).course_name.toUpperCase() + "\"");
         practice_info.setText("LEARN A NEW PHRASE");
         nextButton.setText("LEARN");
     }

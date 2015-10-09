@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -44,7 +43,6 @@ import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
 
 import java.io.File;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,10 +63,7 @@ public class MainActivity extends BaseActivity {
     private LinearLayout chunkInfo;
     private LinearLayout leaderBoard;
     private WebView webView;
-    private Button button;
     private View inflatedView;
-
-
 
     private LocalDashboardBLL dashboardBLL;
 	private UserScoreBiz mScoreBiz;
@@ -89,14 +84,11 @@ public class MainActivity extends BaseActivity {
 
     private boolean interrupt;
     private int resumeTimes;
+    private HttpDashboard mhttpDashboard;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-        LayoutInflater inflater = getLayoutInflater();
-        this.inflatedView = inflater.inflate(R.layout.fragment_home_sreen_all_done_more, null);
-        button = (Button) inflatedView.findViewById(R.id.home_screen_next_button);
 
 		init();
 
@@ -182,15 +174,22 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            int height = scrollView.getMeasuredHeight();
+        int scrollViewHeight;
 
-            chunkInfo.getLayoutParams().height = height / 3 * 2;
-            chunkInfo.requestLayout();
-            leaderBoard.getLayoutParams().height = height / 3 * 1;
-            leaderBoard.requestLayout();
+        scrollViewHeight = scrollView.getMeasuredHeight();
+
+        if (mhttpDashboard.data.new_lesson_count > 0) {
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
+            leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
+        } else {
+            webView.setVisibility(View.VISIBLE);
+            webView.getLayoutParams().height = scrollViewHeight / 3 * 1;
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
+            leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
         }
+        scrollView.requestLayout();
     }
+
 
 	@Override
 	public void onStart() {
@@ -240,18 +239,6 @@ public class MainActivity extends BaseActivity {
 		}
 		ft.commitAllowingStateLoss();
 	}
-
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		super.onActivityResult(requestCode, resultCode, data);
-//		if (requestCode == AppConst.RequestCode.EF_LOGIN
-//				&& resultCode == AppConst.ResultCode.APP_EXIT) {
-//			finish();
-//		} else if (requestCode == AppConst.RequestCode.WALKTHROUGH
-//				&& resultCode == AppConst.ResultCode.APP_EXIT) {
-//			finish();
-//		}
-//	}
 
 	private long lastExitTime = 0;
 	@Override
@@ -313,15 +300,8 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void done(ParseException e) {
                         if (e != null) {
-                            // Toast toast = Toast.makeText(
-                            // getApplicationContext(),
-                            // "Push register failed", Toast.LENGTH_SHORT);
-//							// toast.show();
-//							Log.d("com.parse.push",
-//									"save error:" + e.getMessage());
                             e.printStackTrace();
                         } else {
-//							Log.d("com.parse.push", "save done:");
                         }
                     }
                 });
@@ -423,6 +403,8 @@ public class MainActivity extends BaseActivity {
 					@Override
 					public void executing(HttpDashboard httpDashboard) {
 						if ( httpDashboard != null && httpDashboard.data !=null) {
+                            mhttpDashboard = httpDashboard;
+
 							dashboardCache.save(httpDashboard);
 							updateDashboard(httpDashboard);
                             progress.dismiss();
@@ -451,8 +433,8 @@ public class MainActivity extends BaseActivity {
 		if(httpDashboard == null || httpDashboard.data==null){
 			return;
 		}
+
 		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count>0?View.VISIBLE:View.GONE);
-        webView.setVisibility(httpDashboard.data.new_lesson_count > 0 ? View.GONE : View.VISIBLE);
 		mNotificationCount.setText(httpDashboard.data.inbox_count + "");
 		masteredChunkNum=httpDashboard.data.master_count;
 		updateFragment(httpDashboard);
@@ -461,7 +443,7 @@ public class MainActivity extends BaseActivity {
 		mFriendContainer.initialize(mFriendLayout);
 	}
 
-	private void updateFragment(HttpDashboard httpDashboard){
+    private void updateFragment(HttpDashboard httpDashboard){
         int index;
 		//switch fragment by states
 		if(httpDashboard.data.new_lessons.size() > 0){
@@ -475,7 +457,6 @@ public class MainActivity extends BaseActivity {
         List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
         ((BaseDashboardFragment) fragmentList.get(index)).update(httpDashboard);
         switchFragment(index);
-
     }
 
 
