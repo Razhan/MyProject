@@ -158,12 +158,19 @@ public class MainActivity extends BaseActivity {
         chunkInfo = (LinearLayout)findViewById(R.id.home_screen_chunk_layout);
         leaderBoard = (LinearLayout)findViewById(R.id.home_screen_leaderboard);
         webView = (WebView) findViewById(R.id.home_screen_webView);
-        webView.loadUrl("http://www.baidu.com/");
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
                 return true;
+            }
+        });
+
+        webView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, AdvertisementActivity.class);
+                it.putExtra("target_url", mhttpDashboard.data.banners.get(0).getTarget_url());
+                startActivity(it);
             }
         });
 
@@ -177,16 +184,25 @@ public class MainActivity extends BaseActivity {
         int scrollViewHeight;
 
         scrollViewHeight = scrollView.getMeasuredHeight();
+        LinearLayout.LayoutParams lp_board = (LinearLayout.LayoutParams) leaderBoard.getLayoutParams();
 
-        if (mhttpDashboard.data.new_lesson_count > 0) {
-            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
+        if (!mhttpDashboard.data.unlock_enabled) {
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2 - lp_board.topMargin;
             leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
         } else {
+            LinearLayout.LayoutParams lp_title = (LinearLayout.LayoutParams) home_screen_leaderboard_title.getLayoutParams();
+
+            int titleHeight = home_screen_leaderboard_title.getMeasuredHeight() + lp_board.topMargin +
+                        lp_title.topMargin + home_screen_leaderboard_title.getTotalPaddingTop();
+
+            webView.getLayoutParams().height = scrollViewHeight / 4 * 2 - titleHeight;
             webView.setVisibility(View.VISIBLE);
-            webView.getLayoutParams().height = scrollViewHeight / 3 * 1;
-            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
+            webView.loadUrl(mhttpDashboard.data.banners.get(0).getImage_url());
+
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 4 * 2;
             leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
         }
+        scrollView.setVisibility(View.VISIBLE);
         scrollView.requestLayout();
     }
 
@@ -441,6 +457,7 @@ public class MainActivity extends BaseActivity {
 		//show friends list
 		convertFriends(httpDashboard.data.rank_friends);
 		mFriendContainer.initialize(mFriendLayout);
+
 	}
 
     private void updateFragment(HttpDashboard httpDashboard){
@@ -449,10 +466,12 @@ public class MainActivity extends BaseActivity {
 		if(httpDashboard.data.new_lessons.size() > 0){
             index = 0;
 		} else if (httpDashboard.data.new_rehearsals.size() > 0){
-            index = 0;
+            index = 1;
+		} else if (httpDashboard.data.unlock_enabled) {
+            index = 2;
 		} else {
-            index = 0;
-		}
+            index = 3;
+        }
 
         List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
         ((BaseDashboardFragment) fragmentList.get(index)).update(httpDashboard);

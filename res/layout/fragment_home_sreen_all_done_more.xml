@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bella_chunk_practice_info"
+    android:background="@color/bella_chunk_background"
     android:orientation="vertical"
     android:id="@+id/home_screen_courses_info">
 
@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="0dip"
         android:alpha="0.7"
-        android:layout_weight="3" >
+        android:layout_weight="2" >
 
         <RelativeLayout
             android:id="@+id/Relative_Pharse"
@@ -32,7 +32,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/leaderboard_global"
+                android:src="@drawable/home_book"
                 android:layout_alignRight="@+id/home_screen_pharses_num"
                 android:layout_marginTop="10dp"
                 />
@@ -67,7 +67,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/likerecording"
+                android:src="@drawable/home_like"
                 android:layout_alignRight="@+id/home_screen_likes_num"
                 android:layout_alignTop="@+id/home_screen_likes_num"
                 android:layout_marginTop="10dp"
@@ -106,7 +106,7 @@
                 android:paddingTop="20dp"
                 android:text=""
                 android:textStyle="bold"
-                android:textSize="35sp" />
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/home_screen_practice_available_info"

@@ -11,23 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.ef.bite.AppConst;
 import com.ef.bite.R;
-import com.ef.bite.business.action.RehearseChunkOpenAction;
-import com.ef.bite.business.task.GetUnlockChunkTask;
-import com.ef.bite.business.task.PostExecuting;
-import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.dataacces.mode.httpMode.HttpDashboard;
-import com.ef.bite.dataacces.mode.httpMode.HttpUnlockChunks;
-import com.ef.bite.ui.chunk.ChunkLearnActivity;
-import com.ef.bite.ui.chunk.ChunkListActivity;
 import com.ef.bite.dataacces.ChunkLoader;
-import com.ef.bite.utils.JsonSerializeHelper;
-import com.ef.bite.utils.NetworkChecker;
-import com.ef.bite.utils.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.ef.bite.ui.chunk.ChunkListActivity;
 
 /**
  * The basic states for dashboard
@@ -38,6 +25,8 @@ public abstract class BaseDashboardFragment extends Fragment {
     private RelativeLayout mLearnPhraseLayout;
     private RelativeLayout mPracticePhraseLayout;
     private RelativeLayout mMasteredPhraseLayout;
+    private RelativeLayout Relative_Pharse;
+
     protected HttpDashboard httpDashboard;
     protected ChunkLoader chunkLoader;
     private TextView phrasesNum;
@@ -69,6 +58,7 @@ public abstract class BaseDashboardFragment extends Fragment {
                 .findViewById(R.id.home_screen_learn_layout);
         mMasteredPhraseLayout = (RelativeLayout) root
                 .findViewById(R.id.home_screen_mastered_layout);
+
         phrasesNum = (TextView)root.findViewById(R.id.home_screen_pharses_num);
         likesNum = (TextView)root.findViewById(R.id.home_screen_likes_num);
 
@@ -77,6 +67,13 @@ public abstract class BaseDashboardFragment extends Fragment {
 
         nextButton = (Button)root.findViewById(R.id.home_screen_next_button);
 
+        Relative_Pharse = (RelativeLayout)root.findViewById(R.id.Relative_Pharse);
+        Relative_Pharse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), ChunkListActivity.class));
+            }
+        });
     }
 
     protected void toast(String message) {
@@ -103,7 +100,7 @@ public abstract class BaseDashboardFragment extends Fragment {
 
         courseInfo.setVisibility(View.VISIBLE);
         phrasesNum.setText(String.valueOf(httpDashboard.data.phrase_count));
-        likesNum.setText(String.valueOf(httpDashboard.data.phrase_count));
+        likesNum.setText(String.valueOf(httpDashboard.data.recording_like_count));
     }
 
     public HttpDashboard getHttpDashboard() {

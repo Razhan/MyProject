@@ -36,6 +36,8 @@ public class AllDoneFragmentNothing extends BaseDashboardFragment {
         super.update(httpDashboard);
 
         practice_title.setText("You are done for today!");
+//        Practice again in xxx days
+
         practice_info.setText("Do you want to learn more?");
         nextButton.setVisibility(View.GONE);
     }
