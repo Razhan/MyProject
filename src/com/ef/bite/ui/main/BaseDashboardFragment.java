@@ -15,6 +15,7 @@ import com.ef.bite.R;
 import com.ef.bite.dataacces.mode.httpMode.HttpDashboard;
 import com.ef.bite.dataacces.ChunkLoader;
 import com.ef.bite.ui.chunk.ChunkListActivity;
+import com.ef.bite.utils.JsonSerializeHelper;
 
 /**
  * The basic states for dashboard
@@ -31,6 +32,8 @@ public abstract class BaseDashboardFragment extends Fragment {
     protected ChunkLoader chunkLoader;
     private TextView phrasesNum;
     private TextView likesNum;
+    private TextView phrasesTitle;
+    private TextView likesTitle;
 
     protected TextView practice_title;
     protected TextView practice_info;
@@ -61,6 +64,8 @@ public abstract class BaseDashboardFragment extends Fragment {
 
         phrasesNum = (TextView)root.findViewById(R.id.home_screen_pharses_num);
         likesNum = (TextView)root.findViewById(R.id.home_screen_likes_num);
+        phrasesTitle = (TextView)root.findViewById(R.id.Pharse_title);
+        likesTitle = (TextView)root.findViewById(R.id.Like_title);
 
         practice_title = (TextView)root.findViewById(R.id.home_screen_practice_title);
         practice_info = (TextView)root.findViewById(R.id.home_screen_practice_available_info);
@@ -97,6 +102,23 @@ public abstract class BaseDashboardFragment extends Fragment {
             return;
         }
         this.httpDashboard = httpDashboard;
+
+        if (httpDashboard.data.phrase_count < 2) {
+            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                    getActivity(), "dash_screen_phrase_singular"));
+        } else {
+            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                    getActivity(), "dash_screen_phrase_plural"));
+        }
+
+        if (httpDashboard.data.recording_like_count < 2) {
+            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                    getActivity(), "dash_screen_phrase_singular"));
+        } else {
+            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                    getActivity(), "dash_screen_likes_plural"));
+        }
+
 
         courseInfo.setVisibility(View.VISIBLE);
         phrasesNum.setText(String.valueOf(httpDashboard.data.phrase_count));

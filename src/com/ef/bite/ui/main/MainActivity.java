@@ -186,20 +186,19 @@ public class MainActivity extends BaseActivity {
         scrollViewHeight = scrollView.getMeasuredHeight();
         LinearLayout.LayoutParams lp_board = (LinearLayout.LayoutParams) leaderBoard.getLayoutParams();
 
-        if (!mhttpDashboard.data.unlock_enabled) {
+        if (mhttpDashboard.data.new_lesson_count > 0 || mhttpDashboard.data.new_rehearsal_count > 0) {
+            webView.setVisibility(View.GONE);
             chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2 - lp_board.topMargin;
             leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
         } else {
-            LinearLayout.LayoutParams lp_title = (LinearLayout.LayoutParams) home_screen_leaderboard_title.getLayoutParams();
-
-            int titleHeight = home_screen_leaderboard_title.getMeasuredHeight() + lp_board.topMargin +
-                        lp_title.topMargin + home_screen_leaderboard_title.getTotalPaddingTop();
-
-            webView.getLayoutParams().height = scrollViewHeight / 4 * 2 - titleHeight;
+            String URL = mhttpDashboard.data.banners.get(0).getImage_url();
+            String html = "<html><body><img src=\"" + URL + "\" width=\"100%\" height=\"auto\" vertical-align=\"center\"\"/></body></html>";
+            webView.loadDataWithBaseURL("", html, "text/html", "UTF-8", "");
             webView.setVisibility(View.VISIBLE);
-            webView.loadUrl(mhttpDashboard.data.banners.get(0).getImage_url());
+            //banner size: 475 * 224
+            webView.getLayoutParams().height = scrollView.getWidth() / 2;
 
-            chunkInfo.getLayoutParams().height = scrollViewHeight / 4 * 2;
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
             leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
         }
         scrollView.setVisibility(View.VISIBLE);
@@ -218,10 +217,6 @@ public class MainActivity extends BaseActivity {
         super.onResume();
 //		updateDashboard(dashboardCache.load());
 		postUserAchievement();
-
-        if (resumeTimes == 2 && interrupt) {
-            ((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
-        }
 	}
 
 	private void  initFragment() {
@@ -290,7 +285,9 @@ public class MainActivity extends BaseActivity {
 				((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
 				break;
 			case new_rehearsal:
-				((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
+                if (currentIndex == 1) {
+                    ((BaseDashboardFragment) fragments.get(currentIndex)).getNextButton().performClick();
+                }
 				break;
 			case recording_rate:
 				inboxView.performClick();
@@ -450,7 +447,7 @@ public class MainActivity extends BaseActivity {
 			return;
 		}
 
-		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count>0?View.VISIBLE:View.GONE);
+		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count > 0 ? View.VISIBLE : View.GONE);
 		mNotificationCount.setText(httpDashboard.data.inbox_count + "");
 		masteredChunkNum=httpDashboard.data.master_count;
 		updateFragment(httpDashboard);
@@ -463,9 +460,9 @@ public class MainActivity extends BaseActivity {
     private void updateFragment(HttpDashboard httpDashboard){
         int index;
 		//switch fragment by states
-		if(httpDashboard.data.new_lessons.size() > 0){
+		if(httpDashboard.data.new_lesson_count > 0){
             index = 0;
-		} else if (httpDashboard.data.new_rehearsals.size() > 0){
+		} else if (httpDashboard.data.new_rehearsal_count > 0){
             index = 1;
 		} else if (httpDashboard.data.unlock_enabled) {
             index = 2;
@@ -476,6 +473,10 @@ public class MainActivity extends BaseActivity {
         List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
         ((BaseDashboardFragment) fragmentList.get(index)).update(httpDashboard);
         switchFragment(index);
+
+        if (resumeTimes == 2 && interrupt && currentIndex == 0) {
+            ((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
+        }
     }
 
 

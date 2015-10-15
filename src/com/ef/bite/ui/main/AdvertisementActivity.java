@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 import android.webkit.WebBackForwardList;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -36,6 +37,8 @@ public class AdvertisementActivity extends BaseActivity {
                 }, null);
 
         mWebView = (WebView)findViewById(R.id.ads_webview);
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
         mWebView.loadUrl(target_url);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override

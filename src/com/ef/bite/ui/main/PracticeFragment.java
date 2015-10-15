@@ -37,32 +37,6 @@ public class PracticeFragment extends BaseDashboardFragment implements View.OnCl
         super.setupViews();
 
         nextButton.setOnClickListener(this);
-
-//        FontHelper.applyFont(getActivity(), getmPracticeTitle(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmLearnCount(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmMasteredCount(),
-//                FontHelper.FONT_Museo500);
-
-//        if(getHttpDashboard()!=null && getHttpDashboard().data.new_lesson_count>0){
-//            getmPracticeCount().setTextColor(getResources().getColor(
-//                    R.color.bella_color_orange_light));
-//        }else {
-//            getmLearnCount().setTextColor(getResources().getColor(
-//                    R.color.bella_color_black_dark));
-//            getmLearnCount().setAlpha(0.5f);
-//            getmMasteredCount().setAlpha(0.5f);
-//        }
-
-//        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
-//        RelativeLayout unlockBtn = (RelativeLayout) root.findViewById(R.id.home_screen_learn_layout);
-//        unlockBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        getUnlockChunk();
-//                    }
-//                });
     }
 
     @Override
@@ -125,9 +99,12 @@ public class PracticeFragment extends BaseDashboardFragment implements View.OnCl
     protected void update(HttpDashboard httpDashboard) {
         super.update(httpDashboard);
 
-        practice_title.setText(String.valueOf(httpDashboard.data.phrase_count) + " PHRASES");
-        practice_info.setText("PRACTICE WHAT YOU'VE LEARNT");
-        nextButton.setText("PRACTICE");
+        practice_title.setText(String.valueOf(httpDashboard.data.new_rehearsal_count) + " " + JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_phrase_plural"));
+        practice_info.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_practice_now"));
+        nextButton.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_practice_title"));
     }
 
 }

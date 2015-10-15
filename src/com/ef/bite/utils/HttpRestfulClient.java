@@ -35,7 +35,7 @@ import org.json.JSONObject;
 
 public class HttpRestfulClient {
 
-    public final static int TIME_OUT = 13000;
+    public final static int TIME_OUT = 45 * 1000;
 	public static int Header_Num = 3;// 0:baidu 1:91 2:anzhuo 3:woo 4:wandoujia
 
 	/*

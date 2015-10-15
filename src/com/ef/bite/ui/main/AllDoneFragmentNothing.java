@@ -1,5 +1,6 @@
 package com.ef.bite.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,7 @@ public class AllDoneFragmentNothing extends BaseDashboardFragment {
 //        return root;
 //    }
 
-    private final long ONE_MINITUE = 60 * 1000;
+    private final long ONE_MINITUE = 60 * 1;
     private final long ONE_HOUR = 60 * ONE_MINITUE;
     private final long ONE_DAY = 24 * ONE_HOUR;
 
@@ -35,14 +36,13 @@ public class AllDoneFragmentNothing extends BaseDashboardFragment {
     protected void update(HttpDashboard httpDashboard) {
         super.update(httpDashboard);
 
-        practice_title.setText("You are done for today!");
-//        Practice again in xxx days
+        practice_title.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_no_more_phrases"));
 
-        practice_info.setText("Do you want to learn more?");
+        practice_info.setText("Practice again in " + getAvailableLeftTimeText(
+                                httpDashboard.data.new_rehearsal_unlocking_seconds, false));
         nextButton.setVisibility(View.GONE);
     }
-
-
 
     /**
      * 显示将来可用的具体剩余时间
@@ -51,39 +51,24 @@ public class AllDoneFragmentNothing extends BaseDashboardFragment {
      * @param isLearn       是否是learn，或者practice
      * @return
      */
-    public String getAvailableLeftTimeText(Long availableTime, boolean isLearn) {
+    public String getAvailableLeftTimeText(Integer availableTime, boolean isLearn) {
         // String TimeText = null;
         try {
             if (availableTime == null)
-                return isLearn ? JsonSerializeHelper.JsonLanguageDeserialize(
-                        getActivity(), "home_screen_learn_available_tomorrow")
-                        : JsonSerializeHelper.JsonLanguageDeserialize(getActivity(),
-                        "home_screen_practice_available_tomorrow");
-            if (availableTime >= ONE_DAY)
-                return isLearn ? JsonSerializeHelper.JsonLanguageDeserialize(
-                        getActivity(), "home_screen_learn_available_tomorrow")
-                        : JsonSerializeHelper.JsonLanguageDeserialize(getActivity(),
-                        "home_screen_practice_available_tomorrow");
-            if (availableTime < ONE_DAY && availableTime >= ONE_HOUR) {
+                return String.valueOf(1) + " days";
+
+            if (availableTime >= ONE_DAY) {
+                if (availableTime % ONE_DAY == 0) {
+                    return String.valueOf(availableTime / ONE_DAY) + " days";
+                } else {
+                    return String.valueOf(availableTime / ONE_DAY + 1) + " days";
+                }
+            } else if (availableTime < ONE_DAY && availableTime >= ONE_HOUR) {
                 int leftHour = (int) (availableTime / ONE_HOUR);
-                return String.format(
-                        isLearn ? JsonSerializeHelper.JsonLanguageDeserialize(
-                                getActivity(), "home_screen_learn_available_hours")
-                                : JsonSerializeHelper.JsonLanguageDeserialize(
-                                getActivity(),
-                                "home_screen_practice_available_hour"),
-                        leftHour);
-            }
-            if (availableTime < ONE_HOUR && availableTime > 0) {
+                return String.valueOf(leftHour) + " hours";
+            } else if (availableTime < ONE_HOUR && availableTime > 0) {
                 int leftMinutes = (int) (availableTime / ONE_MINITUE);
-                return String
-                        .format(isLearn ? JsonSerializeHelper
-                                        .JsonLanguageDeserialize(getActivity(),
-                                                "home_screen_learn_available_tomorrow")
-                                        : JsonSerializeHelper
-                                        .JsonLanguageDeserialize(getActivity(),
-                                                "home_screen_practice_available_minutes"),
-                                leftMinutes);
+                return String.valueOf(leftMinutes) + " minutes";
             }
             if (availableTime <= 0) {
                 return isLearn ? JsonSerializeHelper.JsonLanguageDeserialize(

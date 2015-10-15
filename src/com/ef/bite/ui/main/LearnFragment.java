@@ -59,7 +59,7 @@ public class LearnFragment extends BaseDashboardFragment implements View.OnClick
                             getActivity().startActivity(intent);
 //                                    new NewChunkOpenAction().open(getActivity(), chunk);
                         } else {
-                            if(NetworkChecker.isConnected(getActivity())){
+                            if (NetworkChecker.isConnected(getActivity())) {
                                 Toast.makeText(
                                         getActivity(),
                                         JsonSerializeHelper.JsonLanguageDeserialize(
@@ -82,7 +82,9 @@ public class LearnFragment extends BaseDashboardFragment implements View.OnClick
         super.update(httpDashboard);
 
         practice_title.setText("\"" + httpDashboard.data.new_lessons.get(0).course_name.toUpperCase() + "\"");
-        practice_info.setText("LEARN A NEW PHRASE");
-        nextButton.setText("LEARN");
+        practice_info.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_new_phrases"));
+        nextButton.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_learn_now"));
     }
 }

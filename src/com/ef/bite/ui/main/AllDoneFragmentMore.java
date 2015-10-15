@@ -41,31 +41,7 @@ public class AllDoneFragmentMore extends BaseDashboardFragment implements View.O
     @Override
     public void setupViews() {
         super.setupViews();
-
         nextButton.setOnClickListener(this);
-
-//        goodJob = (TextView) root.findViewById(R.id.home_screen_done_good);
-//        goodJob.setText(JsonSerializeHelper.JsonLanguageDeserialize(getActivity(), "home_screen_all_done_good_job"));
-//        goodJobInfo = (TextView) root.findViewById(R.id.home_screen_done_info);
-//        goodJobInfo.setText(JsonSerializeHelper.JsonLanguageDeserialize(getActivity(), "home_screen_all_done_stay_tuned"));
-//        FontHelper.applyFont(getActivity(), getmLearnCount(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmPracticeCount(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), getmMasteredCount(),
-//                FontHelper.FONT_Museo500);
-//        FontHelper.applyFont(getActivity(), goodJob,
-//                FontHelper.FONT_Museo500);
-
-//        ImageButton unlockBtn = (ImageButton) root.findViewById(R.id.home_screen_practice_unlock);
-//        RelativeLayout unlockBtn = (RelativeLayout) root.findViewById(R.id.home_screen_learn_layout);
-//        unlockBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getUnlockChunk();
-//            }
-//        });
-
     }
 
     @Override
@@ -77,9 +53,12 @@ public class AllDoneFragmentMore extends BaseDashboardFragment implements View.O
     protected void update(HttpDashboard httpDashboard) {
         super.update(httpDashboard);
 
-        practice_title.setText("You are done for today!");
-        practice_info.setText("Do you want to learn more?");
-        nextButton.setText("LEARN MORE");
+        practice_title.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_no_more_phrases"));
+        practice_info.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_learn_more"));
+        nextButton.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+                getActivity(), "dash_screen_learn_more_button"));
     }
 
     private void getUnlockChunk(){

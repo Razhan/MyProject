@@ -345,7 +345,8 @@
         </activity>
         <activity
             android:name=".ui.main.AdvertisementActivity"
-            android:label="@string/title_activity_advertisement" >
+            android:label="@string/title_activity_advertisement"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
