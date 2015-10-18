@@ -11,10 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import com.ef.bite.dataacces.mode.httpMode.HttpDashboard;
 import com.ef.bite.dataacces.ChunkLoader;
 import com.ef.bite.ui.chunk.ChunkListActivity;
+import com.ef.bite.ui.record.UserRecordingActivity;
 import com.ef.bite.utils.JsonSerializeHelper;
 
 /**
@@ -27,6 +30,7 @@ public abstract class BaseDashboardFragment extends Fragment {
     private RelativeLayout mPracticePhraseLayout;
     private RelativeLayout mMasteredPhraseLayout;
     private RelativeLayout Relative_Pharse;
+    private RelativeLayout Relative_likes;
 
     protected HttpDashboard httpDashboard;
     protected ChunkLoader chunkLoader;
@@ -79,6 +83,19 @@ public abstract class BaseDashboardFragment extends Fragment {
                 getActivity().startActivity(new Intent(getActivity(), ChunkListActivity.class));
             }
         });
+
+        Relative_likes = (RelativeLayout)root.findViewById(R.id.Relative_likes);
+        Relative_likes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(),
+                        UserRecordingActivity.class);
+                intent.putExtra(AppConst.BundleKeys.BELLAID,
+                        AppConst.CurrUserInfo.UserId);
+                startActivity(intent);
+            }
+        });
     }
 
     protected void toast(String message) {
@@ -113,7 +130,7 @@ public abstract class BaseDashboardFragment extends Fragment {
 
         if (httpDashboard.data.recording_like_count < 2) {
             likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                    getActivity(), "dash_screen_phrase_singular"));
+                    getActivity(), "dash_screen_likes_singular"));
         } else {
             likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
                     getActivity(), "dash_screen_likes_plural"));
