@@ -43,7 +43,7 @@ public class HostCompetition {
 //				+ AppUtils.getVersion(context));
 //		SimpleTask<?> task2 = getTask(AppConst.EFAPIs.HK_ETHost + "android/"
 //				+ AppUtils.getVersion(context));
-
+//
         SimpleTask<?> task1 = getTask("http://bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com/api/bella/2/config");
         SimpleTask<?> task2 = getTask("http://42.96.250.52/api/bella/2/config");
 

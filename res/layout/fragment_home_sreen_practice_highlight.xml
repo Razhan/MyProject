@@ -1,132 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/bella_chunk_practice_info"
+              android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/home_screen_progress_score_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dip"
+        android:alpha="0.7"
+        android:layout_weight="3" >
+
+
+        <RelativeLayout
+            android:id="@+id/Relative_Pharse"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_alignParentLeft="true">
+
+            <TextView
+                android:id="@+id/home_screen_pharses_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="8"
+                android:textSize="50dp"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/leaderboard_global"
+                android:layout_marginRight="20dp"
+                android:layout_alignRight="@+id/home_screen_pharses_num"
+                android:layout_marginTop="10dp"
+                />
+
+            <TextView
+                android:id="@+id/Pharse_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@+id/home_screen_pharses_num"
+                android:text="PHARSES"
+                android:textSize="15dp"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/Relative_likes"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginRight="30dp"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/home_screen_likes_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="8"
+                android:textSize="50dp"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/leaderboard_global"
+                android:layout_marginRight="20dp"
+                android:layout_alignRight="@+id/home_screen_likes_num"
+                android:layout_alignTop="@+id/home_screen_likes_num"
+                android:layout_marginTop="10dp"
+                />
+
+            <TextView
+                android:id="@+id/Like_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@+id/home_screen_likes_num"
+                android:text="LIKES"
+                android:textSize="15dp"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/home_screen_learn_layout"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_weight="1.2" >
-
-        <TextView
-            android:id="@+id/home_screen_learn_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:text="0"
-            android:textColor="@color/bella_color_orange_light"
-            android:textSize="@dimen/home_screen_non_highlite_text_size" />
-
-        <ImageButton
-                android:id="@+id/home_screen_practice_unlock"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="5dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/button_go_ahead_enable"
-                android:src="@drawable/arrow_goahead"
-                android:clickable="false"
-                android:focusable="false"
-                android:visibility="visible"/>
+        android:layout_weight="5" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/home_screen_learn_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha="0.8"
-                android:text="@string/home_screen_learn_title"
-                android:textColor="@color/bella_color_black_dark"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/home_screen_learn_available_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:alpha="0.6"
-                android:text="@string/home_screen_learn_available_tomorrow"
-                android:textColor="@color/bella_color_black_dark"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/home_screen_practice_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="2" >
-
-        <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/dashboard_highlight" />
-
-        <TextView
-            android:id="@+id/home_sreen_practice_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:text="00"
-            android:textColor="@color/white"
-            android:textSize="@dimen/home_screen_highlight_text_size" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/home_sreen_practice_count"
+            android:layout_margin="10dp"
+            android:background="@drawable/corners_bg"
+            android:gravity="center"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/home_screen_practice_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_screen_practice_title"
-                android:textColor="@color/bella_color_black_dark"
-                android:textSize="26sp" />
+                android:text=""
+                android:textStyle="bold"
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/home_screen_practice_available_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:scrollHorizontally="false"
-                android:text="@string/home_screen_practice_3_times_to_master"
-                android:textColor="@color/bella_color_black_dark"
-                android:textSize="16sp" />
+                android:layout_margin="20dp"
+                android:text=""
+                android:textSize="15sp" />
 
-            <ImageButton
-                android:id="@+id/home_screen_practice_go"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginTop="5dp"
-                android:duplicateParentState="true"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="@drawable/button_go_ahead_enable"
-                android:src="@drawable/arrow_goahead" />
+            <Button
+                android:id="@+id/home_screen_next_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_margin="20dp"
+                android:text=""
+                android:background="@drawable/btn_round_orange"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -134,30 +131,8 @@
         android:id="@+id/home_screen_mastered_layout"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.9" >
-
-        <TextView
-            android:id="@+id/home_sreen_mastered_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:alpha="0.8"
-            android:text="@string/home_screen_mastered_title"
-            android:textColor="@color/bella_color_black_dark"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/home_sreen_mastered_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:text="0"
-            android:textColor="@color/bella_color_orange_light"
-            android:textSize="@dimen/home_screen_non_highlite_text_size" />
+        android:layout_weight="1"
+        android:visibility="gone">
     </RelativeLayout>
 
 </LinearLayout>

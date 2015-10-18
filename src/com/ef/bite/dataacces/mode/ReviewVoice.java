@@ -11,8 +11,11 @@ public class ReviewVoice {
 	private String voice_file_name;
 	private int voice_length;
 	private String voice_url;
+    public String market_code;
+    public String flag_file_name;
 
-	public String getBella_id() {
+
+    public String getBella_id() {
 		return bella_id;
 	}
 

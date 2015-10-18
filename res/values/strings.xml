@@ -349,5 +349,6 @@
     </string-array>
     <string name="title_activity_third_party_log_in">ThirdPartyLogInActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_advertisement">AdvertisementActivity</string>
 
 </resources>

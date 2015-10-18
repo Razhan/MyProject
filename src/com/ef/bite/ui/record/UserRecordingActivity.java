@@ -294,6 +294,7 @@ public class UserRecordingActivity extends BaseActivity implements
 							userRecord = result.getData();
 							voiceReviewrs = result.getData()
 									.getVoice_reviewers();
+                            COURESID =result.data.getCourse_id();
 							if (voiceReviewrs.size() > 0) {
 								loadvoicereviewers(userRecord
 										.getVoice_file_name());

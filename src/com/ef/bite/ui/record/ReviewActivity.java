@@ -143,7 +143,7 @@ public class ReviewActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        getCountryInfo(BELLAID);
+//        getCountryInfo(BELLAID);
     }
 
     private void getCountryInfo(String id) {
@@ -256,6 +256,19 @@ public class ReviewActivity extends BaseActivity implements
 							reviewvoiceSum = reviewVoices.size();
 							if (reviewvoiceSum > 0) {
 								initSetViewValue(VoiceNum);
+
+                                country = result.getData().get(0).market_code;
+
+                                String path = android.os.Environment.getExternalStorageDirectory()
+                                        + File.separator + AppConst.CacheKeys.RootStorage + File.separator
+                                        + AppConst.CacheKeys.Storage_Language + File.separator + "country"
+                                        + File.separator;
+
+                                rl_country.setVisibility(View.VISIBLE);
+                                country_name.setText(CountryBLL.getLocalCountry(country, path, mContext));
+                                country_flag.setImageBitmap(CountryBLL.getLoacalBitmap(country, path));
+
+
 							}
 						} else {
 							goback.setOnClickListener(ReviewActivity.this);
@@ -306,7 +319,7 @@ public class ReviewActivity extends BaseActivity implements
 				}
 			}
 		});
-	}
+    }
 
 	private void initOnClickListener() {
 		// TODO Auto-generated method stub

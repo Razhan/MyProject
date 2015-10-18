@@ -12,8 +12,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.*;
 
 
@@ -49,13 +51,21 @@ import java.util.List;
  * MainScreen for dashboard
  */
 public class MainActivity extends BaseActivity {
+    private final String TAG = MainActivity.class.getSimpleName();
+
 	private ImageButton mSettingBtn;
 	private RelativeLayout inboxView;
 	private LinearLayout mFriendLayout; // 底部朋友layout
 	private FriendsContainer mFriendContainer;
 	private ImageButton mFirendMore;
 	private TextView home_screen_leaderboard_title;
-	private LocalDashboardBLL dashboardBLL;
+    private ScrollView scrollView;
+    private LinearLayout chunkInfo;
+    private LinearLayout leaderBoard;
+    private WebView webView;
+    private View inflatedView;
+
+    private LocalDashboardBLL dashboardBLL;
 	private UserScoreBiz mScoreBiz;
 	private HttpGetFriendData currentUserSelected;
 	private List<HttpGetFriendData> mFriendList = new ArrayList<HttpGetFriendData>();
@@ -74,10 +84,12 @@ public class MainActivity extends BaseActivity {
 
     private boolean interrupt;
     private int resumeTimes;
+    private HttpDashboard mhttpDashboard;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		init();
 
         TutorialConfigBiz tutorialBiz = new TutorialConfigBiz(mContext);
@@ -119,7 +131,7 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(mContext,
-						FriendNotificationActivity.class));
+                        FriendNotificationActivity.class));
 			}
 		});
 
@@ -128,8 +140,8 @@ public class MainActivity extends BaseActivity {
 			public void onClick(View v) {
 				startActivity(new Intent(mContext, LeaderBoardActivity.class));
 				MainActivity.this.overridePendingTransition(
-						R.anim.activity_in_from_right,
-						R.anim.activity_out_to_left);
+                        R.anim.activity_in_from_right,
+                        R.anim.activity_out_to_left);
 
 
 			}
@@ -141,9 +153,58 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 		mPhraseLayout = (LinearLayout)findViewById(R.id.home_screen_chunk_layout);
-		initFragment();
+
+        scrollView = (ScrollView)findViewById(R.id.home_screen_scrollview);
+        chunkInfo = (LinearLayout)findViewById(R.id.home_screen_chunk_layout);
+        leaderBoard = (LinearLayout)findViewById(R.id.home_screen_leaderboard);
+        webView = (WebView) findViewById(R.id.home_screen_webView);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return true;
+            }
+        });
+
+        webView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(mContext, AdvertisementActivity.class);
+                it.putExtra("target_url", mhttpDashboard.data.banners.get(0).getTarget_url());
+                startActivity(it);
+            }
+        });
+
+        initFragment();
 		switchFragment(3);
 	}
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        int scrollViewHeight;
+
+        scrollViewHeight = scrollView.getMeasuredHeight();
+        LinearLayout.LayoutParams lp_board = (LinearLayout.LayoutParams) leaderBoard.getLayoutParams();
+
+        if (mhttpDashboard.data.new_lesson_count > 0 || mhttpDashboard.data.new_rehearsal_count > 0) {
+            webView.setVisibility(View.GONE);
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2 - lp_board.topMargin;
+            leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
+        } else {
+            String URL = mhttpDashboard.data.banners.get(0).getImage_url();
+            String html = "<html><body><img src=\"" + URL + "\" width=\"100%\" height=\"auto\" vertical-align=\"center\"\"/></body></html>";
+            webView.loadDataWithBaseURL("", html, "text/html", "UTF-8", "");
+            webView.setVisibility(View.VISIBLE);
+            //banner size: 475 * 224
+            webView.getLayoutParams().height = scrollView.getWidth() / 2;
+
+            chunkInfo.getLayoutParams().height = scrollViewHeight / 3 * 2;
+            leaderBoard.getLayoutParams().height = scrollViewHeight / 3 * 1;
+        }
+        scrollView.setVisibility(View.VISIBLE);
+        scrollView.requestLayout();
+    }
+
 
 	@Override
 	public void onStart() {
@@ -154,20 +215,17 @@ public class MainActivity extends BaseActivity {
 	protected void onResume() {
         resumeTimes++;
         super.onResume();
-		updateDashboard(dashboardCache.load());
+//		updateDashboard(dashboardCache.load());
 		postUserAchievement();
-
-        if (resumeTimes == 2 && interrupt) {
-            ((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
-        }
 	}
 
 	private void  initFragment() {
 		fragments.clear();
 		fragments.add(new LearnFragment());
 		fragments.add(new PracticeFragment());
-		fragments.add(new AllDoneFragment());
-	}
+		fragments.add(new AllDoneFragmentMore());
+        fragments.add(new AllDoneFragmentNothing());
+    }
 
 	private void switchFragment(int index) {
 		if (null == mFragmentManager) {
@@ -193,18 +251,6 @@ public class MainActivity extends BaseActivity {
 		ft.commitAllowingStateLoss();
 	}
 
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		super.onActivityResult(requestCode, resultCode, data);
-//		if (requestCode == AppConst.RequestCode.EF_LOGIN
-//				&& resultCode == AppConst.ResultCode.APP_EXIT) {
-//			finish();
-//		} else if (requestCode == AppConst.RequestCode.WALKTHROUGH
-//				&& resultCode == AppConst.ResultCode.APP_EXIT) {
-//			finish();
-//		}
-//	}
-
 	private long lastExitTime = 0;
 	@Override
 	public void onBackPressed() {
@@ -226,9 +272,6 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
-
-
-
 	/**
 	 * execute action with different type
 	 */
@@ -239,10 +282,12 @@ public class MainActivity extends BaseActivity {
 		}
 		switch (pushData.getType()) {
 			case new_lesson:
-				((BaseDashboardFragment)fragments.get(currentIndex)).getmLearnPhraseLayout().performClick();
+				((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
 				break;
 			case new_rehearsal:
-				((BaseDashboardFragment)fragments.get(currentIndex)).getmPracticePhraseLayout().performClick();
+                if (currentIndex == 1) {
+                    ((BaseDashboardFragment) fragments.get(currentIndex)).getNextButton().performClick();
+                }
 				break;
 			case recording_rate:
 				inboxView.performClick();
@@ -264,22 +309,15 @@ public class MainActivity extends BaseActivity {
 		ParseInstallation.getCurrentInstallation().put("device_id",
 				AppConst.GlobalConfig.DeviceID);
 		ParseInstallation.getCurrentInstallation().saveInBackground(
-				new SaveCallback() {
-					@Override
-					public void done(ParseException e) {
-						if (e != null) {
-							// Toast toast = Toast.makeText(
-							// getApplicationContext(),
-							// "Push register failed", Toast.LENGTH_SHORT);
-//							// toast.show();
-//							Log.d("com.parse.push",
-//									"save error:" + e.getMessage());
-							e.printStackTrace();
-						} else {
-//							Log.d("com.parse.push", "save done:");
-						}
-					}
-				});
+                new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null) {
+                            e.printStackTrace();
+                        } else {
+                        }
+                    }
+                });
 	}
 
 	/**
@@ -378,6 +416,8 @@ public class MainActivity extends BaseActivity {
 					@Override
 					public void executing(HttpDashboard httpDashboard) {
 						if ( httpDashboard != null && httpDashboard.data !=null) {
+                            mhttpDashboard = httpDashboard;
+
 							dashboardCache.save(httpDashboard);
 							updateDashboard(httpDashboard);
                             progress.dismiss();
@@ -406,7 +446,8 @@ public class MainActivity extends BaseActivity {
 		if(httpDashboard == null || httpDashboard.data==null){
 			return;
 		}
-		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count>0?View.VISIBLE:View.GONE);
+
+		mNotificationLayout.setVisibility(httpDashboard.data.inbox_count > 0 ? View.VISIBLE : View.GONE);
 		mNotificationCount.setText(httpDashboard.data.inbox_count + "");
 		masteredChunkNum=httpDashboard.data.master_count;
 		updateFragment(httpDashboard);
@@ -416,24 +457,27 @@ public class MainActivity extends BaseActivity {
 
 	}
 
-	private void updateFragment(HttpDashboard httpDashboard){
-
+    private void updateFragment(HttpDashboard httpDashboard){
+        int index;
 		//switch fragment by states
-		if(httpDashboard.data.new_lessons.size()>0){
-			switchFragment(0);
-		} else if (httpDashboard.data.new_rehearsals.size() >0){
-			switchFragment(1);
+		if(httpDashboard.data.new_lesson_count > 0){
+            index = 0;
+		} else if (httpDashboard.data.new_rehearsal_count > 0){
+            index = 1;
+		} else if (httpDashboard.data.unlock_enabled) {
+            index = 2;
 		} else {
-			switchFragment(2);
-		}
+            index = 3;
+        }
 
-		List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
-		if(fragmentList!=null){
-			for (Fragment fragment : fragmentList) {
-				((BaseDashboardFragment) fragment).update(httpDashboard);
-			}
-		}
-	}
+        List<Fragment> fragmentList =this.getSupportFragmentManager().getFragments();
+        ((BaseDashboardFragment) fragmentList.get(index)).update(httpDashboard);
+        switchFragment(index);
+
+        if (resumeTimes == 2 && interrupt && currentIndex == 0) {
+            ((BaseDashboardFragment)fragments.get(currentIndex)).getNextButton().performClick();
+        }
+    }
 
 
 	private void convertFriends(List<HttpDashboard.friend> friends){
@@ -449,16 +493,6 @@ public class MainActivity extends BaseActivity {
 			mFriendList.add(friendData);
 		}
 
-	}
-
-	private void onStartExecute(HttpDashboard httpDashboard){
-		if(httpDashboard.data.new_lessons.size()>0){
-
-		} else if (httpDashboard.data.new_rehearsals.size() >0){
-
-		} else {
-
-		}
 	}
 
 	private void showUpdateDialog() {

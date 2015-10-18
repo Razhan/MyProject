@@ -6,7 +6,7 @@ public class HttpDashboard extends HttpBaseMessage {
 
 	public DashboardData data;
 
-	public static class DashboardData {
+    public static class DashboardData {
 		public int inbox_count;
 		public List<Lesson> new_lessons;
 		public int new_lesson_count;
@@ -17,7 +17,10 @@ public class HttpDashboard extends HttpBaseMessage {
 		public int master_count;
 		public int phrase_count;
 		public List<friend> rank_friends;
-	}
+        public boolean unlock_enabled;
+        public int recording_like_count;
+        public List<BannersEntity> banners;
+    }
 
 	public static class Lesson {
 		public String course_id;
@@ -41,4 +44,31 @@ public class HttpDashboard extends HttpBaseMessage {
 		public int friend_count;
 
 	}
+
+    public static class BannersEntity {
+        /**
+         * image_url : http://bella-image.oss-cn-qingdao.aliyuncs.com/banner/dashboard_banner_default.jpg
+         * target_url : http://www.englishtown.com
+         */
+
+        private String image_url;
+        private String target_url;
+
+        public void setImage_url(String image_url) {
+            this.image_url = image_url;
+        }
+
+        public void setTarget_url(String target_url) {
+            this.target_url = target_url;
+        }
+
+        public String getImage_url() {
+            return image_url;
+        }
+
+        public String getTarget_url() {
+            return target_url;
+        }
+    }
 }
+

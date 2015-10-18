@@ -104,7 +104,7 @@
                 android:id="@+id/home_screen_practice_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="On The Side"
+                android:text=""
                 android:textStyle="bold"
                 android:textSize="30sp" />
 
@@ -113,15 +113,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="NEW PHARSE"
+                android:text=""
                 android:textSize="15sp" />
 
             <Button
+                android:visibility="gone"
                 android:id="@+id/home_screen_next_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_margin="20dp"
-                android:text="LEARN"
+                android:text="LEARN MORE"
                 android:background="@drawable/btn_round_orange"/>
         </LinearLayout>
     </RelativeLayout>
