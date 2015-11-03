@@ -1,5 +1,8 @@
 package com.ef.bite.utils;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +44,12 @@ public class HttpRestfulClient {
 	/*
 	 * 调用Restful web service API
 	 */
-	public static Object Get(String url, Type returnType) {
+	public static Object Get(String url, Type returnType, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
@@ -70,7 +78,12 @@ public class HttpRestfulClient {
 	/*
 	 * 返回Json
 	 */
-	public static String Get(String url, Map<String, String> headerMap) {
+	public static String Get(String url, Map<String, String> headerMap, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
@@ -99,7 +112,12 @@ public class HttpRestfulClient {
 	}
 
 	public static Object Post(String url, Map<String, String> headerMap,
-			Type returnType) {
+			Type returnType, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
 		httpClient.getParams().setParameter(
@@ -134,7 +152,12 @@ public class HttpRestfulClient {
 	/*
 	 * 
 	 */
-	public static String Post(String url, List<BasicNameValuePair> params) {
+	public static String Post(String url, List<BasicNameValuePair> params, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
@@ -158,7 +181,12 @@ public class HttpRestfulClient {
 		}
 	}
 
-	public static Object Post(String url, JSONObject params, Type returnType) {
+	public static Object Post(String url, JSONObject params, Type returnType, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		httpClient.getParams().setParameter(
@@ -199,7 +227,12 @@ public class HttpRestfulClient {
 	 * @return
 	 */
 	public static String JsonPost(String url, String jsonParams,
-			Map<String, String> headerMap) {
+			Map<String, String> headerMap, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		httpClient.getParams().setParameter(
@@ -237,7 +270,12 @@ public class HttpRestfulClient {
 	 * @return
 	 */
 	public static String uploadFile(String url, String filePath,
-			Map<String, String> headerMap) {
+			Map<String, String> headerMap, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
@@ -276,7 +314,12 @@ public class HttpRestfulClient {
 	 * @return
 	 */
 	public static String uploadFile(String url, InputStream fileStream,
-			String contentType) {
+			String contentType, Context mcontext) {
+
+        if (!CheckNetWork(mcontext)) {
+            return null;
+        }
+
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
@@ -341,6 +384,15 @@ public class HttpRestfulClient {
             }
         });
 
+    }
+
+    private static boolean CheckNetWork(Context mcontext) {
+        if (!NetworkChecker.isConnected(mcontext)) {
+//            Toast.makeText(mcontext, JsonSerializeHelper.JsonLanguageDeserialize(
+//                    mcontext, "error_check_network_available"), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
 }

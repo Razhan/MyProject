@@ -718,6 +718,16 @@ public class ContextDataMode {
 		public final static String actionTabCancelLocationValue = "balloon introduction";
 	}
 
+	public static class Upsellkeys {
+		public final static String actionUpsellKey = "action.Upsell";
+	}
 
+	public static class UpsellValues {
+		public final static String actionUpsellValues = "1";
+	}
+
+	public static class CourseSelectionkeys {
+		public final static String actionCourseSelection = "action.CourseSelect";
+	}
 
 }

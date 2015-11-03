@@ -50,7 +50,7 @@ public class ThirdPartyLogInActivity extends BaseActivity {
 
     private int step = 1;
 
-    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
+    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans != null && AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
     private String bella_id = "";
     private boolean show_level = true;
     private boolean show_phone = true;
@@ -119,6 +119,8 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MobclickTracking.OmnitureTrack.actionCourseSelect(mLevelChoice);
+
                 updateProfile(mLevelChoice, null, new CallBackInterface() {
                     @Override
                     public void exectueMethod() {
@@ -141,6 +143,8 @@ public class ThirdPartyLogInActivity extends BaseActivity {
                     @Override
                     public void exectueMethod() {
                         MobclickTracking.OmnitureTrack.ActionRegisterSuccessful(ContextDataMode.ActionRegisterTypeValues.FACEBOOK);
+                        MobclickTracking.OmnitureTrack.actionUpsell();
+
                         updateSccess(bella_id);
                     }
                 });
@@ -233,7 +237,6 @@ public class ThirdPartyLogInActivity extends BaseActivity {
         mLevelLayout.startAnimation(fadeout);
         mPhoneLayout.startAnimation(fadein);
         step++;
-
     }
 
     private void attempBack() {

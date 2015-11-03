@@ -27,7 +27,7 @@ public class LoginServerAPI extends BaseServerAPI {
 					.JsonSerializer(loginMode);
 			String loginMesString = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/login", usermodeString,
-					headerMap);
+					headerMap, context);
 //			Log.i("loginMesString", loginMesString);
 			HttpLogin httpLogin = (HttpLogin) JsonSerializeHelper
 					.JsonDeserialize(loginMesString, HttpLogin.class);
@@ -43,7 +43,7 @@ public class LoginServerAPI extends BaseServerAPI {
 		try {
 			HttpBaseMessage logoutMessage = (HttpBaseMessage) HttpRestfulClient
 					.Get(AppConst.EFAPIs.BaseAddress + "logout/" + uid,
-							HttpBaseMessage.class);
+							HttpBaseMessage.class, context);
 			return logoutMessage;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -77,7 +77,7 @@ public class LoginServerAPI extends BaseServerAPI {
 
 			String registInfoMessage = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "register",
-					jsonObj.toString(), headerMap);
+					jsonObj.toString(), headerMap, context);
 			HttpBaseMessage registInfoMessage2 = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(registInfoMessage, HttpBaseMessage.class);
 			return registInfoMessage2;
@@ -100,12 +100,12 @@ public class LoginServerAPI extends BaseServerAPI {
 			if (country.equals("cn")) {
 				HttpServerAddress address = (HttpServerAddress) HttpRestfulClient
 						.Get(AppConst.EFAPIs.ETHost + "android/" + app_version,
-								HttpServerAddress.class);
+								HttpServerAddress.class, context);
 				return address;
 			} else {
 				HttpServerAddress address = (HttpServerAddress) HttpRestfulClient
 						.Get(AppConst.EFAPIs.HK_ETHost + "android/"
-								+ app_version, HttpServerAddress.class);
+								+ app_version, HttpServerAddress.class, context);
 				return address;
 			}
 
@@ -126,7 +126,7 @@ public class LoginServerAPI extends BaseServerAPI {
 		try {
 			HttpServerAddress address = (HttpServerAddress) HttpRestfulClient
 					.Get(AppConst.EFAPIs.ETHost + "android/" + app_version,
-							HttpServerAddress.class);
+							HttpServerAddress.class, context);
 			return address;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -139,7 +139,7 @@ public class LoginServerAPI extends BaseServerAPI {
 		try {
 			HttpServerAddress address = (HttpServerAddress) HttpRestfulClient
 					.Get(AppConst.EFAPIs.HK_ETHost + "android/" + app_version,
-							HttpServerAddress.class);
+							HttpServerAddress.class, context);
 			return address;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -155,7 +155,7 @@ public class LoginServerAPI extends BaseServerAPI {
 			String language = HttpRestfulClient.JsonPost(
 //					AppConst.EFAPIs.BaseAddress + "appresource", resource,
                     AppConst.EFAPIs.BaseAddress + "2/appresource", resource,
-					headerMap);
+					headerMap, context);
 			HttpAppResourceResponse httpAppResourceResponse = (HttpAppResourceResponse) JsonSerializeHelper
 					.JsonDeserialize(language, HttpAppResourceResponse.class);
 //			Log.i("language", language);
@@ -173,7 +173,7 @@ public class LoginServerAPI extends BaseServerAPI {
 		try {
 			String resource = JsonSerializeHelper
 					.JsonSerializer(versionRequest);
-			String version = HttpRestfulClient.JsonPost(AppConst.EFAPIs.BaseAddress + "2/appresource", resource, headerMap);
+			String version = HttpRestfulClient.JsonPost(AppConst.EFAPIs.BaseAddress + "2/appresource", resource, headerMap, context);
 
 			HttpVersionCheckResponse httpVersionCheckResponse = (HttpVersionCheckResponse) JsonSerializeHelper
 					.JsonDeserialize(version, HttpVersionCheckResponse.class);

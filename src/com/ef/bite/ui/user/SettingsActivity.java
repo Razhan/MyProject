@@ -541,6 +541,9 @@ public class SettingsActivity extends BaseActivity {
                                     JsonSerializeHelper.JsonLanguageDeserialize(mContext, "course_title"),
                                     AppConst.GlobalConfig.StudyPlansMap.get(courselevel),
                                     true, mItemClick);
+
+                            MobclickTracking.OmnitureTrack.actionCourseSelect(courselevel);
+
                         } else {
                             Log.e("ThirdPartyLogin", "updateProfile error");
                             finish();

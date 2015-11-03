@@ -82,7 +82,7 @@ public class EFRegisterActivity extends BaseActivity {
     int step = 1;
     TermsServicePopupWindow popup;
 
-    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
+    private final boolean chooseLevel = (AppConst.GlobalConfig.StudyPlans != null && AppConst.GlobalConfig.StudyPlans.size() > 1) ? true : false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -398,7 +398,13 @@ public class EFRegisterActivity extends BaseActivity {
             @Override
             public void onAnimationStart(Animation animation) {
                 if (!chooseLevel) {
-                    mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(0);
+
+                    if (AppConst.GlobalConfig.StudyPlans != null) {
+                        mLevelChoice = AppConst.GlobalConfig.StudyPlans.get(0);
+                    } else {
+                        mLevelChoice = "sequence";
+                    }
+
                     next2.performClick();
                 } else {
                     mEnterLevelLayout.setVisibility(View.VISIBLE);

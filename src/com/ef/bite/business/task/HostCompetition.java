@@ -112,7 +112,7 @@ public class HostCompetition {
         Map<String, String> headerMap = new HashMap<String, String>();
         headerMap.put("language", AppLanguageHelper.getSystemLaunguage(context));
         headerMap.put("system", AppConst.GlobalConfig.OS);
-		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Post(url, headerMap, HttpServerAddress.class);
+		HttpServerAddress address = (HttpServerAddress) HttpRestfulClient.Post(url, headerMap, HttpServerAddress.class, context);
 		return address;
 	}
 

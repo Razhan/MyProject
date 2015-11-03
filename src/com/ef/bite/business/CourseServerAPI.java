@@ -49,7 +49,7 @@ public class CourseServerAPI extends BaseServerAPI {
 			String param = JsonSerializeHelper.JsonSerializer(request);
 			String jsonResp = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "course", param,
-					this.headerMap);
+					this.headerMap, context);
 			return (HttpCourseResponse) JsonSerializeHelper.JsonDeserialize(
 					jsonResp, HttpCourseResponse.class);
 		} catch (Exception ex) {
@@ -71,7 +71,7 @@ public class CourseServerAPI extends BaseServerAPI {
 			String param = JsonSerializeHelper.JsonSerializer(request);
 			String jsonResp = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "progress/next", param,
-					this.headerMap);
+					this.headerMap, context);
 			return (HttpProgressNextResponse) JsonSerializeHelper
 					.JsonDeserialize(jsonResp, HttpProgressNextResponse.class);
 		} catch (Exception ex) {
@@ -86,7 +86,7 @@ public class CourseServerAPI extends BaseServerAPI {
             String dataString = JsonSerializeHelper.JsonSerializer(request);
             String userProfile = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "view/rehearsal/list", dataString,
-					headerMap);
+					headerMap, context);
             HttpRehearsalListResponse response = (HttpRehearsalListResponse) JsonSerializeHelper
                     .JsonDeserialize(userProfile, HttpRehearsalListResponse.class);
             return response;
@@ -111,7 +111,7 @@ public class CourseServerAPI extends BaseServerAPI {
 			params.put("unlock_count", "1");
 			String jsonString = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/learn/unlock",params.toString(),
-					headerMap);
+					headerMap, context);
 			HttpUnlockChunks httpResponse = (HttpUnlockChunks) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpUnlockChunks.class);
 			return httpResponse;

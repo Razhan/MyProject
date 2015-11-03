@@ -31,7 +31,7 @@ public class UserServerAPI extends BaseServerAPI {
 			param.put("bella_id",id);
 			String result =  HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/profile/", param.toString(),
-					headerMap);
+					headerMap, context);
 			HttpProfile httpProfile= (HttpProfile) JsonSerializeHelper
 					.JsonDeserialize(result, HttpProfile.class);
 			return httpProfile;
@@ -48,7 +48,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String dataString = JsonSerializeHelper.JsonSerializer(profileData);
 			String userProfile = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "/profile/save", dataString,
-					headerMap);
+					headerMap, context);
 			HttpBaseMessage user = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(userProfile, HttpBaseMessage.class);
 			return user;
@@ -65,7 +65,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String dataString = profileData.toString();
 			String userProfile = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "/profile/save", dataString,
-					headerMap);
+					headerMap, context);
 			HttpBaseMessage user = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(userProfile, HttpBaseMessage.class);
 			return user;
@@ -82,7 +82,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			HttpGetFriends user = (HttpGetFriends) HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "friend/" + id,
-					HttpGetFriends.class);
+					HttpGetFriends.class, context);
 			return user;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -96,7 +96,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			HttpProgress data = (HttpProgress) HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "userprogress/" + id,
-					HttpProgress.class);
+					HttpProgress.class, context);
 			return data;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -112,7 +112,7 @@ public class UserServerAPI extends BaseServerAPI {
 			Log.i("Post Progress", dataString);
 			String userProfile = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "userprogress/save",
-					dataString, headerMap);
+					dataString, headerMap, context);
 			HttpProgress user = (HttpProgress) JsonSerializeHelper
 					.JsonDeserialize(userProfile, HttpProgress.class);
 			return user;
@@ -130,7 +130,7 @@ public class UserServerAPI extends BaseServerAPI {
 			param.put("os", os);
 			param.put("osversion", osversion);
 			HttpRestfulClient.JsonPost(AppConst.EFAPIs.BaseAddress
-					+ "fingerprint", param.toString(), headerMap);
+					+ "fingerprint", param.toString(), headerMap, context);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -144,7 +144,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(reviewVoiceRequest);
 		String jsonString = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/review/", jsonParams,
-				headerMap);
+				headerMap, context);
 		HttpReviewVoiceResponse httpReviewVoiceResponse = (HttpReviewVoiceResponse) JsonSerializeHelper
 				.JsonDeserialize(jsonString, HttpReviewVoiceResponse.class);
 		return httpReviewVoiceResponse;
@@ -156,7 +156,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpUserRecordingRequest);
 		String jsonString = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "view/recording/", jsonParams,
-				headerMap);
+				headerMap, context);
 		HttpUserRecordingResponse httpUserRecordingResponse = (HttpUserRecordingResponse) JsonSerializeHelper
 				.JsonDeserialize(jsonString, HttpUserRecordingResponse.class);
 		return httpUserRecordingResponse;
@@ -168,7 +168,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpLikeVoiceRequest);
 		String jsonRestful = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/like/", jsonParams,
-				headerMap);
+				headerMap, context);
 		System.out.println("PostLikeVoice" + jsonRestful);
 	}
 
@@ -178,7 +178,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpLikeVoiceRequest);
 		String jsonRestful = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/unlike/", jsonParams,
-				headerMap);
+				headerMap, context);
 		System.out.println("PostUnlikeVoice" + jsonRestful);
 	}
 
@@ -188,7 +188,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpLikeVoiceRequest);
 		String jsonRestful = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/report/", jsonParams,
-				headerMap);
+				headerMap, context);
 		System.out.println("PostReportVoice" + jsonRestful);
 	}
 
@@ -198,7 +198,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpVoiceDeletRequest);
 		String jsonRestful = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/delete/", jsonParams,
-				headerMap);
+				headerMap, context);
 		return true;
 	}
 
@@ -209,7 +209,7 @@ public class UserServerAPI extends BaseServerAPI {
 				.JsonSerializer(httpQueryVoiceReviewersRequest);
 		String jsonRestful = HttpRestfulClient.JsonPost(
 				AppConst.EFAPIs.BaseAddress + "voice/reviewer/", jsonParams,
-				headerMap);
+				headerMap, context);
 		HttpQueryVoiceReviewersResponse httpQueryVoiceReviewersResponse = (HttpQueryVoiceReviewersResponse) JsonSerializeHelper
 				.JsonDeserialize(jsonRestful,
 						HttpQueryVoiceReviewersResponse.class);
@@ -225,7 +225,7 @@ public class UserServerAPI extends BaseServerAPI {
 			text = text.replace(" ", "%20");
 			HttpGetFriends data = (HttpGetFriends) HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "profile/search/" + text,
-					HttpGetFriends.class);
+					HttpGetFriends.class, context);
 			return data;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -241,7 +241,7 @@ public class UserServerAPI extends BaseServerAPI {
 			HttpGetFriends data = (HttpGetFriends) HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "profile/search/" + text
 							+ "/" + pageIndex + "/" + pageSize,
-					HttpProfile.class);
+					HttpProfile.class, context);
 			return data;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -254,7 +254,7 @@ public class UserServerAPI extends BaseServerAPI {
 	public HttpGetFriends dashboard(String id) {
 		try {
 			String jsonFriends = HttpRestfulClient.Get(
-					AppConst.EFAPIs.BaseAddress + "dashboard/" + id, headerMap);
+					AppConst.EFAPIs.BaseAddress + "dashboard/" + id, headerMap, context);
 			HttpGetFriends httpGetFriends = (HttpGetFriends) JsonSerializeHelper
 					.JsonDeserialize(jsonFriends, HttpGetFriends.class);
 			return httpGetFriends;
@@ -271,7 +271,7 @@ public class UserServerAPI extends BaseServerAPI {
 				return leaderboardview();
 			String jsonFriends = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "leaderboard/global/" + start
-							+ "/" + rows, headerMap);
+							+ "/" + rows, headerMap, context);
 			HttpGetFriends httpGetFriends = (HttpGetFriends) JsonSerializeHelper
 					.JsonDeserialize(jsonFriends, HttpGetFriends.class);
 			return httpGetFriends;
@@ -286,7 +286,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonFriends = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "leaderboard/global",
-					headerMap);
+					headerMap, context);
 			HttpGetFriends httpGetFriends = (HttpGetFriends) JsonSerializeHelper
 					.JsonDeserialize(jsonFriends, HttpGetFriends.class);
 			return httpGetFriends;
@@ -306,7 +306,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonFriends = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "leaderboard/friend/" + uid,
-					headerMap);
+					headerMap, context);
 			HttpGetFriends httpGetFriends = (HttpGetFriends) JsonSerializeHelper
 					.JsonDeserialize(jsonFriends, HttpGetFriends.class);
 			return httpGetFriends;
@@ -322,7 +322,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String jsonParams = JsonSerializeHelper.JsonSerializer(dataList);
 			String jsonString = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "tracking/save", jsonParams,
-					headerMap);
+					headerMap, context);
 			HttpBaseMessage httpMessage = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpBaseMessage.class);
 			return httpMessage;
@@ -341,7 +341,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonString = HttpRestfulClient.uploadFile(
 					AppConst.EFAPIs.BaseAddress + "avatar/upload", avatar,
-					headerMap);
+					headerMap, context);
 			HttpAvatarData httpMessage = (HttpAvatarData) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpAvatarData.class);
 			return httpMessage;
@@ -362,7 +362,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonResponse = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "friend/is/" + uid + "/"
-							+ friend_id, headerMap);
+							+ friend_id, headerMap, context);
 			HttpIsMyFriend httpResponse = (HttpIsMyFriend) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpIsMyFriend.class);
 			return httpResponse;
@@ -390,7 +390,7 @@ public class UserServerAPI extends BaseServerAPI {
 			jsonObj.put("rows", 1);
 			String jsonString = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "friend/add",
-					jsonObj.toString(), headerMap);
+					jsonObj.toString(), headerMap, context);
 			HttpBaseMessage httpMessage = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpBaseMessage.class);
 			return httpMessage;
@@ -410,7 +410,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonString = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "friend/count/" + uid,
-					headerMap);
+					headerMap, context);
 			HttpFriendCount httpResponse = (HttpFriendCount) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpFriendCount.class);
 			return httpResponse;
@@ -430,7 +430,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonString = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "notification/" + uid + "/"
-							+ 200, headerMap);
+							+ 200, headerMap, context);
 			HttpNotification httpResponse = (HttpNotification) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpNotification.class);
 			return httpResponse;
@@ -460,7 +460,7 @@ public class UserServerAPI extends BaseServerAPI {
 			else
 				url = AppConst.EFAPIs.BaseAddress + "notification/" + uid + "/"
 						+ rows + "/" + start_id + "/";
-			String jsonString = HttpRestfulClient.Get(url, headerMap);
+			String jsonString = HttpRestfulClient.Get(url, headerMap, context);
 			HttpNotification httpResponse = (HttpNotification) JsonSerializeHelper
 					.JsonDeserialize(jsonString, HttpNotification.class);
 			return httpResponse;
@@ -479,7 +479,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String jsonParams = JsonSerializeHelper.JsonSerializer(param);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "notification/read",
-					jsonParams, headerMap);
+					jsonParams, headerMap, context);
 			HttpBaseMessage httpResponse = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpBaseMessage.class);
 			return httpResponse;
@@ -498,7 +498,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			String jsonResponse = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "notification/unread/count/"
-							+ uid, headerMap);
+							+ uid, headerMap, context);
 			HttpUnreadNotificationCount httpResponse = (HttpUnreadNotificationCount) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse,
 							HttpUnreadNotificationCount.class);
@@ -526,7 +526,7 @@ public class UserServerAPI extends BaseServerAPI {
 			params.put("new_password", new_pwd);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "password/change",
-					params.toString(), headerMap);
+					params.toString(), headerMap, context);
 			HttpBaseMessage httpResp = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpBaseMessage.class);
 			return httpResp;
@@ -548,7 +548,7 @@ public class UserServerAPI extends BaseServerAPI {
 			params.put("phone", phone);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "password/forget",
-					params.toString(), headerMap);
+					params.toString(), headerMap, context);
 			HttpBaseMessage httpResp = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpBaseMessage.class);
 			return httpResp;
@@ -572,7 +572,7 @@ public class UserServerAPI extends BaseServerAPI {
 			params.put("new_password", new_pwd);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "password/reset",
-					params.toString(), headerMap);
+					params.toString(), headerMap, context);
 			HttpBaseMessage httpResp = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpBaseMessage.class);
 			return httpResp;
@@ -603,7 +603,7 @@ public class UserServerAPI extends BaseServerAPI {
 			param.put("target_language", target_language);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "course/share",
-					param.toString(), headerMap);
+					param.toString(), headerMap, context);
 			HttpShareLink httpResp = (HttpShareLink) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpShareLink.class);
 			return httpResp;
@@ -625,7 +625,7 @@ public class UserServerAPI extends BaseServerAPI {
 			param.put("language", language);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "friend/invite",
-					param.toString(), headerMap);
+					param.toString(), headerMap, context);
 			HttpShareLink httpResp = (HttpShareLink) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpShareLink.class);
 			return httpResp;
@@ -645,7 +645,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String jsonResponse = HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "ad/"
 							+ AppConst.CurrUserInfo.UserId + "/"
-							+ AppConst.GlobalConfig.DeviceID, headerMap);
+							+ AppConst.GlobalConfig.DeviceID, headerMap, context);
 			HttpADsAddress httpResp = (HttpADsAddress) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpADsAddress.class);
 			return httpResp;
@@ -666,7 +666,7 @@ public class UserServerAPI extends BaseServerAPI {
 		try {
 			HttpStudyPlans studyPlan = (HttpStudyPlans) HttpRestfulClient.Get(
 					AppConst.EFAPIs.BaseAddress + "studyplan/user/" + id,
-					HttpStudyPlans.class);
+					HttpStudyPlans.class, context);
 			return studyPlan;
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -691,7 +691,7 @@ public class UserServerAPI extends BaseServerAPI {
 //			param.put("rank_friend_max_count", 4);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/dashboard/",
-					param.toString(), headerMap);
+					param.toString(), headerMap, context);
 			HttpDashboard httpResp = (HttpDashboard) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpDashboard.class);
 			return httpResp;
@@ -712,7 +712,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String param = JsonSerializeHelper.JsonSerializer(request);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "voice/share/",
-					param.toString(), headerMap);
+					param.toString(), headerMap, context);
 			HttpVoiceShareRespone httpResp = (HttpVoiceShareRespone) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpVoiceShareRespone.class);
 			return httpResp;
@@ -732,7 +732,7 @@ public class UserServerAPI extends BaseServerAPI {
 			String param = JsonSerializeHelper.JsonSerializer(achievements);
 			String jsonResponse = HttpRestfulClient.JsonPost(
 					AppConst.EFAPIs.BaseAddress + "2/progress/update/",
-					param.toString(), headerMap);
+					param.toString(), headerMap, context);
 			HttpBaseMessage httpResp = (HttpBaseMessage) JsonSerializeHelper
 					.JsonDeserialize(jsonResponse, HttpBaseMessage.class);
 			return httpResp;
@@ -748,7 +748,7 @@ public class UserServerAPI extends BaseServerAPI {
             JSONObject param = new JSONObject();
             String result = HttpRestfulClient.JsonPost(
                     AppConst.EFAPIs.BaseAddress + "banner/facebook_invite_image/", param.toString(),
-                    headerMap);
+                    headerMap, context);
             HttpGetFBImageResponse fbImageResponse = (HttpGetFBImageResponse) JsonSerializeHelper
                     .JsonDeserialize(result, HttpGetFBImageResponse.class);
             return fbImageResponse;

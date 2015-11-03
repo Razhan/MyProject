@@ -35,7 +35,7 @@ public class UploadRecordingTask extends BaseAsyncTask<String, Void, Boolean> {
         try {
             String url = AppConst.EFAPIs.BaseAddress + "voice/upload/" + "?bella_id=%s&course_id=%s&voice_length=%s&score=%s";
             url = String.format(url, AppConst.CurrUserInfo.UserId, chunkId, duration, score);
-            String result = HttpRestfulClient.uploadFile(url, recFile.getPath(), null);
+            String result = HttpRestfulClient.uploadFile(url, recFile.getPath(), null, context);
             if (result != null) {
 //                Log.v("POST RECORDING---",result);
                 JSONObject jsonObject = new JSONObject(result);
