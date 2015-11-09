@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.ef.bite.AppConst;
+import com.ef.bite.model.AndroidServerLog;
 import com.ef.bite.model.SMSRecord;
 import com.ef.bite.model.ServerErrorLog;
 import com.parse.*;
@@ -33,6 +34,7 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,11 +66,14 @@ public class HttpRestfulClient {
 
             sendToParse(response.getStatusLine().getStatusCode(), url);
 
-			HttpEntity entity = response.getEntity();
+            HttpEntity entity = response.getEntity();
 			jsonString = getUTF8ContentFromEntity(entity);
 			Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
 					returnType);
-			return obj;
+
+            sengLogToServer(url, null, jsonString);
+
+            return obj;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -102,9 +107,12 @@ public class HttpRestfulClient {
 
             sendToParse(response.getStatusLine().getStatusCode(), url);
 
+
             HttpEntity entity = response.getEntity();
 			jsonString = getUTF8ContentFromEntity(entity);
-			return jsonString;
+            sengLogToServer(url, null, jsonString);
+
+            return jsonString;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -138,11 +146,16 @@ public class HttpRestfulClient {
 //			if (params != null)
 //				httpPost.setEntity(new UrlEncodedFormEntity(params));
 			response = httpClient.execute(httpPost);
-			HttpEntity entity = response.getEntity();
-			String jsonString = getUTF8ContentFromEntity(entity);
-			Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
+
+            sendToParse(response.getStatusLine().getStatusCode(), url);
+
+            HttpEntity entity = response.getEntity();
+            String jsonString = getUTF8ContentFromEntity(entity);
+            Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
                     returnType);
-			return obj;
+            sengLogToServer(url, null, jsonString);
+
+            return obj;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -168,7 +181,7 @@ public class HttpRestfulClient {
 		try {
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.addHeader("Content-type",
-					"application/json; charset=utf-8");
+                    "application/json; charset=utf-8");
 			if (params != null)
 				httpPost.setEntity(new UrlEncodedFormEntity(params));
 			response = httpClient.execute(httpPost, localContext);
@@ -203,7 +216,7 @@ public class HttpRestfulClient {
 						HTTP.UTF_8));
 			response = httpClient.execute(httpPost, localContext);
 			HttpEntity entity = response.getEntity();
-			String jsonString = getUTF8ContentFromEntity(entity);
+            String jsonString = getUTF8ContentFromEntity(entity);
 			if (jsonString != null) {
 				Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
 						returnType);
@@ -242,7 +255,7 @@ public class HttpRestfulClient {
 		HttpResponse response = null;
 		try {
 			HttpPost httpPost = new HttpPost(url);
-			httpPost.addHeader("Content-type",
+            httpPost.addHeader("Content-type",
 					"application/json; charset=utf-8");
 			if (headerMap != null)
 				for (String key : headerMap.keySet())
@@ -253,8 +266,13 @@ public class HttpRestfulClient {
 
 			sendToParse(response.getStatusLine().getStatusCode(), url);
 
-			HttpEntity entity = response.getEntity();
-			return getUTF8ContentFromEntity(entity);
+
+            HttpEntity entity = response.getEntity();
+
+
+            String jsonString = getUTF8ContentFromEntity(entity);
+            sengLogToServer(url, jsonParams, jsonString);
+            return jsonString;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -296,6 +314,7 @@ public class HttpRestfulClient {
 			response = httpClient.execute(httppost, localContext);
 
             sendToParse(response.getStatusLine().getStatusCode(), url);
+
 
             HttpEntity resEntity = response.getEntity();
 			return getUTF8ContentFromEntity(resEntity);
@@ -376,7 +395,7 @@ public class HttpRestfulClient {
             @Override
             public void done(ParseException ex) {
                 if (ex == null) {
-                    final Map<String,String> params = new HashMap<String,String>();
+                    final Map<String, String> params = new HashMap<String, String>();
                     Date time = new Date();
                     params.put("api", url);
                     ParseCloud.callFunctionInBackground("sendSMS", params);
@@ -385,6 +404,41 @@ public class HttpRestfulClient {
         });
 
     }
+
+    private static void sengLogToServer(String url, String request, String response) {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("42.96.250.52");
+        list.add("bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com");
+
+        if (!isContainUrl(list, url)) {
+            return;
+        }
+
+        AndroidServerLog log = new AndroidServerLog();
+
+        log.put("appVersion", AppConst.GlobalConfig.App_Version);
+        log.put("bellaID", AppConst.CurrUserInfo.UserId);
+        log.put("deviceModel", AppConst.GlobalConfig.Device_Model);
+        log.put("phoneVersion", AppConst.GlobalConfig.OS_Version);
+        log.put("platform", AppConst.GlobalConfig.OS);
+        log.put("endPoint", url);
+        log.put("request", request == null ? "" : request);
+        log.put("response", response == null ? "" : response);
+
+        log.saveInBackground();
+    }
+
+    private static boolean isContainUrl(ArrayList<String> list, String url) {
+        for (int i = 0; i < list.size(); i++) {
+            if (url.contains(list.get(i))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 
     private static boolean CheckNetWork(Context mcontext) {
         if (!NetworkChecker.isConnected(mcontext)) {

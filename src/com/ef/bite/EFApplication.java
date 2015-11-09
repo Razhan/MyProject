@@ -11,6 +11,7 @@ import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.dataacces.AchievementCache;
 import com.ef.bite.dataacces.ChunksHolder;
 import com.ef.bite.dataacces.DashboardCache;
+import com.ef.bite.model.AndroidServerLog;
 import com.ef.bite.model.SMSRecord;
 import com.ef.bite.model.ServerErrorLog;
 import com.ef.bite.utils.AppUtils;
@@ -48,6 +49,8 @@ public class EFApplication extends Application {
 			// Initialize the Parse SDK.
             ParseObject.registerSubclass(SMSRecord.class);
             ParseObject.registerSubclass(ServerErrorLog.class);
+            ParseObject.registerSubclass(AndroidServerLog.class);
+
             Parse.initialize(this, APP_ID, CLIENT_ID);
 			ParseUser.enableAutomaticUser();
 			ParsePush.subscribeInBackground("", new SaveCallback() {

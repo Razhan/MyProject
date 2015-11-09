@@ -120,21 +120,27 @@ public abstract class BaseDashboardFragment extends Fragment {
         }
         this.httpDashboard = httpDashboard;
 
-        if (httpDashboard.data.phrase_count < 2) {
-            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                    getActivity(), "dash_screen_phrase_singular"));
-        } else {
-            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                    getActivity(), "dash_screen_phrase_plural"));
-        }
+//        if (httpDashboard.data.phrase_count < 2) {
+//            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+//                    getActivity(), "dash_screen_phrase_singular"));
+//        } else {
+//            phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+//                    getActivity(), "dash_screen_phrase_plural"));
+//        }
+//
+//        if (httpDashboard.data.recording_like_count < 2) {
+//            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+//                    getActivity(), "dash_screen_likes_singular"));
+//        } else {
+//            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+//                    getActivity(), "dash_screen_likes_plural"));
+//        }
 
-        if (httpDashboard.data.recording_like_count < 2) {
-            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                    getActivity(), "dash_screen_likes_singular"));
-        } else {
-            likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                    getActivity(), "dash_screen_likes_plural"));
-        }
+        phrasesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+            getActivity(), "dash_screen_phrase_plural"));
+
+        likesTitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
+            getActivity(), "dash_screen_likes_plural"));
 
 
         courseInfo.setVisibility(View.VISIBLE);
