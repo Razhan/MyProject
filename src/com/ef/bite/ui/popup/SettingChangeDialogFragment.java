@@ -11,9 +11,12 @@ import android.widget.Toast;
 import com.ef.bite.AppConst;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.PostProfileTask;
+import com.ef.bite.business.task.UpdateUserProfile;
 import com.ef.bite.dataacces.mode.httpMode.HttpBaseMessage;
 import com.ef.bite.dataacces.mode.httpMode.HttpProfile;
 import com.ef.bite.utils.JsonSerializeHelper;
+
+import org.json.JSONObject;
 
 /**
  * 设置项值修改的dialog
@@ -69,20 +72,33 @@ public class SettingChangeDialogFragment extends BaseDialogFragment {
 									Toast.LENGTH_SHORT).show();
 							return;
 						}
-						final HttpProfile.ProfileData httpProfile = new HttpProfile.ProfileData();
-						httpProfile.bella_id = AppConst.CurrUserInfo.UserId;
-						if (mChangeItemID == SETTINGS_NICKNAME) {
-							httpProfile.alias = text;
-						} else if (mChangeItemID == SETTINGS_FIRST_NAME) {
-							httpProfile.given_name = text;
-						} else if (mChangeItemID == SETTINGS_LAST_NAME) {
-							httpProfile.family_name = text;
-						} else if (mChangeItemID == SETTINGS_PHONE) {
-							httpProfile.phone = text;
-						} else
-							is_to_update = false;
+
+                        JSONObject jsonObj = new JSONObject();
+
+                        try{
+                            jsonObj.put("bella_id", AppConst.CurrUserInfo.UserId);
+
+                            if (mChangeItemID == SETTINGS_NICKNAME) {
+                                jsonObj.put("alias", text);
+
+                            } else if (mChangeItemID == SETTINGS_FIRST_NAME) {
+                                jsonObj.put("given_name", text);
+
+                            } else if (mChangeItemID == SETTINGS_LAST_NAME) {
+                                jsonObj.put("family_name", text);
+
+                            } else if (mChangeItemID == SETTINGS_PHONE) {
+                                jsonObj.put("phone", text);
+
+                            } else
+                                is_to_update = false;
+
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
 						if (is_to_update) {
-							PostProfileTask task = new PostProfileTask(
+                            UpdateUserProfile task = new UpdateUserProfile(
 									mActivity,
 									new PostExecuting<HttpBaseMessage>() {
 										@Override
@@ -110,7 +126,7 @@ public class SettingChangeDialogFragment extends BaseDialogFragment {
 														.show();
 										}
 									});
-							task.execute(new HttpProfile.ProfileData[] { httpProfile });
+							task.execute(jsonObj);
 						} else
 							Toast.makeText(
 									mActivity,
@@ -120,13 +136,13 @@ public class SettingChangeDialogFragment extends BaseDialogFragment {
 									Toast.LENGTH_SHORT).show();
 					}
 				}).setNegativeButton(
-				JsonSerializeHelper.JsonLanguageDeserialize(mActivity,
-						"settings_logout_dialog_cancel"),
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
+                JsonSerializeHelper.JsonLanguageDeserialize(mActivity,
+                        "settings_logout_dialog_cancel"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
 		return mBuilder.create();
 	}
 
