@@ -181,6 +181,11 @@ public class ASREngineController implements SpeechToTextService.Callback, ASREng
         return null;
     }
 
+    @Override
+    public int getDuration() {
+        return sphinxStt.getDuration();
+    }
+
     private void initRecorderHandlerIfNeed() {
         // if already inited and the same mode,don't need reinit again.
         if (isRecorderHandlerInited && recorderMode == previewRecorderMode) {

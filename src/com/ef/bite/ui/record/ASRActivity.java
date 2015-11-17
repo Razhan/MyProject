@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -40,6 +41,7 @@ import com.englishtown.android.asr.core.AsrCorrectItem;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,8 +59,8 @@ public class ASRActivity extends BaseChunkActivity {
     private String audioPath;
     private boolean isRecording = false;
     private boolean isPlaying = false;
-
     private ArrayList<AsrCorrectItem> correctItemArrayList;
+    private String phrase = "how are you";
 
 
     private File mRecAudioFile;// Recording output file
@@ -100,7 +102,7 @@ public class ASRActivity extends BaseChunkActivity {
 
         installAsrEngine();
 
-        openGuide();
+//        openGuide();
         tracking();
 
     }
@@ -139,26 +141,78 @@ public class ASRActivity extends BaseChunkActivity {
             @Override
             public void onRecordComplete(String audio) {
                 audioPath = audio;
-//                updateResultView("onRecordComplete, " + audioPath + '\n');
+                Log.d("onRecordComplete", "onRecordComplete, " + audioPath + '\n');
             }
 
             @Override
             public void onSuccess(final AsrCorrectItem correctItem) {
-//                updateResultView("onSuccess: " + correctItem.toString() + '\n');
+                Log.d("onSuccess", "onSuccess: " + correctItem.toString() + '\n');
             }
 
             @Override
             public void onError() {
-//                updateResultView("onError" + '\n');
+                Log.d("onError", "onError" + '\n');
             }
 
             @Override
             public void onPlaybackComplete() {
-//                updateResultView("onPlaybackComplete" + '\n');
+                Log.d("onPlaybackComplete", "onPlaybackComplete" + '\n');
             }
         });
 
-//        prepareSentencesContext();
+        prepareSentencesContext();
+    }
+
+    private void prepareSentencesContext() {
+
+        List<String> sentencesList = testNeighborGrammarGenerator();
+
+        setContext(sentencesList);
+    }
+
+    private void setContext(final List<String> sentencesList) {
+        final ProgressDialog progressDialog = new ProgressDialog(ASRActivity.this);
+        progressDialog.setMessage("Preparing context...");
+        progressDialog.show();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (null == correctItemArrayList) {
+                    correctItemArrayList = new ArrayList<>();
+                    int i = 0;
+                    for (String s : sentencesList) {
+                        correctItemArrayList.add(new AsrCorrectItem(i, s));
+                        i++;
+                    }
+
+                    asrEngine.setContext(sentencesList);
+
+                    ASRActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+    }
+
+    private List<String> testNeighborGrammarGenerator() {
+
+        neighborGrammarGenerator = new NeighborGrammarGenerator(null, asrConfig.POCKETSPHINX_CFG_DEFAULT_DICT);
+
+//        ArrayList<String> list = new ArrayList<String>() {{
+//            add("how");
+//            add("are");
+//            add("you");
+//        }};
+
+        List<String> list = Arrays.asList(phrase.split(" "));
+
+        return neighborGrammarGenerator.getSentenceNeighbors(list);
     }
 
 
@@ -198,7 +252,6 @@ public class ASRActivity extends BaseChunkActivity {
             @Override
             public void onClick(View v) {
                 if (isRecording) {
-                    recBtn.setOnClickListener(startRecListener);
                     audioView.setVisibility(View.INVISIBLE);
                     stopProgress();
                     if (audioPath != null) {
@@ -212,7 +265,6 @@ public class ASRActivity extends BaseChunkActivity {
 
                     asrEngine.stopRecording();
                 } else {
-                    recBtn.setOnClickListener(stopRecListener);
                     playBtn.setVisibility(View.GONE);
                     audioView.setVisibility(View.VISIBLE);
                     submitBtn.setVisibility(View.INVISIBLE);
@@ -221,7 +273,7 @@ public class ASRActivity extends BaseChunkActivity {
                     startProgress(1000 * DURATION, new Closure() {
                         @Override
                         public void execute(Object result) {
-                            onRecStop();// do something after counting stop
+//                            onRecStop();// do something after counting stop
                         }
                     });
                     startCounter();
@@ -246,7 +298,6 @@ public class ASRActivity extends BaseChunkActivity {
                 } else {
                     playBtn.setBackgroundResource(R.drawable.ic_stop);
                     switchProgressColor(false);
-                    initMediaPlayer();
                     startProgress(mMediaPlayer.getDuration(), null);
 
                     asrEngine.startPlayback(audioPath);
@@ -261,15 +312,12 @@ public class ASRActivity extends BaseChunkActivity {
             List<PresentationConversation> list = mChunkModel.getChunkPresentation().getPresentationConversations();
             for (PresentationConversation p : list) {
                 if (p.getSentence().contains(mChunkModel.getChunkText())) {
-                    titleView.setText(String.format(JsonSerializeHelper
-                            .JsonLanguageDeserialize(mContext,
-                                    "recording_view_instruction"), mChunkModel
-                            .getCoursename()));
-
+                    phrase = p.getSentence();
                     break;
                 }
             }
         }
+        titleView.setText(phrase);
 
         skipView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -613,11 +661,14 @@ public class ASRActivity extends BaseChunkActivity {
      * @return
      */
     private int getDuration() {
-        initMediaPlayer();
-        if (mMediaPlayer != null) {
-            return mMediaPlayer.getDuration();
+
+        int duration = asrEngine.getDuration();
+
+        if (duration == -1) {
+            return 10 * 1000;
+        } else {
+            return duration;
         }
-        return 0;
     }
 
     @Override

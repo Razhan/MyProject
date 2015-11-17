@@ -18,6 +18,7 @@ import com.ef.bite.dataacces.ChunkLoader;
 import com.ef.bite.dataacces.mode.Chunk;
 import com.ef.bite.dataacces.mode.httpMode.HttpRehearsalListResponse;
 import com.ef.bite.ui.chunk.ChunkLearnActivity;
+import com.ef.bite.ui.record.ASRActivity;
 import com.ef.bite.ui.record.RecordingActivity;
 import com.ef.bite.ui.record.UserRecordingActivity;
 import com.ef.bite.utils.FontHelper;
@@ -174,7 +175,7 @@ public class ChunkRehearseListAdapter extends
                                     Chunk chunk = chunkLoader.getChunk(data.course_id);
                                     if (chunk != null) {
                                         mContext.startActivity(new Intent(mContext,
-                                                RecordingActivity.class).putExtra(
+                                                ASRActivity.class).putExtra(
                                                 AppConst.BundleKeys.Is_Chunk_Learning, false)
                                                 .putExtra(AppConst.BundleKeys.Chunk, chunk));
 

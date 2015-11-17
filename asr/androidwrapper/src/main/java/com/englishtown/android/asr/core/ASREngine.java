@@ -35,4 +35,6 @@ public interface ASREngine {
     void destroy();
 
     String getRecorderAudioFilePath();
+
+    int getDuration();
 }

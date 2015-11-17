@@ -155,19 +155,7 @@ public class asr_test extends Activity {
 
     private void prepareSentencesContext() {
         sentencesList = new ArrayList<String>();
-//        sentencesList.add("This is the test sentences you can add them here");
-//        sentencesList.add("Read one by one");
-//        sentencesList.add("Hello World");
-//        sentencesList.add("How are you");
-//        sentencesList.add("I am fine");
-//        sentencesList.add("Thank you very much");
-//        sentencesList.add("What's wrong with you");
-//        sentencesList.add("This is a test");
-//        sentencesList.add("How do you think about the weather");
-//        sentencesList.add("It amazing it works");
-//        sentencesList.add("I'm Jackie");
-//        sentencesList.add("You are Pete");
-//        sentencesList.add("She's Kate");
+
 
         sentencesList = testNeighborGrammarGenerator();
 

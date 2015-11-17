@@ -352,6 +352,11 @@
             android:name=".ui.record.asr_test"
             android:label="@string/title_activity_asr_test"
             android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".ui.record.ASRActivity"
+            android:label="@string/title_activity_asr_test"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

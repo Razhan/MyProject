@@ -19,6 +19,8 @@ public class SphinxSpeachToText implements SpeechToTextService, RecognitionListe
     private final Thread recThread;
     private Callback callback;
     private boolean init;
+    private int duration = -1;
+    private long startTime;
 
     private boolean stopped;
 
@@ -60,11 +62,13 @@ public class SphinxSpeachToText implements SpeechToTextService, RecognitionListe
         this.callback = callback;
         stopped = false;
         rec.start();
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     public synchronized void stopListening() {
         rec.stop();
+        duration = (int)(System.currentTimeMillis() - startTime);
         stopped = true;
     }
 
@@ -110,6 +114,10 @@ public class SphinxSpeachToText implements SpeechToTextService, RecognitionListe
         } else {
             Logger.e(TAG, "rec is null in setModelPath()");
         }
+    }
+
+    public int getDuration() {
+        return duration;
     }
 
 }
