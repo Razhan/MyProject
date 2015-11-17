@@ -17,7 +17,7 @@ dependencies {
     compile fileTree(include: '*.jar', dir: 'libs')
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
     compile 'com.apptentive:apptentive-android:1.7.3@aar'
-
+    compile project(':asr:androidwrapper')
 }
 
 android {
@@ -55,7 +55,7 @@ android {
 
     productFlavors {
 
-        woo {}
+//        woo {}
 //        "91" {}
 //        anzhuo {}
 //        baidu {}
@@ -81,7 +81,7 @@ android {
 //        "360" {}
 //        google {}
 //        wyyyzs {}
-//        xmyysd {}
+        xmyysd {}
 //        hwyysc {}
 //        yysc {}
 //        yyb {}

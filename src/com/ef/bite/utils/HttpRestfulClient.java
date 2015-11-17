@@ -406,26 +406,26 @@ public class HttpRestfulClient {
     }
 
     private static void sengLogToServer(String url, String request, String response) {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("42.96.250.52");
-        list.add("bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com");
-
-        if (!isContainUrl(list, url)) {
-            return;
-        }
-
-        AndroidServerLog log = new AndroidServerLog();
-
-        log.put("appVersion", AppConst.GlobalConfig.App_Version);
-        log.put("bellaID", AppConst.CurrUserInfo.UserId);
-        log.put("deviceModel", AppConst.GlobalConfig.Device_Model);
-        log.put("phoneVersion", AppConst.GlobalConfig.OS_Version);
-        log.put("platform", AppConst.GlobalConfig.OS);
-        log.put("endPoint", url);
-        log.put("request", request == null ? "" : request);
-        log.put("response", response == null ? "" : response);
-
-        log.saveInBackground();
+//        ArrayList<String> list = new ArrayList<String>();
+//        list.add("42.96.250.52");
+//        list.add("bella-live-web-lb-1387001753.us-west-2.elb.amazonaws.com");
+//
+//        if (!isContainUrl(list, url)) {
+//            return;
+//        }
+//
+//        AndroidServerLog log = new AndroidServerLog();
+//
+//        log.put("appVersion", AppConst.GlobalConfig.App_Version);
+//        log.put("bellaID", AppConst.CurrUserInfo.UserId);
+//        log.put("deviceModel", AppConst.GlobalConfig.Device_Model);
+//        log.put("phoneVersion", AppConst.GlobalConfig.OS_Version);
+//        log.put("platform", AppConst.GlobalConfig.OS);
+//        log.put("endPoint", url);
+//        log.put("request", request == null ? "" : request);
+//        log.put("response", response == null ? "" : response);
+//
+//        log.saveInBackground();
     }
 
     private static boolean isContainUrl(ArrayList<String> list, String url) {

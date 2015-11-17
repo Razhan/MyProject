@@ -1,0 +1,8 @@
+#JSGF V1.0;
+grammar efekta;
+
+public <result> = <sentences>;
+<sentences> = <e0> | <e1> | <e2>;
+<e0> = PAUL'S PHONE NUMBER IS THREE SIX ONE SEVEN FIVE FOUR TWO;
+<e1> = PETER'S PHONE NUMBER IS FIVE SEVEN EIGHT NINE ZERO ZERO ONE;
+<e2> = PAUL THIS IS KATIE KATIE THIS IS PAUL;

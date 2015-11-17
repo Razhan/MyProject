@@ -1,0 +1,76 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+
+repositories {
+    maven {
+        url "${mobileRepoUrl}"
+    }
+    jcenter()
+}
+
+compileJava {
+    sourceCompatibility=1.7
+    targetCompatibility=1.7
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '**/*.so')
+
+    testCompile 'junit:junit:4.+'
+}
+
+//
+test.onlyIf { project.hasProperty('testNative') }
+
+tasks.withType(Test) {
+    systemProperty "java.library.path", "libs-mac-x64"
+}
+
+group = 'com.englishtown.android.asr'
+archivesBaseName = 'pocketsphinx'
+version = '1.0.1-SNAPSHOT'
+
+
+if (project.hasProperty('artifactory_user')) {
+
+    uploadArchives {
+
+        repositories.mavenDeployer {
+            repository(url: "${mobileSnapshotUrl}") {
+                authentication(userName: "${artifactory_user}", password: "${artifactory_password}")
+            }
+        }
+    }
+}
+
+
+def ASR_PACKAGE = 'hub4wsj_sc_8k'
+task asrPackageZip(type: Zip) {
+    archiveName "${ASR_PACKAGE}.zip"
+    classifier = 'resources'
+    from fileTree(dir: 'resources', exclude: '.DS_Store', include: "${ASR_PACKAGE}/*" )
+}
+
+
+def armeabiFile = file('libs/armeabi/libpocketsphinx_jni.so')
+def x86SoFile = file('libs/x86/libpocketsphinx_jni.so')
+def armeabiv7aSoFile = file('libs/armeabi-v7a/libpocketsphinx_jni.so')
+artifacts {
+    archives(armeabiFile) {
+        classifier = 'armeabi'
+        type 'so'
+    }
+
+    archives(armeabiv7aSoFile) {
+        classifier = 'armeabi-v7a'
+        type 'so'
+    }
+
+    archives(x86SoFile) {
+        classifier = 'x86'
+        type 'so'
+    }
+
+    archives asrPackageZip
+}
