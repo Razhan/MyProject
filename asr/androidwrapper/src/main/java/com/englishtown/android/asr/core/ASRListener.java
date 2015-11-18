@@ -6,7 +6,7 @@ package com.englishtown.android.asr.core;
 public interface ASRListener {
     void onRecordComplete(String o);
 
-    void onSuccess(AsrCorrectItem o);
+    void onSuccess(String o);
 
     void onError();
 

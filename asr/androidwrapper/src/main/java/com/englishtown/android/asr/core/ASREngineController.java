@@ -390,31 +390,34 @@ public class ASREngineController implements SpeechToTextService.Callback, ASREng
             sessionData.accumulateResult(ASRSessionData.RESULT_NULL);
             handleASREvent(ASREngineController.MSG_ASR_STT_RESULT_ERR, null);
         } else {
-            if (null != correctList) {
-                for (AsrCorrectItem i : correctList) {
-                    String normalized = normalizer.normalize(i.words, true);
-                    Logger.i(TAG, " cmp:" + sessionData.getCmp() + " matching:" + normalized + " ==> " + normalizedResult);
+//            if (null != correctList) {
+//                for (AsrCorrectItem i : correctList) {
+//                    String normalized = normalizer.normalize(i.words, true);
+//                    Logger.i(TAG, " cmp:" + sessionData.getCmp() + " matching:" + normalized + " ==> " + normalizedResult);
+//
+//                    if (normalized.contains("_")) {
+//                        if (wildcardMatch(normalized, normalizedResult)) {
+//                            sessionData.accumulateResult(ASRSessionData.RESULT_MATCHED);
+//                            handleASREvent(MSG_ASR_STT_RESULT, i);
+//                            return;
+//                        }
+//                    } else {
+//                        normalized = normalized.replaceAll(" ", "'");
+//                        normalizedResult = normalizedResult.replaceAll(" ", "'");
+//                        if (normalized.compareToIgnoreCase(normalizedResult) == 0) {
+//                            sessionData.accumulateResult(ASRSessionData.RESULT_MATCHED);
+//                            handleASREvent(MSG_ASR_STT_RESULT, i);
+//                            return;
+//                        }
+//                    }
+//
+//                }
+//            }
+//            sessionData.accumulateResult(ASRSessionData.RESULT_NOT_MATCHED);
+//            handleASREvent(MSG_ASR_STT_RESULT_ERR, null);
 
-                    if (normalized.contains("_")) {
-                        if (wildcardMatch(normalized, normalizedResult)) {
-                            sessionData.accumulateResult(ASRSessionData.RESULT_MATCHED);
-                            handleASREvent(MSG_ASR_STT_RESULT, i);
-                            return;
-                        }
-                    } else {
-                        normalized = normalized.replaceAll(" ", "'");
-                        normalizedResult = normalizedResult.replaceAll(" ", "'");
-                        if (normalized.compareToIgnoreCase(normalizedResult) == 0) {
-                            sessionData.accumulateResult(ASRSessionData.RESULT_MATCHED);
-                            handleASREvent(MSG_ASR_STT_RESULT, i);
-                            return;
-                        }
-                    }
-
-                }
-            }
-            sessionData.accumulateResult(ASRSessionData.RESULT_NOT_MATCHED);
-            handleASREvent(MSG_ASR_STT_RESULT_ERR, null);
+            sessionData.accumulateResult(ASRSessionData.RESULT_MATCHED);
+            handleASREvent(ASREngineController.MSG_ASR_STT_RESULT, normalizedResult);
         }
     }
 
@@ -443,52 +446,10 @@ public class ASREngineController implements SpeechToTextService.Callback, ASREng
     }
 
     private void handleASREvent(int what, Object o) {
-//        handleASREventR(what, o);
-//    }
-//
-//    public void handleASREventR(int what, Object o) {
-//        String js = "";
-//
-//        switch (what) {
-//            case MSG_ASR_STT_RESULT:
-//                AsrCorrectItem i = (AsrCorrectItem) o;
-//                js = JS_ASR_CMD_COMPLETE + "({\"result\":\"success\", \"index\":" + i.getIndex() + ", \"sentence\":\"" + i.getWords() + "\"})";
-//                break;
-//            case MSG_ASR_STT_RESULT_ERR:
-//                if (sessionData.getTemplateCode().equals("LngComp")) {
-//                    js = JS_ASR_CMD_COMPLETE + "({\"result\":\"success\", \"index\":-1, \"sentence\":\"\", \"words\":[]})";
-//                } else {
-//                    js = JS_ASR_CMD_COMPLETE + "({\"result\":\"error\", \"reason\":\"\"})";
-//                }
-//                resetAsr(1);
-//                break;
-//            case MSG_ASR_REC_COMPLETE:
-//                // need return the recorder file path.
-//                if (null == o && null != recorderAndPlaybackHandler) {
-//                    o = recorderAndPlaybackHandler.getAudioTmpFilesPath();
-//                }
-//
-//                js = JS_ASR_CMD_REC_COMPLETE + "('" + (String) o + "')";
-//
-//                break;
-//            case MSG_ASR_PB_COMPLETE:
-//                js = JS_ASR_CMD_PB_COMPLETE + "()";
-//                break;
-//            default:
-//                throw new RuntimeException("Unexpected Msg");
-//        }
-//
-//        if (what == MSG_ASR_STT_RESULT || what == MSG_ASR_STT_RESULT_ERR) {
-//            Logger.i(TAG, "handleASREvent:" + js);
-//        } else {
-//            Logger.v(TAG, "handleASREvent:" + js);
-//        }
-//        ASRContext.webView.loadUrl(js);
-
 
         switch (what) {
             case MSG_ASR_STT_RESULT: {
-                asrListener.onSuccess((AsrCorrectItem) o);
+                asrListener.onSuccess((String) o);
                 break;
             }
 

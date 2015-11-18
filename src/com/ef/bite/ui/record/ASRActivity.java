@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -39,7 +40,6 @@ import com.englishtown.android.asr.core.ASRListener;
 import com.englishtown.android.asr.core.AsrCorrectItem;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ASRActivity extends BaseChunkActivity {
     private boolean isRecording = false;
     private boolean isPlaying = false;
     private ArrayList<AsrCorrectItem> correctItemArrayList;
-    private String phrase = "how are you";
+    private String phrase = "Record user's practice and upload it";
 
 
     private File mRecAudioFile;// Recording output file
@@ -84,11 +84,23 @@ public class ASRActivity extends BaseChunkActivity {
     private ProgressDialog progressDialog;
     private MP3Recorder mMediaRecorder;
 
+    private Handler mHandler;
+
+    public static final int MSG_ASR_REC_START = 0;
+    public static final int MSG_ASR_REC_END = 1;
+    public static final int MSG_ASR_PB_START = 2;
+    public static final int MSG_ASR_PB_COMPLETE = 3;
+    public static final int MSG_ASR_REC_SUCCESS = 4;
+    public static final int MSG_ASR_REC_COMPLETE = 5;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chunk_recording);
         super.onCreate(savedInstanceState);
         recStorage = new FileStorage(this, AppConst.CacheKeys.Storage_Recording);
+        initHandler();
         setupViews();
 
         appPreference = AppPreference.getInstance(getApplicationContext());
@@ -104,6 +116,39 @@ public class ASRActivity extends BaseChunkActivity {
 
 //        openGuide();
         tracking();
+
+    }
+
+    private void initHandler() {
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                int what = msg.what;
+                switch (what) {
+                    case MSG_ASR_REC_START:
+                        break;
+                    case MSG_ASR_REC_END:
+                        break;
+                    case MSG_ASR_PB_START:
+                        break;
+                    case MSG_ASR_PB_COMPLETE:
+                        playBtn.performClick();
+                        break;
+                    case MSG_ASR_REC_SUCCESS:
+                        String tip = (String)msg.obj;
+                        titleView.setText(tip);
+                        break;
+                    case MSG_ASR_REC_COMPLETE:
+                        tipsView.setText("recoding complete");
+                        playBtn.setVisibility(View.VISIBLE);
+                        submitBtn.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
 
     }
 
@@ -142,11 +187,24 @@ public class ASRActivity extends BaseChunkActivity {
             public void onRecordComplete(String audio) {
                 audioPath = audio;
                 Log.d("onRecordComplete", "onRecordComplete, " + audioPath + '\n');
+                if (audioPath != null) {
+                    Message msg = mHandler.obtainMessage();
+                    msg.what = MSG_ASR_REC_COMPLETE;
+                    msg.obj = audioPath;
+
+                    mHandler.sendMessage(msg);
+                }
             }
 
             @Override
-            public void onSuccess(final AsrCorrectItem correctItem) {
-                Log.d("onSuccess", "onSuccess: " + correctItem.toString() + '\n');
+            public void onSuccess(final String correctItem) {
+                Log.d("onSuccess", "onSuccess: " + correctItem + '\n');
+
+                Message msg = mHandler.obtainMessage();
+                msg.what = MSG_ASR_REC_SUCCESS;
+                msg.obj = correctItem;
+
+                mHandler.sendMessage(msg);
             }
 
             @Override
@@ -157,6 +215,8 @@ public class ASRActivity extends BaseChunkActivity {
             @Override
             public void onPlaybackComplete() {
                 Log.d("onPlaybackComplete", "onPlaybackComplete" + '\n');
+
+                mHandler.sendEmptyMessage(MSG_ASR_PB_COMPLETE);
             }
         });
 
@@ -203,13 +263,6 @@ public class ASRActivity extends BaseChunkActivity {
     private List<String> testNeighborGrammarGenerator() {
 
         neighborGrammarGenerator = new NeighborGrammarGenerator(null, asrConfig.POCKETSPHINX_CFG_DEFAULT_DICT);
-
-//        ArrayList<String> list = new ArrayList<String>() {{
-//            add("how");
-//            add("are");
-//            add("you");
-//        }};
-
         List<String> list = Arrays.asList(phrase.split(" "));
 
         return neighborGrammarGenerator.getSentenceNeighbors(list);
@@ -254,15 +307,6 @@ public class ASRActivity extends BaseChunkActivity {
                 if (isRecording) {
                     audioView.setVisibility(View.INVISIBLE);
                     stopProgress();
-                    if (audioPath != null) {
-
-                        tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-                                mContext, "recoding_view_complete"));// completed
-                        // information
-                        playBtn.setVisibility(View.VISIBLE);
-                        submitBtn.setVisibility(View.VISIBLE);
-                    }
-
                     asrEngine.stopRecording();
                 } else {
                     playBtn.setVisibility(View.GONE);
@@ -298,7 +342,8 @@ public class ASRActivity extends BaseChunkActivity {
                 } else {
                     playBtn.setBackgroundResource(R.drawable.ic_stop);
                     switchProgressColor(false);
-                    startProgress(mMediaPlayer.getDuration(), null);
+                    int i = getDuration();
+                    startProgress(getDuration(), null);
 
                     asrEngine.startPlayback(audioPath);
                 }
@@ -334,93 +379,6 @@ public class ASRActivity extends BaseChunkActivity {
             }
         });
     }
-
-//    // On recording start
-//    View.OnClickListener startRecListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            onRecStart();
-//            MobclickTracking.OmnitureTrack.ActionTrackingRecording(1);
-//        }
-//    };
-//
-//    // On recording stop
-//    View.OnClickListener stopRecListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            onRecStop();
-//        }
-//    };
-//
-//    // on player start
-//    View.OnClickListener startPlayListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            onPlayStart();
-//        }
-//    };
-//
-//    // on player stop
-//    View.OnClickListener stopPlayListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            onPlayStop();
-//        }
-//    };
-//
-//    private void initMp3Recorder() {
-//        try {
-//            recStorage.clearAll();
-//            mRecAudioFile = File.createTempFile(PREFIX, ".mp3",
-//                    recStorage.getStorageDir());
-//            if (mRecAudioFile == null) {
-//                return;
-//            }
-//            mMediaRecorder = new MP3Recorder(mRecAudioFile);
-//            mMediaRecorder.start();
-//
-//        } catch (IOException e) {
-//            tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-//                    mContext, "recording_view_no_sound"));
-//            MobclickTracking.OmnitureTrack.ActionTrackingRecording(0);
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void initMediaPlayer() {
-//        if (mRecAudioFile == null) {
-//            return;
-//        }
-//        try {
-//            mMediaPlayer = new MediaPlayer();
-//            mMediaPlayer.setDataSource(mRecAudioFile.getAbsolutePath());
-//            mMediaPlayer
-//                    .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                        @Override
-//                        public void onCompletion(MediaPlayer mp) {
-//                            onPlayStop();
-//                        }
-//                    });
-//            mMediaPlayer.prepare();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    private void playRec() {
-//        if (mMediaPlayer == null) {
-//            return;
-//        }
-//        mMediaPlayer.start();
-//    }
-//
-//    private void stopMediaPlayer() {
-//        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-//            mMediaPlayer.stop();
-//            mMediaPlayer.release();
-//            mMediaPlayer = null;
-//        }
-//    }
 
     /**
      * draw progress circle
@@ -484,84 +442,6 @@ public class ASRActivity extends BaseChunkActivity {
         }
     }
 
-//    private void onRecStart() {
-//        recBtn.setOnClickListener(stopRecListener);
-//        playBtn.setVisibility(View.GONE);
-//        audioView.setVisibility(View.VISIBLE);
-//        submitBtn.setVisibility(View.INVISIBLE);
-//        switchProgressColor(true);
-//        onPlayStop();
-//        startProgress(1000 * DURATION, new Closure() {
-//            @Override
-//            public void execute(Object result) {
-//                onRecStop();// do something after counting stop
-//            }
-//        });
-//        startCounter();
-//        // initMediaRecorder();
-//        initMp3Recorder();
-//        updateDecibelStatus();
-//    }
-//
-//    private void onRecStop() {
-//        recBtn.setOnClickListener(startRecListener);
-//        audioView.setVisibility(View.INVISIBLE);
-//        stopProgress();
-//        stopMp3Record();
-//        // stopRecord();
-//        if (mRecAudioFile != null) {
-////            MobclickTracking.OmnitureTrack
-////                    .ActionTrackingRecordingSuccessful(mContext);
-//            tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-//                    mContext, "recoding_view_complete"));// completed
-//            // information
-//            playBtn.setVisibility(View.VISIBLE);
-//            submitBtn.setVisibility(View.VISIBLE);
-//        }
-//    }
-//
-//    /**
-//     * to stop record
-//     */
-//    // private void stopRecord() {
-//    // if (mMediaRecorder != null) {
-//    // // Stop recording
-//    // mMediaRecorder.stop();
-//    // // Release MediaRecorder
-//    // mMediaRecorder.release();
-//    // mMediaRecorder = null;
-//    // }
-//    // }
-//    private void stopMp3Record() {
-//        if (mMediaRecorder != null) {
-//            // Stop recording
-//            mMediaRecorder.stop();
-//            // Release MediaRecorder
-//            mMediaRecorder = null;
-//        }
-//    }
-//
-//    private void onPlayStart() {
-//        playBtn.setBackgroundResource(R.drawable.ic_stop);
-//        playBtn.setOnClickListener(stopPlayListener);
-//        switchProgressColor(false);
-//        initMediaPlayer();
-//        startProgress(mMediaPlayer.getDuration(), null);
-//        playRec();
-//    }
-//
-//    private void onPlayStop() {
-//        playBtn.setBackgroundResource(R.drawable.ic_play);
-//        playBtn.setOnClickListener(startPlayListener);
-//        stopProgress();
-//        startProgress(0, null);
-//        stopMediaPlayer();
-//    }
-
-    /**
-     * Audio decibel meter
-     */
-    private final Handler mHandler = new Handler();
     private Runnable mUpdateMicStatusTimer = new Runnable() {
         public void run() {
             updateDecibelStatus();
@@ -752,3 +632,4 @@ public class ASRActivity extends BaseChunkActivity {
         startActivity(intent);
     }
 }
+

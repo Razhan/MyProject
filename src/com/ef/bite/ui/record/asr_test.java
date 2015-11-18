@@ -123,7 +123,7 @@ public class asr_test extends Activity {
             }
 
             @Override
-            public void onSuccess(final AsrCorrectItem correctItem) {
+            public void onSuccess(final String correctItem) {
                 updateResultView("onSuccess: " + correctItem.toString() + '\n');
             }
 
@@ -158,11 +158,6 @@ public class asr_test extends Activity {
 
 
         sentencesList = testNeighborGrammarGenerator();
-
-//        sentencesList.add("how|know");
-//        sentencesList.add("are|am");
-//        sentencesList.add("you|I");
-
         sentences.setText("");
 
 
