@@ -3,6 +3,10 @@ package com.ef.bite.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -316,5 +320,24 @@ public class StringUtils {
 		baifenbi = df1.format(fen);
 		return baifenbi;
 	}
+
+    public static Map<Integer, Integer> getDIff(List<String> source, List<String> target) {
+
+        Map<Integer, Integer> res = new HashMap<Integer, Integer>();
+        if (source == null || target == null || source.size() < 1 || target.size() < 1) {
+            return res;
+        }
+
+        int len = 0;
+        for (int i = 0; i < target.size(); i++) {
+            if (source.contains(target.get(i))) {
+                res.put(len, len + target.get(i).length());
+            }
+            len += target.get(i).length() + 1;
+        }
+
+        return res;
+    }
+
 
 }

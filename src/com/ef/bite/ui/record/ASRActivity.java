@@ -3,10 +3,15 @@ package com.ef.bite.ui.record;
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -22,17 +27,23 @@ import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.UploadRecordingTask;
+import com.ef.bite.dataacces.mode.HintDefinition;
 import com.ef.bite.dataacces.mode.PresentationConversation;
 import com.ef.bite.lang.Closure;
 import com.ef.bite.ui.chunk.BaseChunkActivity;
 import com.ef.bite.ui.guide.RecordGuideAvtivity;
 import com.ef.bite.ui.main.MainActivity;
 import com.ef.bite.utils.FileStorage;
+import com.ef.bite.utils.IFileStorage;
 import com.ef.bite.utils.JsonSerializeHelper;
+import com.ef.bite.utils.StringUtils;
 import com.ef.bite.widget.DonutProgress;
+import com.ef.bite.widget.GifImageView;
+import com.ef.bite.widget.GifMovieView;
 import com.ef.bite.widget.HeaderView;
 import com.ef.bite.widget.PagesIndicator;
 import com.ef.efekta.asr.JSGFgen.NeighborGrammarGenerator;
+import com.ef.efekta.asr.textnormalizer.StringUtil;
 import com.englishtown.android.asr.core.ASRConfig;
 import com.englishtown.android.asr.core.ASREngine;
 import com.englishtown.android.asr.core.ASREngineController;
@@ -40,9 +51,11 @@ import com.englishtown.android.asr.core.ASRListener;
 import com.englishtown.android.asr.core.AsrCorrectItem;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,13 +73,10 @@ public class ASRActivity extends BaseChunkActivity {
     private boolean isRecording = false;
     private boolean isPlaying = false;
     private ArrayList<AsrCorrectItem> correctItemArrayList;
-    private String phrase = "Record user's practice and upload it";
+    private String phrase = "";
 
 
-    private File mRecAudioFile;// Recording output file
     // private MediaRecorder mMediaRecorder;
-    private MediaPlayer mMediaPlayer;
-    private FileStorage recStorage;
     private static String PREFIX = "rec";// The prefix name of recording file
     private static int DURATION = 10;// Recording limit time,default is 10s
     private static int CREDITS = 15;// Reward credits
@@ -81,8 +91,9 @@ public class ASRActivity extends BaseChunkActivity {
     private Timer progressTimer;
     private Timer counterTimer;
     private ImageView audioView;
+    private GifMovieView audioView_gif;
+
     private ProgressDialog progressDialog;
-    private MP3Recorder mMediaRecorder;
 
     private Handler mHandler;
 
@@ -93,13 +104,10 @@ public class ASRActivity extends BaseChunkActivity {
     public static final int MSG_ASR_REC_SUCCESS = 4;
     public static final int MSG_ASR_REC_COMPLETE = 5;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chunk_recording);
         super.onCreate(savedInstanceState);
-        recStorage = new FileStorage(this, AppConst.CacheKeys.Storage_Recording);
         initHandler();
         setupViews();
 
@@ -112,11 +120,24 @@ public class ASRActivity extends BaseChunkActivity {
         asrConfig = new ASRConfig(hmmPath, true, base);
         asrEngine = ASREngineController.getInstance(getApplication()).setConfig(asrConfig);
 
-        installAsrEngine();
-
 //        openGuide();
         tracking();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ASTInitAsyncTask asyncTask = new ASTInitAsyncTask();
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Prepare ASR Engine...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        asyncTask.execute();
     }
 
     private void initHandler() {
@@ -136,20 +157,31 @@ public class ASRActivity extends BaseChunkActivity {
                         playBtn.performClick();
                         break;
                     case MSG_ASR_REC_SUCCESS:
-                        String tip = (String)msg.obj;
-                        titleView.setText(tip);
+                        String tip = (String) msg.obj;
+                        boolean result = changeColor(
+                                StringUtils.getDIff(Arrays.asList(tip.split(" ")),
+                                        Arrays.asList(phrase.toUpperCase().split(" ")))
+                        );
+                        if (result) {
+                            tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
+                                    "record_asr_correct"));
+                            submitBtn.setVisibility(View.VISIBLE);
+                            scoreView.setVisibility(View.VISIBLE);
+                        } else {
+                            tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
+                                    "record_asr_incorrect"));
+                            submitBtn.setVisibility(View.INVISIBLE);
+                            scoreView.setVisibility(View.INVISIBLE);
+                        }
                         break;
                     case MSG_ASR_REC_COMPLETE:
-                        tipsView.setText("recoding complete");
                         playBtn.setVisibility(View.VISIBLE);
-                        submitBtn.setVisibility(View.VISIBLE);
                         break;
                     default:
                         break;
                 }
             }
         };
-
     }
 
     private void installAsrEngine() {
@@ -158,12 +190,6 @@ public class ASRActivity extends BaseChunkActivity {
 
             return;
         }
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Install ASR Engine...");
-
-        progressDialog.show();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -172,8 +198,6 @@ public class ASRActivity extends BaseChunkActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        progressDialog.dismiss();
-
                         initasrEngine();
                     }
                 });
@@ -186,7 +210,6 @@ public class ASRActivity extends BaseChunkActivity {
             @Override
             public void onRecordComplete(String audio) {
                 audioPath = audio;
-                Log.d("onRecordComplete", "onRecordComplete, " + audioPath + '\n');
                 if (audioPath != null) {
                     Message msg = mHandler.obtainMessage();
                     msg.what = MSG_ASR_REC_COMPLETE;
@@ -198,8 +221,6 @@ public class ASRActivity extends BaseChunkActivity {
 
             @Override
             public void onSuccess(final String correctItem) {
-                Log.d("onSuccess", "onSuccess: " + correctItem + '\n');
-
                 Message msg = mHandler.obtainMessage();
                 msg.what = MSG_ASR_REC_SUCCESS;
                 msg.obj = correctItem;
@@ -214,9 +235,7 @@ public class ASRActivity extends BaseChunkActivity {
 
             @Override
             public void onPlaybackComplete() {
-                Log.d("onPlaybackComplete", "onPlaybackComplete" + '\n');
-
-                mHandler.sendEmptyMessage(MSG_ASR_PB_COMPLETE);
+//                mHandler.sendEmptyMessage(MSG_ASR_PB_COMPLETE);
             }
         });
 
@@ -225,16 +244,12 @@ public class ASRActivity extends BaseChunkActivity {
 
     private void prepareSentencesContext() {
 
-        List<String> sentencesList = testNeighborGrammarGenerator();
+        List<String> sentencesList = NeighborGrammarGenerator();
 
         setContext(sentencesList);
     }
 
     private void setContext(final List<String> sentencesList) {
-        final ProgressDialog progressDialog = new ProgressDialog(ASRActivity.this);
-        progressDialog.setMessage("Preparing context...");
-        progressDialog.show();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -247,23 +262,17 @@ public class ASRActivity extends BaseChunkActivity {
                     }
 
                     asrEngine.setContext(sentencesList);
-
-                    ASRActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                        }
-                    });
                 }
             }
         }).start();
 
     }
 
-    private List<String> testNeighborGrammarGenerator() {
+    private List<String> NeighborGrammarGenerator() {
 
         neighborGrammarGenerator = new NeighborGrammarGenerator(null, asrConfig.POCKETSPHINX_CFG_DEFAULT_DICT);
-        List<String> list = Arrays.asList(phrase.split(" "));
+        List<String> list = Arrays.asList(phrase
+                .split(" "));
 
         return neighborGrammarGenerator.getSentenceNeighbors(list);
     }
@@ -281,9 +290,10 @@ public class ASRActivity extends BaseChunkActivity {
         titleView = (TextView) findViewById(R.id.tv_title);
         tipsView = (TextView) findViewById(R.id.tv_tips);
         tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
-                "recording_view_record"));
+                "record_asr_instruction"));
         scoreView = (TextView) findViewById(R.id.tv_score);
         audioView = (ImageView) findViewById(R.id.iv_audio);
+        audioView_gif = (GifMovieView)findViewById(R.id.iv_audio_gif);
         recProgress = (DonutProgress) findViewById(R.id.recorder_progress);
         recBtn = (Button) findViewById(R.id.btn_rec);
         playBtn = (Button) findViewById(R.id.btn_play);
@@ -306,22 +316,26 @@ public class ASRActivity extends BaseChunkActivity {
             public void onClick(View v) {
                 if (isRecording) {
                     audioView.setVisibility(View.INVISIBLE);
+                    playBtn.setVisibility(View.VISIBLE);
                     stopProgress();
                     asrEngine.stopRecording();
                 } else {
                     playBtn.setVisibility(View.GONE);
-                    audioView.setVisibility(View.VISIBLE);
+                    asrEngine.stopPlayBack();
+
+                    audioView.setVisibility(View.GONE);
+                    audioView_gif.setVisibility(View.VISIBLE);
                     submitBtn.setVisibility(View.INVISIBLE);
                     switchProgressColor(true);
-                    asrEngine.stopPlayBack();
                     startProgress(1000 * DURATION, new Closure() {
                         @Override
                         public void execute(Object result) {
-//                            onRecStop();// do something after counting stop
+                            recBtn.performClick();
                         }
                     });
                     startCounter();
                     updateDecibelStatus();
+
 
                     asrEngine.startRecording(correctItemArrayList, ASRConfig.RECORDER_MODE_RECORDER_ASR);
                 }
@@ -337,31 +351,48 @@ public class ASRActivity extends BaseChunkActivity {
                     playBtn.setBackgroundResource(R.drawable.ic_play);
                     stopProgress();
                     startProgress(0, null);
+                    recBtn.setClickable(true);
 
                     asrEngine.stopPlayBack();
                 } else {
+                    if (audioPath == null) {
+                        tipsView.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
+                                "record_asr_nothingness"));
+                        return;
+                    }
+
                     playBtn.setBackgroundResource(R.drawable.ic_stop);
                     switchProgressColor(false);
-                    int i = getDuration();
-                    startProgress(getDuration(), null);
-
+                    startProgress(getDuration(), new Closure() {
+                        @Override
+                        public void execute(Object result) {
+                            playBtn.performClick();
+                        }
+                    });
+                    asrEngine.stopRecording();
+                    recBtn.setClickable(false);
+                    audioView.setVisibility(View.GONE);
+                    audioView_gif.setVisibility(View.VISIBLE);
                     asrEngine.startPlayback(audioPath);
                 }
-
                 isPlaying = !isPlaying;
             }
         });
 
         if (mChunkModel != null) {
+            List<HintDefinition> list = mChunkModel.getHintDefinitions();
+            String str = list.get(list.size() - 1).getExample().split("\n")[0];
 
-            List<PresentationConversation> list = mChunkModel.getChunkPresentation().getPresentationConversations();
-            for (PresentationConversation p : list) {
-                if (p.getSentence().contains(mChunkModel.getChunkText())) {
-                    phrase = p.getSentence();
-                    break;
-                }
-            }
+            phrase = str
+                    .replace("<h>", "")
+                    .replace("</h>", "")
+                    .substring(3)
+                    .replace(".", "")
+                    .replace("\r", "")
+                    .replace("\n", "");
         }
+
+//        phrase = "still Be careful at the concert.";
         titleView.setText(phrase);
 
         skipView.setOnClickListener(new View.OnClickListener() {
@@ -406,7 +437,7 @@ public class ASRActivity extends BaseChunkActivity {
                     }
                 });
             }
-        }, 500, duration / 360);
+        }, 100, duration / 360);
     }
 
     /**
@@ -452,11 +483,13 @@ public class ASRActivity extends BaseChunkActivity {
     private int DELAY = 100;// Sampling interval time
 
     private void updateDecibelStatus() {
-        if (mMediaRecorder != null) {
-            double ratio = (double) mMediaRecorder.getVolume() / BASE;
+        if (asrEngine != null) {
+
+            double ratio = (double) asrEngine.getAmplitude() / BASE;
             double db = 0;// decibel
             if (ratio > 1)
                 db = 20 * Math.log10(ratio);
+
             updateAudioView(db);
             // Log.d("---dB", "dB：" + db);
             mHandler.postDelayed(mUpdateMicStatusTimer, DELAY);
@@ -494,7 +527,7 @@ public class ASRActivity extends BaseChunkActivity {
             return;
         }
 
-        if (mRecAudioFile == null) {
+        if (audioPath == null) {
             toast("No recording file");
             return;
         }
@@ -504,7 +537,7 @@ public class ASRActivity extends BaseChunkActivity {
                 mContext, "record_msg_uploading"));
         progressDialog.setCancelable(false);
         progressDialog.show();
-        UploadRecordingTask task = new UploadRecordingTask(this, mRecAudioFile,
+        UploadRecordingTask task = new UploadRecordingTask(this, new File(audioPath),
                 mChunkModel.getChunkCode(),
                 String.valueOf(getDuration() / 1000), "15",
                 new PostExecuting<Boolean>() {
@@ -548,6 +581,31 @@ public class ASRActivity extends BaseChunkActivity {
             return 10 * 1000;
         } else {
             return duration;
+        }
+    }
+
+    private boolean changeColor(Map<Integer, Integer> map) {
+
+        SpannableStringBuilder builder = new SpannableStringBuilder(phrase);
+
+        //ForegroundColorSpan 为文字前景色，BackgroundColorSpan为文字背景色
+        ForegroundColorSpan redSpan = new ForegroundColorSpan(Color.RED);
+
+        builder.setSpan(redSpan, 0, phrase.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            ForegroundColorSpan greenSpan = new ForegroundColorSpan(Color.GREEN);
+            builder.setSpan(greenSpan, entry.getKey(), entry.getValue(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        titleView.setText(builder);
+
+        int a = map.size();
+        int b = Arrays.asList(phrase.split(" ")).size() / 2;
+        if (map.size() > Arrays.asList(phrase.split(" ")).size() / 2) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -630,6 +688,20 @@ public class ASRActivity extends BaseChunkActivity {
         intent.putExtra(AppConst.BundleKeys.BELLAID,
                 AppConst.CurrUserInfo.UserId);
         startActivity(intent);
+    }
+
+    public class ASTInitAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            installAsrEngine();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            progressDialog.dismiss();
+            appPreference.setAsrPreInited(true);
+        }
     }
 }
 

@@ -335,8 +335,8 @@
 
 
     <!--Facebook id-->
-    <string name="fb_app_id">840080019363949</string>
-    <string name="fb_app_name">EFID</string>
+    <string name="fb_app_id">143864969305030</string>
+    <string name="fb_app_name">English Bite</string>
 
     <string-array name="array_spinner_registerage">
         <item>0&#8211;18</item>

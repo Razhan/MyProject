@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.englishtown.android.asr.core.ASRConfig;
 import com.englishtown.android.asr.task.audiorecorder.RecorderAndPlaybackInterface;
@@ -19,11 +20,11 @@ import edu.cmu.pocketsphinx.pocketsphinx;
 
 /**
  * Speech recognition task, which runs in a worker thread.
- * 
+ *
  * This class implements speech recognition for this demo application. It takes
  * the form of a long-running task which accepts requests to start and stop
  * listening, and emits recognition results to a listener.
- * 
+ *
  * @author David Huggins-Daines <dhuggins@cs.cmu.edu>
  */
 public class RecognizerTask implements Runnable {
@@ -37,6 +38,8 @@ public class RecognizerTask implements Runnable {
     private static final String POCKETSPHINX_UTTID = "efektaudio";
 
 	ASRConfig asrConfig;
+
+    private int amplitude;
 
     /**
 	 * Audio recording task.
@@ -92,7 +95,6 @@ public class RecognizerTask implements Runnable {
 			this.rec = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION,
 					RECORDER_SAMPLERATE, RECORDER_CHANNELS,
 	        RECORDER_AUDIO_ENCODING, bufferSize);
-
 		}
 
 		public int getBlockSize() {
@@ -133,21 +135,27 @@ public class RecognizerTask implements Runnable {
 		}
 
 		int readBlock() {
-			short[] buf = new short[this.block_size];
-			int nshorts = this.rec.read(buf, 0, buf.length);
+			short[] buffer = new short[this.block_size];
+			int nshorts = this.rec.read(buffer, 0, buffer.length);
 			
 			if (nshorts > 0) {
-				this.q.add(buf);
+				this.q.add(buffer);
 			}
 
 			if(null != recorderAndPlaybackInterface){
-				recorderAndPlaybackInterface.saveAudioRecorderFile(buf, nshorts);
+				recorderAndPlaybackInterface.saveAudioRecorderFile(buffer, nshorts);
 			}
 
+            double sum = 0;
+
+            for (int i = 0; i < nshorts; i++) {
+                sum += buffer [i] * buffer [i];
+            }
+            if (nshorts > 0) {
+                amplitude = (int)Math.sqrt(sum / nshorts);
+            }
 			return nshorts;
 		}
-		
-
 	}
 
 	/**
@@ -194,6 +202,10 @@ public class RecognizerTask implements Runnable {
 	Event mailbox;
 	private boolean done;
 	private boolean uttStarted;
+
+    public int getAmplitude() {
+        return amplitude;
+    }
 
 	public RecognitionListener getRecognitionListener() {
 		return rl;

@@ -114,10 +114,14 @@ public class NeighborGrammarGenerator implements RuleGenerator {
         }
 
         for (String item : sentence) {
+            if (allWordsAndPhones == null || !allWordsAndPhones.containsKey(item.toUpperCase())) {
+                continue;
+            }
             allPhonemes.clear();
             res.add(getWordNeighbors(item));
         }
-
+        allWordsAndPhones.clear();
+        allWordsAndPhones = null;
         return res;
     }
 
@@ -125,8 +129,8 @@ public class NeighborGrammarGenerator implements RuleGenerator {
 
         word = word.toUpperCase();
 
-        if (allWordsAndPhones != null && !allWordsAndPhones.containsKey(word.toUpperCase())) {
-            return word;
+        if (allWordsAndPhones == null || !allWordsAndPhones.containsKey(word.toUpperCase())) {
+            return null;
         }
 
         List<String> originalPhonemes = java.util.Arrays.asList(allWordsAndPhones.get(word).split(" "));

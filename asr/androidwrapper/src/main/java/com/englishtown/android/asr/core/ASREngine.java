@@ -37,4 +37,6 @@ public interface ASREngine {
     String getRecorderAudioFilePath();
 
     int getDuration();
+
+    int getAmplitude();
 }

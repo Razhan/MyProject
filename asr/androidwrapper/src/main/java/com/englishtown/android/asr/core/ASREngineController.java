@@ -157,6 +157,11 @@ public class ASREngineController implements SpeechToTextService.Callback, ASREng
         handleASRCommand(asrCommand);
     }
 
+    @Override
+    public int getAmplitude() {
+        return sphinxStt.getAmplitude();
+    }
+
 
     @Override
     public void destroy() {

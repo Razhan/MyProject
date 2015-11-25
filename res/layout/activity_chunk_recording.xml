@@ -48,7 +48,22 @@
         android:layout_marginTop="24dp"
         android:gravity="center"
         android:text="Record now!"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        android:lines="1"
+        android:ellipsize="end"/>
+
+    <TextView
+        android:id="@+id/tv_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_tips"
+        android:layout_alignRight="@id/tv_tips"
+        android:layout_marginBottom="-20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="30dp"
+        android:text="+15"
+        android:textSize="@dimen/score_increasing_text_smaller_size"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:id="@+id/recorderView"
@@ -92,7 +107,20 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="50dp"
             android:layout_toRightOf="@id/btn_rec"
-            android:background="@drawable/ic_audio" />
+            android:background="@drawable/ic_audio"
+            android:visibility="invisible"/>
+
+        <com.ef.bite.widget.GifMovieView
+            android:id="@+id/iv_audio_gif"
+            android:layout_width="28dp"
+            android:layout_height="40dp"
+            android:src="@drawable/wechat_audio"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="50dp"
+            android:layout_toRightOf="@id/btn_rec"
+            android:visibility="gone"
+            />
+
     </RelativeLayout>
 
     <Button
@@ -116,18 +144,6 @@
         android:text="SKIP"
         android:textColor="@color/gray"
         android:textSize="21dp" />
-
-    <TextView
-        android:id="@+id/tv_score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/btn_post"
-        android:layout_alignRight="@id/btn_post"
-        android:layout_marginBottom="-20dp"
-        android:layout_marginTop="10dp"
-        android:text="+15"
-        android:textSize="@dimen/score_increasing_text_smaller_size"
-        android:visibility="invisible" />
 
     <RelativeLayout
         android:id="@+id/chunk_bottom_layout"

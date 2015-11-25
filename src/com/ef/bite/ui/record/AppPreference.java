@@ -205,8 +205,10 @@ public class AppPreference {
     }
 
     public boolean isAsrPreInited() {
-        return appPreference.getBoolean(
+        boolean b = appPreference.getBoolean(
                 APP_PREFERENCE_ASR_PREINITED, false);
+
+        return b;
     }
 
     public void setAsrPreInited(boolean inited) {

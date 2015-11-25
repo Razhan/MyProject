@@ -120,4 +120,7 @@ public class SphinxSpeachToText implements SpeechToTextService, RecognitionListe
         return duration;
     }
 
+    public int getAmplitude() {
+        return rec.getAmplitude();
+    }
 }

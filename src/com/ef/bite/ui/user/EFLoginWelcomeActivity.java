@@ -2,9 +2,13 @@ package com.ef.bite.ui.user;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -37,6 +41,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,6 +86,8 @@ public class EFLoginWelcomeActivity extends BaseActivity {
 
         setContentView(R.layout.activity_eflogin_welcome);
 
+        getKeyHash();
+
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -96,7 +104,7 @@ public class EFLoginWelcomeActivity extends BaseActivity {
 
             @Override
             public void onError(FacebookException exception) {
-                Log.i("onError", "onError");
+                Log.i("onError", exception.toString());
             }
         });
 
@@ -244,6 +252,23 @@ public class EFLoginWelcomeActivity extends BaseActivity {
 //                startActivity(new Intent(mContext, ThirdPartyLogInActivity.class).putExtra("token", "123"));
             }
         });
+    }
+
+    private void getKeyHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.ef.bite",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -407,7 +407,7 @@ public class ReviewActivity extends BaseActivity implements
 			if(isLearning){
 				//Going to record
 				Intent intent = new Intent(mContext,
-						RecordingActivity.class);
+						ASRActivity.class);
 				intent.putExtra(AppConst.BundleKeys.Chunk,
 						mChunkModel);
 				intent.putExtra(
