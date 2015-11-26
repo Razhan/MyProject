@@ -2,7 +2,9 @@ package com.ef.bite.ui.record;
 
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -26,9 +28,11 @@ import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.UserScoreBiz;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.UploadRecordingTask;
+import com.ef.bite.dataacces.ConfigSharedStorage;
 import com.ef.bite.dataacces.mode.HintDefinition;
 import com.ef.bite.dataacces.mode.PresentationConversation;
 import com.ef.bite.lang.Closure;
+import com.ef.bite.model.ConfigModel;
 import com.ef.bite.ui.chunk.BaseChunkActivity;
 import com.ef.bite.ui.guide.RecordGuideAvtivity;
 import com.ef.bite.ui.main.MainActivity;
@@ -65,7 +69,6 @@ import java.util.TimerTask;
  */
 public class ASRActivity extends BaseChunkActivity {
 
-    private AppPreference appPreference;
     private ASRConfig asrConfig;
     private ASREngine asrEngine;
     private NeighborGrammarGenerator neighborGrammarGenerator;
@@ -76,7 +79,7 @@ public class ASRActivity extends BaseChunkActivity {
     private String phrase = "";
     private FileStorage recStorage;
     private File mRecAudioFile;
-
+    private List<String> sentencesList;
 
     // private MediaRecorder mMediaRecorder;
     private static String PREFIX = "rec";// The prefix name of recording file
@@ -93,7 +96,6 @@ public class ASRActivity extends BaseChunkActivity {
     private Timer progressTimer;
     private Timer counterTimer;
     private ImageView audioView;
-    private GifMovieView audioView_gif;
 
     private ProgressDialog progressDialog;
 
@@ -112,8 +114,6 @@ public class ASRActivity extends BaseChunkActivity {
         super.onCreate(savedInstanceState);
         initHandler();
         setupViews();
-
-        appPreference = AppPreference.getInstance(getApplicationContext());
 
         recStorage = new FileStorage(this, AppConst.CacheKeys.Storage_Recording);
         try {
@@ -138,8 +138,9 @@ public class ASRActivity extends BaseChunkActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+
         ASTInitAsyncTask asyncTask = new ASTInitAsyncTask();
 
         progressDialog = new ProgressDialog(this);
@@ -150,6 +151,20 @@ public class ASRActivity extends BaseChunkActivity {
         progressDialog.show();
 
         asyncTask.execute();
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        sentencesList = savedInstanceState.getStringArrayList("sentencesList");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList("sentencesList", (ArrayList<String>) sentencesList);
+
     }
 
     private void initHandler() {
@@ -197,15 +212,17 @@ public class ASRActivity extends BaseChunkActivity {
     }
 
     private void installAsrEngine() {
-        if (appPreference.isAsrPreInited()) {
-            initasrEngine(mRecAudioFile.getAbsolutePath());
 
+        if (PreferencesUtils.getBoolean(this,
+                AppConst.CacheKeys.APP_PREFERENCE_ASR_PREINITED)) {
+            initasrEngine(mRecAudioFile.getAbsolutePath());
             return;
         }
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                LifecycleActions.performStartActions(getApplicationContext(), asrEngine, asrConfig.getBaseCacheDir());
+                FirstTimeInstall(asrEngine, asrConfig.getBaseCacheDir());
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -215,6 +232,21 @@ public class ASRActivity extends BaseChunkActivity {
                 });
             }
         }).start();
+    }
+
+    private static void FirstTimeInstall(ASREngine asrEngine, String baseCacheDir) {
+        try {
+
+            File offlinePackDir = new File(baseCacheDir);
+            offlinePackDir.mkdirs();
+            new File(offlinePackDir, ".nomedia").mkdir();
+
+            String zipFile = "hub4wsj_sc_8k.zip";
+            asrEngine.installEngine(zipFile);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot start app", e);
+        }
     }
 
     private void initasrEngine(String mp3path) {
@@ -256,7 +288,9 @@ public class ASRActivity extends BaseChunkActivity {
 
     private void prepareSentencesContext() {
 
-        List<String> sentencesList = NeighborGrammarGenerator();
+        if (sentencesList == null || sentencesList.size() < 1) {
+            sentencesList = NeighborGrammarGenerator();
+        }
 
         setContext(sentencesList);
     }
@@ -289,7 +323,6 @@ public class ASRActivity extends BaseChunkActivity {
         return neighborGrammarGenerator.getSentenceNeighbors(list);
     }
 
-
     // Initialize views
     private void setupViews() {
 
@@ -305,7 +338,6 @@ public class ASRActivity extends BaseChunkActivity {
                 "record_asr_instruction"));
         scoreView = (TextView) findViewById(R.id.tv_score);
         audioView = (ImageView) findViewById(R.id.iv_audio);
-        audioView_gif = (GifMovieView)findViewById(R.id.iv_audio_gif);
         recProgress = (DonutProgress) findViewById(R.id.recorder_progress);
         recBtn = (Button) findViewById(R.id.btn_rec);
         playBtn = (Button) findViewById(R.id.btn_play);
@@ -335,8 +367,7 @@ public class ASRActivity extends BaseChunkActivity {
                     playBtn.setVisibility(View.GONE);
                     asrEngine.stopPlayBack();
 
-                    audioView.setVisibility(View.GONE);
-                    audioView_gif.setVisibility(View.VISIBLE);
+                    audioView.setVisibility(View.VISIBLE);
                     submitBtn.setVisibility(View.INVISIBLE);
                     switchProgressColor(true);
                     startProgress(1000 * DURATION, new Closure() {
@@ -384,7 +415,6 @@ public class ASRActivity extends BaseChunkActivity {
                     asrEngine.stopRecording();
                     recBtn.setClickable(false);
                     audioView.setVisibility(View.GONE);
-                    audioView_gif.setVisibility(View.VISIBLE);
                     asrEngine.startPlayback(audioPath);
                 }
                 isPlaying = !isPlaying;
@@ -712,7 +742,8 @@ public class ASRActivity extends BaseChunkActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             progressDialog.dismiss();
-            appPreference.setAsrPreInited(true);
+            PreferencesUtils.putBoolean(ASRActivity.this,
+                    AppConst.CacheKeys.APP_PREFERENCE_ASR_PREINITED, true);
         }
     }
 }

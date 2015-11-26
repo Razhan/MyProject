@@ -245,7 +245,9 @@ public class AppConst {
 		public final static String CACHE_ACHIEVEMENT = "CACHE_ACHIEVEMENT";
 		public final static String CACHE_SCORE = "CACHE_SCORE";
 		public final static String CACHE_PROFILE = "CACHE_PROFILE";
-	}
+        public final static  String APP_PREFERENCE_ASR_PREINITED = "asr_preinited";
+
+    }
 
 	public final static class BundleKeys {
 		public final static String Chunk = "Chunk_Model_Json";

@@ -110,17 +110,6 @@
             android:background="@drawable/ic_audio"
             android:visibility="invisible"/>
 
-        <com.ef.bite.widget.GifMovieView
-            android:id="@+id/iv_audio_gif"
-            android:layout_width="28dp"
-            android:layout_height="40dp"
-            android:src="@drawable/wechat_audio"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@id/btn_rec"
-            android:visibility="gone"
-            />
-
     </RelativeLayout>
 
     <Button

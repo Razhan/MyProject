@@ -276,10 +276,6 @@
             android:theme="@style/Apptentive.Theme.Transparent" />
         <activity android:name=".apptentive.SurveyActivity" />
         <activity
-            android:name=".ui.record.RecordingActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".ui.guide.RecordGuideAvtivity"
             android:screenOrientation="portrait" >
         </activity>
@@ -349,19 +345,9 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".ui.record.asr_test"
-            android:label="@string/title_activity_asr_test"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".ui.record.ASRActivity"
-            android:label="@string/title_activity_asr_test"
+            android:label="@string/title_activity_asr"
             android:screenOrientation="portrait" >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
     </application>
 
