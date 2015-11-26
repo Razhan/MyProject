@@ -102,8 +102,8 @@ public class ASREngineController implements SpeechToTextService.Callback, ASREng
     }
 
     @Override
-    public ASREngineController initAsrEngine() {
-        sphinxStt = new SphinxSpeachToText(asrConfig);
+    public ASREngineController initAsrEngine(String mp3path) {
+        sphinxStt = new SphinxSpeachToText(asrConfig, mp3path);
         sphinxStt.init();
         asrMonitor = new ASRMonitor(sphinxStt);
 

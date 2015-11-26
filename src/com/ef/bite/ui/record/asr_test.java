@@ -115,7 +115,7 @@ public class asr_test extends Activity {
 
 
     private void initasrEngine() {
-        asrEngine.initAsrEngine().setListener(new ASRListener() {
+        asrEngine.initAsrEngine(null).setListener(new ASRListener() {
             @Override
             public void onRecordComplete(String audio) {
                 audioPath = audio;

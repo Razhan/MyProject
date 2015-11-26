@@ -16,7 +16,7 @@ public interface ASREngine {
 
     ASREngine installEngine(String hub4wsj_sc_8kzipAssert) throws IOException;
 
-    ASREngine initAsrEngine();
+    ASREngine initAsrEngine(String path);
 
     ASREngine setListener(ASRListener listener);
 

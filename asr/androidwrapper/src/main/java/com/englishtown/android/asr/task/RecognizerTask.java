@@ -4,13 +4,18 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import com.englishtown.android.asr.core.ASRConfig;
 import com.englishtown.android.asr.task.audiorecorder.RecorderAndPlaybackInterface;
 import com.englishtown.android.asr.utils.Logger;
+import com.englishtown.android.asr.utils.SimpleLame;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import edu.cmu.pocketsphinx.Config;
@@ -29,6 +34,10 @@ import edu.cmu.pocketsphinx.pocketsphinx;
  */
 public class RecognizerTask implements Runnable {
 
+    static {
+        System.loadLibrary("mp3lame");
+    }
+
 	public static final int RECORDER_SAMPLERATE = 8000 * 2;
     public static final float RECORDER_SAMPLERATE_FLOAT = RECORDER_SAMPLERATE;
     public static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
@@ -36,6 +45,7 @@ public class RecognizerTask implements Runnable {
 	
     private static final String TAG = RecognizerTask.class.getSimpleName();
     private static final String POCKETSPHINX_UTTID = "efektaudio";
+    private String mFilePath;
 
 	ASRConfig asrConfig;
 
@@ -61,7 +71,12 @@ public class RecognizerTask implements Runnable {
 
 		static final int DEFAULT_BLOCK_SIZE = 512;
 
-		AudioTask() {
+        short[] buffer;
+        byte[] mp3buffer;
+        FileOutputStream output;
+
+
+        AudioTask() {
 			this.init(new LinkedBlockingQueue<short[]>(), DEFAULT_BLOCK_SIZE);
 		}
 
@@ -69,9 +84,21 @@ public class RecognizerTask implements Runnable {
 			this.init(q, DEFAULT_BLOCK_SIZE);
 		}
 
-		AudioTask(LinkedBlockingQueue<short[]> q, int block_size) {
+		AudioTask(LinkedBlockingQueue<short[]> q, int block_size, String mp3_path) {
 			this.init(q, block_size);
-		}
+
+            buffer = new short[this.block_size];
+            mp3buffer = new byte[(int) (7200 + buffer.length * 2 * 1.25)];
+
+//            String mFilePath = Environment.getExternalStorageDirectory() + "/aaab.mp3";
+
+            try {
+                output = new FileOutputStream(new File(mp3_path));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
 
         private RecorderAndPlaybackInterface recorderAndPlaybackInterface;
 
@@ -118,14 +145,32 @@ public class RecognizerTask implements Runnable {
 		        recorderAndPlaybackInterface.startRecording();
 		    }
 
-			this.rec.startRecording();
+            SimpleLame.init(RECORDER_SAMPLERATE, 1, RECORDER_SAMPLERATE, 32);
+
+            this.rec.startRecording();
 			while (!this.done) {
 				int nshorts = this.readBlock();
 				if (nshorts <= 0)
 					break;
 			}
-			
-			this.rec.stop();
+
+            int flushResult = SimpleLame.flush(mp3buffer);
+
+            if (flushResult != 0) {
+                try {
+                    output.write(mp3buffer, 0, flushResult);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                output.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            this.rec.stop();
 			this.rec.release();
 			
 			if(null != recorderAndPlaybackInterface){
@@ -135,11 +180,21 @@ public class RecognizerTask implements Runnable {
 		}
 
 		int readBlock() {
-			short[] buffer = new short[this.block_size];
 			int nshorts = this.rec.read(buffer, 0, buffer.length);
 			
 			if (nshorts > 0) {
 				this.q.add(buffer);
+
+                int encResult = SimpleLame.encode(buffer,
+                        buffer, nshorts, mp3buffer);
+
+                if (encResult != 0) {
+                    try {
+                        output.write(mp3buffer, 0, encResult);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
 			}
 
 			if(null != recorderAndPlaybackInterface){
@@ -223,7 +278,7 @@ public class RecognizerTask implements Runnable {
 		return this.use_partials;
 	}
 
-	public RecognizerTask(ASRConfig asrConfig) {
+	public RecognizerTask(ASRConfig asrConfig, String mp3path) {
         this.asrConfig = asrConfig;
 		Config c = new Config();
 		setCommonCfg(c);
@@ -235,6 +290,7 @@ public class RecognizerTask implements Runnable {
 		this.audioq = new LinkedBlockingQueue<short[]>();
 		this.use_partials = false;
 		this.mailbox = Event.NONE;
+        this.mFilePath = mp3path;
 	}
 
 	public RecognizerTask(ASRConfig asrConfig, String dictionaryPath, String languageModelPath) {
@@ -315,7 +371,7 @@ public class RecognizerTask implements Runnable {
 			case START:
 				if (state == State.IDLE) { 
 					Logger.v(TAG, "START");
-					this.audio = new AudioTask(this.audioq, 1024);
+					this.audio = new AudioTask(this.audioq, 1024, mFilePath);
 					this.audio_thread = new Thread(this.audio, "AudioTaskThread");
 					this.ps.startUtt(POCKETSPHINX_UTTID);
 					this.uttStarted = true;

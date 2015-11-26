@@ -24,8 +24,8 @@ public class SphinxSpeachToText implements SpeechToTextService, RecognitionListe
 
     private boolean stopped;
 
-    public SphinxSpeachToText(ASRConfig asrConfig) {
-        rec = new RecognizerTask(asrConfig);
+    public SphinxSpeachToText(ASRConfig asrConfig, String mp3path) {
+        rec = new RecognizerTask(asrConfig, mp3path);
         recThread = new Thread(rec, "RecognizerThread");
         rec.setRecognitionListener(this);
         stopped = true;

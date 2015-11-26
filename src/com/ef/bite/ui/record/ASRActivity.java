@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import cn.trinea.android.common.util.PreferencesUtils;
-import com.czt.mp3recorder.MP3Recorder;
 import com.ef.bite.AppConst;
 import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
@@ -51,6 +50,7 @@ import com.englishtown.android.asr.core.ASRListener;
 import com.englishtown.android.asr.core.AsrCorrectItem;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +74,8 @@ public class ASRActivity extends BaseChunkActivity {
     private boolean isPlaying = false;
     private ArrayList<AsrCorrectItem> correctItemArrayList;
     private String phrase = "";
+    private FileStorage recStorage;
+    private File mRecAudioFile;
 
 
     // private MediaRecorder mMediaRecorder;
@@ -112,6 +114,16 @@ public class ASRActivity extends BaseChunkActivity {
         setupViews();
 
         appPreference = AppPreference.getInstance(getApplicationContext());
+
+        recStorage = new FileStorage(this, AppConst.CacheKeys.Storage_Recording);
+        try {
+            recStorage.clearAll();
+            mRecAudioFile = File.createTempFile(PREFIX, ".mp3",
+                    recStorage.getStorageDir());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         File filesDir = getApplicationContext().getFilesDir();
         String base = filesDir.getPath();
@@ -186,7 +198,7 @@ public class ASRActivity extends BaseChunkActivity {
 
     private void installAsrEngine() {
         if (appPreference.isAsrPreInited()) {
-            initasrEngine();
+            initasrEngine(mRecAudioFile.getAbsolutePath());
 
             return;
         }
@@ -198,15 +210,15 @@ public class ASRActivity extends BaseChunkActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        initasrEngine();
+                        initasrEngine(mRecAudioFile.getAbsolutePath());
                     }
                 });
             }
         }).start();
     }
 
-    private void initasrEngine() {
-        asrEngine.initAsrEngine().setListener(new ASRListener() {
+    private void initasrEngine(String mp3path) {
+        asrEngine.initAsrEngine(mp3path).setListener(new ASRListener() {
             @Override
             public void onRecordComplete(String audio) {
                 audioPath = audio;
@@ -537,7 +549,7 @@ public class ASRActivity extends BaseChunkActivity {
                 mContext, "record_msg_uploading"));
         progressDialog.setCancelable(false);
         progressDialog.show();
-        UploadRecordingTask task = new UploadRecordingTask(this, new File(audioPath),
+        UploadRecordingTask task = new UploadRecordingTask(this, mRecAudioFile,
                 mChunkModel.getChunkCode(),
                 String.valueOf(getDuration() / 1000), "15",
                 new PostExecuting<Boolean>() {
