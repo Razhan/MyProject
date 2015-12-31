@@ -330,13 +330,23 @@ public class StringUtils {
 
         int len = 0;
         for (int i = 0; i < target.size(); i++) {
-            if (source.contains(target.get(i))) {
+            if (containWord(source, target.get(i))){
                 res.put(len, len + target.get(i).length());
             }
             len += target.get(i).length() + 1;
         }
 
         return res;
+    }
+
+
+    private static boolean containWord(List<String> source, String word) {
+        for (String str : source) {
+            if (word.contains(str) && word.length() < (str.length() + 2)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

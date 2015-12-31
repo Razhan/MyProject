@@ -1,10 +1,6 @@
 package com.ef.bite.ui.chunk;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-
-import cn.trinea.android.common.util.PreferencesUtils;
-import com.ef.bite.AppSession;
 import com.ef.bite.R;
 import android.os.Handler;
 import android.util.Log;
@@ -17,22 +13,14 @@ import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.adapters.ChunkPracticeListAdapter;
 import com.ef.bite.animation.AudioPlayerMoveAnimation;
-import com.ef.bite.dataacces.TutorialConfigSharedStorage;
-import com.ef.bite.dataacces.mode.Achievement;
 import com.ef.bite.dataacces.mode.MulityChoiceAnswers;
-import com.ef.bite.ui.guide.GuideReviewRecordingActivity;
-import com.ef.bite.ui.popup.BaseDialogFragment.OnDismissListener;
-import com.ef.bite.ui.popup.BasePopupWindow;
-import com.ef.bite.ui.popup.ChunkDonePopWindow;
-import com.ef.bite.ui.popup.LevelUpPopWindow;
+
 import com.ef.bite.ui.popup.PracticeErrorPopWindow;
 import com.ef.bite.ui.popup.QuitPracticePopWindow;
-import com.ef.bite.ui.popup.ScoresUpDialogFragment;
-import com.ef.bite.ui.record.ReviewActivity;
+import com.ef.bite.ui.record.ASRActivity;
 import com.ef.bite.utils.HighLightStringHelper;
 import com.ef.bite.utils.JsonSerializeHelper;
 import com.ef.bite.utils.ScoreLevelHelper;
-import com.ef.bite.utils.TimeFormatUtil;
 import com.ef.bite.widget.DotProgressbar;
 
 public class ChunkPracticeActivity extends BaseMultiChoiceActivity {
@@ -249,69 +237,79 @@ public class ChunkPracticeActivity extends BaseMultiChoiceActivity {
 				totalScoreForPractice=totalScoreForPractice+ScoreLevelHelper.MAXIMUN_SCORE_PRACTICE_USE;
 				userScoreBiz.increaseScore(totalScoreForPractice);
 				// Assemble achievement
-				Achievement achievement = new Achievement();
-				achievement.setBella_id(AppConst.CurrUserInfo.UserId);
-				achievement.setPlan_id(AppConst.CurrUserInfo.CourseLevel);
-				achievement.setCourse_id(mChunkModel.getChunkCode());
-				achievement.setScore(totalScoreForPractice);
-				achievement.setStart_client_date(PreferencesUtils.getString(this, AppConst.CacheKeys.TIME_START));
-				achievement.setEnd_client_date(TimeFormatUtil.getUTCTimeStr());
-				achievement.setUpdate_progress_type(Achievement.TYPE_COMPLETE_LEARN);
-				// Post to server
-				postUserAchievement(achievement);
-				ChunkDonePopWindow donDialog = new ChunkDonePopWindow(
-						ChunkPracticeActivity.this, mChunkModel.getChunkText(),
-						mChunkModel.getChunkCode(), mContext);
-				donDialog.setOnCloseListener(new BasePopupWindow.OnCloseListener() {
-					@Override
-					public void onClose() {
-						// 积分增加dialog
-						ScoresUpDialogFragment scoreUpDilaog = new ScoresUpDialogFragment(
-								ChunkPracticeActivity.this,
-								ScoreLevelHelper
-										.getDisplayLevel(userScore),
-								ScoreLevelHelper
-										.getCurrentLevelScore(userScore),
-								ScoreLevelHelper
-										.getCurrentLevelExistedScore(userScore),
-								totalScoreForPractice, mContext);
-						// 检查是否levelup
-						final int up2Level = totalScoreForPractice > ScoreLevelHelper
-								.getLevelUpScore(userScore) ? ScoreLevelHelper
-								.getDisplayLevel(userScore
-										+ totalScoreForPractice) : 0;
-						scoreUpDilaog
-								.setOnDismissListener(new OnDismissListener() {
-									@Override
-									public void onDismiss(
-											DialogInterface dialog) {
-										if (up2Level <= 0) {
-											openMainActivity();
-										} else {
-											LevelUpPopWindow levelUp = new LevelUpPopWindow(
-													ChunkPracticeActivity.this,
-													up2Level);
-											levelUp.setOnDismissListener(new LevelUpPopWindow.OnDismissListener() {
-												@Override
-												public void onDismiss() {
-													openMainActivity();
-												}
-											});
-											levelUp.open();
-											lvl = String
-													.valueOf(up2Level);
-											BI_Tracking(LevelUpMessageValues);
+//				Achievement achievement = new Achievement();
+//				achievement.setBella_id(AppConst.CurrUserInfo.UserId);
+//				achievement.setPlan_id(AppConst.CurrUserInfo.CourseLevel);
+//				achievement.setCourse_id(mChunkModel.getChunkCode());
+//				achievement.setScore(totalScoreForPractice);
+//				achievement.setStart_client_date(PreferencesUtils.getString(this, AppConst.CacheKeys.TIME_START));
+//				achievement.setEnd_client_date(TimeFormatUtil.getUTCTimeStr());
+//				achievement.setUpdate_progress_type(Achievement.TYPE_COMPLETE_LEARN);
+//				// Post to server
+//				postUserAchievement(achievement);
+//				ChunkDonePopWindow donDialog = new ChunkDonePopWindow(
+//						ChunkPracticeActivity.this, mChunkModel.getChunkText(),
+//						mChunkModel.getChunkCode(), mContext);
+//				donDialog.setOnCloseListener(new BasePopupWindow.OnCloseListener() {
+//					@Override
+//					public void onClose() {
+//						// 积分增加dialog
+//						ScoresUpDialogFragment scoreUpDilaog = new ScoresUpDialogFragment(
+//								ChunkPracticeActivity.this,
+//								ScoreLevelHelper
+//										.getDisplayLevel(userScore),
+//								ScoreLevelHelper
+//										.getCurrentLevelScore(userScore),
+//								ScoreLevelHelper
+//										.getCurrentLevelExistedScore(userScore),
+//								totalScoreForPractice, mContext);
+//						// 检查是否levelup
+//						final int up2Level = totalScoreForPractice > ScoreLevelHelper
+//								.getLevelUpScore(userScore) ? ScoreLevelHelper
+//								.getDisplayLevel(userScore
+//										+ totalScoreForPractice) : 0;
+//						scoreUpDilaog
+//								.setOnDismissListener(new OnDismissListener() {
+//									@Override
+//									public void onDismiss(
+//											DialogInterface dialog) {
+//										if (up2Level <= 0) {
+//											openMainActivity();
+//										} else {
+//											LevelUpPopWindow levelUp = new LevelUpPopWindow(
+//													ChunkPracticeActivity.this,
+//													up2Level);
+//											levelUp.setOnDismissListener(new LevelUpPopWindow.OnDismissListener() {
+//												@Override
+//												public void onDismiss() {
+//													openMainActivity();
+//												}
+//											});
+//											levelUp.open();
+//											lvl = String.valueOf(up2Level);
+//											BI_Tracking(LevelUpMessageValues);
+//
+//										}
+//									}
+//								});
+//						scoreUpDilaog.show(getSupportFragmentManager(),
+//								"scores up");
+//					}
+//				});
+//				donDialog.open();
+//				MobclickTracking.OmnitureTrack.ActionTrackingLearned();
+//				BI_Tracking(PhraseLearnedMessageValues);
 
-										}
-									}
-								});
-						scoreUpDilaog.show(getSupportFragmentManager(),
-								"scores up");
-					}
-				});
-				donDialog.open();
-				MobclickTracking.OmnitureTrack.ActionTrackingLearned();
-				BI_Tracking(PhraseLearnedMessageValues);
+
+                //Going to record
+				Intent intent = new Intent(mContext,
+						ASRActivity.class);
+				intent.putExtra(AppConst.BundleKeys.Chunk,
+						mChunkModel);
+				intent.putExtra(
+						AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+				startActivity(intent);
+                finish();
 
 			}
 		}
@@ -357,29 +355,29 @@ public class ChunkPracticeActivity extends BaseMultiChoiceActivity {
 	/**
 	 * chunk学完以后回到主页面
 	 */
-	private void openMainActivity() {
-		AppConst.GlobalConfig.IsChunkPerDayLearned = true;
-		// new HomeScreenOpenAction().open(mContext, null);
-		// Intent intent = new Intent(mContext, ReviewActivity.class);
-		AppSession.getInstance().clear();
-		TutorialConfigSharedStorage tutorialConfigSharedStorage = new TutorialConfigSharedStorage(
-				mContext, AppConst.CurrUserInfo.UserId);
-		if (tutorialConfigSharedStorage.get().Tutorial_Review_Record) {
-			Intent intent = new Intent(mContext, ReviewActivity.class);
-			intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
-			intent.putExtra(AppConst.BundleKeys.Is_Chunk_Learning, true);
-			intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
-			startActivity(intent);
-			finish();
-		} else {
-			Intent intent = new Intent(mContext,
-					GuideReviewRecordingActivity.class);
-			intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
-			intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
-			startActivity(intent);
-			finish();
-		}
-	}
+//	private void openMainActivity() {
+//		AppConst.GlobalConfig.IsChunkPerDayLearned = true;
+//		// new HomeScreenOpenAction().open(mContext, null);
+//		// Intent intent = new Intent(mContext, ReviewActivity.class);
+//		AppSession.getInstance().clear();
+//		TutorialConfigSharedStorage tutorialConfigSharedStorage = new TutorialConfigSharedStorage(
+//				mContext, AppConst.CurrUserInfo.UserId);
+//		if (tutorialConfigSharedStorage.get().Tutorial_Review_Record) {
+//			Intent intent = new Intent(mContext, ReviewActivity.class);
+//			intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
+//			intent.putExtra(AppConst.BundleKeys.Is_Chunk_Learning, true);
+//			intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+//			startActivity(intent);
+//			finish();
+//		} else {
+//			Intent intent = new Intent(mContext,
+//					GuideReviewRecordingActivity.class);
+//			intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
+//			intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+//			startActivity(intent);
+//			finish();
+//		}
+//	}
 
 	@Override
 	public void onPause() {
@@ -421,8 +419,7 @@ public class ChunkPracticeActivity extends BaseMultiChoiceActivity {
 		case 4:
 			MobclickTracking.OmnitureTrack
 					.AnalyticsTrackState(
-							ContextDataMode.LevelUpMessageValues.pageNameValue
-									+ lvl,
+							ContextDataMode.LevelUpMessageValues.pageNameValue + lvl,
 							ContextDataMode.LevelUpMessageValues.pageSiteSubSectionValue,
 							ContextDataMode.LevelUpMessageValues.pageSiteSectionValue,
 							mContext);

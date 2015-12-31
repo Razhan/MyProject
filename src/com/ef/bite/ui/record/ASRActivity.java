@@ -3,6 +3,7 @@ package com.ef.bite.ui.record;
 import android.animation.ValueAnimator;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -22,24 +23,38 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cn.trinea.android.common.util.PreferencesUtils;
 import com.ef.bite.AppConst;
+import com.ef.bite.AppSession;
 import com.ef.bite.R;
 import com.ef.bite.Tracking.ContextDataMode;
 import com.ef.bite.Tracking.MobclickTracking;
 import com.ef.bite.business.UserScoreBiz;
+import com.ef.bite.business.UserServerAPI;
 import com.ef.bite.business.task.PostExecuting;
 import com.ef.bite.business.task.UploadRecordingTask;
+import com.ef.bite.dataacces.AchievementCache;
 import com.ef.bite.dataacces.ConfigSharedStorage;
+import com.ef.bite.dataacces.TutorialConfigSharedStorage;
+import com.ef.bite.dataacces.mode.Achievement;
 import com.ef.bite.dataacces.mode.HintDefinition;
 import com.ef.bite.dataacces.mode.PresentationConversation;
+import com.ef.bite.dataacces.mode.httpMode.HttpBaseMessage;
 import com.ef.bite.lang.Closure;
 import com.ef.bite.model.ConfigModel;
 import com.ef.bite.ui.chunk.BaseChunkActivity;
+import com.ef.bite.ui.guide.GuideReviewRecordingActivity;
 import com.ef.bite.ui.guide.RecordGuideAvtivity;
 import com.ef.bite.ui.main.MainActivity;
+import com.ef.bite.ui.popup.BaseDialogFragment;
+import com.ef.bite.ui.popup.BasePopupWindow;
+import com.ef.bite.ui.popup.ChunkDonePopWindow;
+import com.ef.bite.ui.popup.LevelUpPopWindow;
+import com.ef.bite.ui.popup.ScoresUpDialogFragment;
 import com.ef.bite.utils.FileStorage;
 import com.ef.bite.utils.IFileStorage;
 import com.ef.bite.utils.JsonSerializeHelper;
+import com.ef.bite.utils.ScoreLevelHelper;
 import com.ef.bite.utils.StringUtils;
+import com.ef.bite.utils.TimeFormatUtil;
 import com.ef.bite.widget.DonutProgress;
 import com.ef.bite.widget.GifImageView;
 import com.ef.bite.widget.GifMovieView;
@@ -47,11 +62,14 @@ import com.ef.bite.widget.HeaderView;
 import com.ef.bite.widget.PagesIndicator;
 import com.ef.efekta.asr.JSGFgen.NeighborGrammarGenerator;
 import com.ef.efekta.asr.textnormalizer.StringUtil;
+import com.ef.efekta.asr.textnormalizer.TextNormalizer;
+import com.ef.efekta.asr.textnormalizer.WordFinder;
 import com.englishtown.android.asr.core.ASRConfig;
 import com.englishtown.android.asr.core.ASREngine;
 import com.englishtown.android.asr.core.ASREngineController;
 import com.englishtown.android.asr.core.ASRListener;
 import com.englishtown.android.asr.core.AsrCorrectItem;
+import com.litesuits.android.async.SimpleTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +95,8 @@ public class ASRActivity extends BaseChunkActivity {
     private boolean isPlaying = false;
     private ArrayList<AsrCorrectItem> correctItemArrayList;
     private String phrase = "";
+    private String normalizedPhrase = "";
+
     private FileStorage recStorage;
     private File mRecAudioFile;
     private List<String> sentencesList;
@@ -85,6 +105,8 @@ public class ASRActivity extends BaseChunkActivity {
     private static String PREFIX = "rec";// The prefix name of recording file
     private static int DURATION = 10;// Recording limit time,default is 10s
     private static int CREDITS = 15;// Reward credits
+    private static int TOTALCREDITS = 100;
+
     private Button recBtn;// Recording button
     private Button playBtn;// Replay button
     private Button submitBtn;// Submit button
@@ -107,6 +129,11 @@ public class ASRActivity extends BaseChunkActivity {
     public static final int MSG_ASR_PB_COMPLETE = 3;
     public static final int MSG_ASR_REC_SUCCESS = 4;
     public static final int MSG_ASR_REC_COMPLETE = 5;
+
+    private final static int MultiChoiceLearn_mean = 1;
+    private final static int MultiChoiceLearn_use = 2;
+    private final static int PhraseLearnedMessageValues = 3;
+    private final static int LevelUpMessageValues = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,15 +159,6 @@ public class ASRActivity extends BaseChunkActivity {
         asrConfig = new ASRConfig(hmmPath, true, base);
         asrEngine = ASREngineController.getInstance(getApplication()).setConfig(asrConfig);
 
-//        openGuide();
-        tracking();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
         ASTInitAsyncTask asyncTask = new ASTInitAsyncTask();
 
         progressDialog = new ProgressDialog(this);
@@ -152,6 +170,14 @@ public class ASRActivity extends BaseChunkActivity {
 
         asyncTask.execute();
 
+        openGuide();
+        tracking();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -317,7 +343,7 @@ public class ASRActivity extends BaseChunkActivity {
     private List<String> NeighborGrammarGenerator() {
 
         neighborGrammarGenerator = new NeighborGrammarGenerator(null, asrConfig.POCKETSPHINX_CFG_DEFAULT_DICT);
-        List<String> list = Arrays.asList(phrase
+        List<String> list = Arrays.asList(normalizedPhrase
                 .split(" "));
 
         return neighborGrammarGenerator.getSentenceNeighbors(list);
@@ -423,25 +449,23 @@ public class ASRActivity extends BaseChunkActivity {
 
         if (mChunkModel != null) {
             List<HintDefinition> list = mChunkModel.getHintDefinitions();
-            String str = list.get(list.size() - 1).getExample().split("\n")[0];
-
-            phrase = str
-                    .replace("<h>", "")
-                    .replace("</h>", "")
+            String str = list.get(list.size() - 1).getExample()
+                    .split("\n")[0]
                     .substring(3)
-                    .replace(".", "")
-                    .replace("\r", "")
-                    .replace("\n", "");
+                    .replace("<h>", "")
+                    .replace("</h>", "");
+
+            TextNormalizer normalizer = new TextNormalizer(WordFinder.getPattern());
+            normalizedPhrase = normalizer.normalize(str, true);
+            phrase = normalizer.normalize(str, false);
         }
 
-//        phrase = "still Be careful at the concert.";
         titleView.setText(phrase);
 
         skipView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openUsersRecordAct();
-                finish();
+                addScore(TOTALCREDITS);
             }
         });
 
@@ -594,13 +618,13 @@ public class ASRActivity extends BaseChunkActivity {
 
                             MobclickTracking.OmnitureTrack.ActionTrackingRecordingSuccessful(mContext);
 
-                            new Handler().postDelayed(new Runnable() {
-                                public void run() {
-//                                    openUsersRecordAct();
-                                    startActivity(new Intent(mContext, MainActivity.class));
-                                    finish();
-                                }
-                            }, 500);
+//                            new Handler().postDelayed(new Runnable() {
+//                                public void run() {
+////                                    openUsersRecordAct();
+//                                    startActivity(new Intent(mContext, MainActivity.class));
+//                                    finish();
+//                                }
+//                            }, 500);
                         } else {
                             toast(JsonSerializeHelper.JsonLanguageDeserialize(
                                     mContext, "record_msg_upload_failed"));
@@ -642,8 +666,6 @@ public class ASRActivity extends BaseChunkActivity {
 
         titleView.setText(builder);
 
-        int a = map.size();
-        int b = Arrays.asList(phrase.split(" ")).size() / 2;
         if (map.size() > Arrays.asList(phrase.split(" ")).size() / 2) {
             return true;
         } else {
@@ -699,9 +721,136 @@ public class ASRActivity extends BaseChunkActivity {
      *
      * @param score
      */
-    private void addScore(int score) {
+    private void addScore(final int score) {
         UserScoreBiz userScoreBiz = new UserScoreBiz(this);
+        final int userScore = userScoreBiz.getUserScore();
         userScoreBiz.increaseScore(score);
+
+        // Assemble achievement
+        Achievement achievement = new Achievement();
+        achievement.setBella_id(AppConst.CurrUserInfo.UserId);
+        achievement.setPlan_id(AppConst.CurrUserInfo.CourseLevel);
+        achievement.setCourse_id(mChunkModel.getChunkCode());
+        achievement.setScore(score);
+        achievement.setStart_client_date(PreferencesUtils.getString(this, AppConst.CacheKeys.TIME_START));
+        achievement.setEnd_client_date(TimeFormatUtil.getUTCTimeStr());
+        achievement.setUpdate_progress_type(Achievement.TYPE_COMPLETE_LEARN);
+        // Post to server
+        postUserAchievement(achievement);
+        ChunkDonePopWindow donDialog = new ChunkDonePopWindow(
+                ASRActivity.this, mChunkModel.getChunkText(),
+                mChunkModel.getChunkCode(), mContext);
+        donDialog.setOnCloseListener(new BasePopupWindow.OnCloseListener() {
+            @Override
+            public void onClose() {
+                // 积分增加dialog
+                ScoresUpDialogFragment scoreUpDilaog = new ScoresUpDialogFragment(
+                        ASRActivity.this,
+                        ScoreLevelHelper
+                                .getDisplayLevel(userScore),
+                        ScoreLevelHelper
+                                .getCurrentLevelScore(userScore),
+                        ScoreLevelHelper
+                                .getCurrentLevelExistedScore(userScore),
+                        score, mContext);
+                // 检查是否levelup
+                final int up2Level = score > ScoreLevelHelper
+                        .getLevelUpScore(userScore) ? ScoreLevelHelper
+                        .getDisplayLevel(userScore
+                                + score) : 0;
+                scoreUpDilaog
+                        .setOnDismissListener(new BaseDialogFragment.OnDismissListener() {
+                            @Override
+                            public void onDismiss(
+                                    DialogInterface dialog) {
+                                if (up2Level <= 0) {
+                                    opennextActivity();
+                                } else {
+                                    LevelUpPopWindow levelUp = new LevelUpPopWindow(
+                                            ASRActivity.this,
+                                            up2Level);
+                                    levelUp.setOnDismissListener(new LevelUpPopWindow.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss() {
+                                            opennextActivity();
+                                        }
+                                    });
+                                    levelUp.open();
+//                                    lvl = String.valueOf(up2Level);
+                                    BI_Tracking(LevelUpMessageValues);
+
+                                }
+                            }
+                        });
+                scoreUpDilaog.show(getSupportFragmentManager(),
+                        "scores up");
+            }
+        });
+        donDialog.open();
+
+
+    }
+
+    private void opennextActivity() {
+        AppConst.GlobalConfig.IsChunkPerDayLearned = true;
+        // new HomeScreenOpenAction().open(mContext, null);
+        // Intent intent = new Intent(mContext, ReviewActivity.class);
+        AppSession.getInstance().clear();
+        TutorialConfigSharedStorage tutorialConfigSharedStorage = new TutorialConfigSharedStorage(
+                mContext, AppConst.CurrUserInfo.UserId);
+        if (tutorialConfigSharedStorage.get().Tutorial_Review_Record) {
+            Intent intent = new Intent(mContext, ReviewActivity.class);
+            intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
+            intent.putExtra(AppConst.BundleKeys.Is_Chunk_Learning, true);
+            intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+            startActivity(intent);
+            finish();
+        } else {
+            Intent intent = new Intent(mContext,
+                    GuideReviewRecordingActivity.class);
+            intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
+            intent.putExtra(AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    public void postUserAchievement(final Achievement achievement) {
+
+        SimpleTask<HttpBaseMessage> task = new SimpleTask<HttpBaseMessage>() {
+
+            @Override
+            protected void onPreExecute() {
+                if(StringUtils.isEquals(Achievement.TYPE_COMPLETE_LEARN,achievement.getUpdate_progress_type())){
+                    dashboardCache.removeLesson(achievement.getCourse_id());
+                }else {
+                    dashboardCache.removeRehearsal(achievement.getCourse_id());
+                }
+            }
+
+            @Override
+            protected HttpBaseMessage doInBackground() {
+                try {
+                    UserServerAPI serverAPI = new UserServerAPI(mContext);
+                    return serverAPI.postAchievement(new ArrayList<Achievement>(Arrays.asList(achievement)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(HttpBaseMessage result) {
+                if (result != null && StringUtils.isEquals(result.status, "0")) {
+
+                } else {
+                    AchievementCache.getInstance().setPersnalCache(achievement);
+                }
+            }
+        };
+
+        task.execute();
+
     }
 
     private void tracking() {
@@ -721,15 +870,6 @@ public class ASRActivity extends BaseChunkActivity {
                 AppConst.CacheKeys.Storage_Record_guide, true);
         startActivity(new Intent(this, RecordGuideAvtivity.class));
 
-    }
-
-    private void openUsersRecordAct() {
-        Intent intent = new Intent(ASRActivity.this,
-                UserRecordingActivity.class);
-        intent.putExtra(AppConst.BundleKeys.Chunk, mChunkModel);
-        intent.putExtra(AppConst.BundleKeys.BELLAID,
-                AppConst.CurrUserInfo.UserId);
-        startActivity(intent);
     }
 
     public class ASTInitAsyncTask extends AsyncTask<Void, Void, Void> {

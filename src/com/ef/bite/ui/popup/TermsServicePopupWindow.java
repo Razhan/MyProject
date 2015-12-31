@@ -81,7 +81,7 @@ public class TermsServicePopupWindow extends BasePopupWindow {
 		mAgree.setText(JsonSerializeHelper.JsonLanguageDeserialize(mActivity,
 				"popup_term_service_btn_agree"));
 		mNotAgree.setText(JsonSerializeHelper.JsonLanguageDeserialize(
-				mActivity, "popup_term_Service_btn_not_agree"));
+				mActivity, "popup_term_service_btn_not_agree"));
 		mPopuptermstitle.setText(JsonSerializeHelper.JsonLanguageDeserialize(
                 mActivity, "popup_term_service_title"));
 

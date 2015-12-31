@@ -40,6 +40,7 @@ import com.ef.bite.ui.preview.MutliChoicePreviewActivity;
 import com.ef.bite.utils.*;
 import com.ef.bite.widget.ActionbarLayout;
 import com.ef.bite.widget.UserLevelView;
+import com.google.gson.FieldNamingStrategy;
 
 public class BalloonActivity extends BaseActivity {
 	Chunk mChunkModel;
@@ -816,6 +817,7 @@ public class BalloonActivity extends BaseActivity {
 								R.anim.activity_in_from_right,
 								R.anim.activity_out_to_left);
 					}
+                    finish();
 				}
 			}
 		}, 1000);

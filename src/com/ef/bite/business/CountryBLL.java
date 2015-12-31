@@ -24,7 +24,7 @@ public class CountryBLL {
         String country = obj.optString(countrycode);
 
         if (country.isEmpty()) {
-            return "cn";
+            return "en";
         } else {
             return country;
         }

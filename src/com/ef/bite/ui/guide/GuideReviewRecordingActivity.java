@@ -74,7 +74,11 @@ public class GuideReviewRecordingActivity extends BaseActivity {
 
 				TutorialConfigSharedStorage tutorialConfigSharedStorage = new TutorialConfigSharedStorage(
 						mContext, AppConst.CurrUserInfo.UserId);
-				TutorialConfig tutorialConfig = new TutorialConfig();
+
+                TutorialConfig tutorialConfig = tutorialConfigSharedStorage.get();
+                if (tutorialConfig == null) {
+                    tutorialConfig = new TutorialConfig();
+                }
 				tutorialConfig.Tutorial_Review_Record = true;
 				tutorialConfigSharedStorage.put(tutorialConfig);
 			}

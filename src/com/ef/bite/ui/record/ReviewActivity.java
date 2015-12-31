@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ import com.ef.bite.dataacces.mode.httpMode.HttpReviewVoiceRequest;
 import com.ef.bite.dataacces.mode.httpMode.HttpReviewVoiceResponse;
 import com.ef.bite.dataacces.mode.httpMode.HttpVoiceRequest;
 import com.ef.bite.ui.BaseActivity;
+import com.ef.bite.ui.main.MainActivity;
 import com.ef.bite.ui.popup.QuitPracticePopWindow;
 import com.ef.bite.ui.popup.ReviewActivityPopWindow;
 import com.ef.bite.utils.AppLanguageHelper;
@@ -406,14 +408,20 @@ public class ReviewActivity extends BaseActivity implements
 			isDataNull = true;
 			if(isLearning){
 				//Going to record
-				Intent intent = new Intent(mContext,
-						ASRActivity.class);
-				intent.putExtra(AppConst.BundleKeys.Chunk,
-						mChunkModel);
-				intent.putExtra(
-						AppConst.BundleKeys.Hide_Bottom_Lay, 1);
-				startActivity(intent);
-				finish();
+//				Intent intent = new Intent(mContext,
+//						ASRActivity.class);
+//				intent.putExtra(AppConst.BundleKeys.Chunk,
+//						mChunkModel);
+//				intent.putExtra(
+//						AppConst.BundleKeys.Hide_Bottom_Lay, 1);
+//				startActivity(intent);
+
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        startActivity(new Intent(mContext, MainActivity.class));
+                        finish();
+                    }
+                }, 500);
 			}else {
 
 				ReviewActivityPopWindow reviewActivityPopWindow = new ReviewActivityPopWindow(

@@ -58,7 +58,7 @@ public class TermConditionActivity extends BaseActivity {
 		mAgree.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
 				"popup_term_service_btn_agree"));
 		mNotAgree.setText(JsonSerializeHelper.JsonLanguageDeserialize(mContext,
-				"popup_term_Service_btn_not_agree"));
+				"popup_term_service_btn_not_agree"));
 		popup_terms_title.setText(JsonSerializeHelper.JsonLanguageDeserialize(
 				mContext, "popup_term_service_title"));
 

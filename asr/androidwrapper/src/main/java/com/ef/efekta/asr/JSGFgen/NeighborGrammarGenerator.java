@@ -136,7 +136,7 @@ public class NeighborGrammarGenerator implements RuleGenerator {
         List<String> originalPhonemes = java.util.Arrays.asList(allWordsAndPhones.get(word).split(" "));
 //        allPhonemes.add(originalPhonemes);
 
-        generatePhonemeNeighbors(originalPhonemes, 0);
+        generatePhonemeNeighbors(originalPhonemes, 0, 3);
 
         Map<String, String> wordNeighbors = generateWordNeighbors(word, allPhonemes);
         addNewNeighbors(wordNeighbors);
@@ -167,9 +167,11 @@ public class NeighborGrammarGenerator implements RuleGenerator {
         return wordNeighbors;
     }
 
-    private void generatePhonemeNeighbors(final List<String> originalPhonemes, int index) {
+    private void generatePhonemeNeighbors(final List<String> originalPhonemes, int index, int limit) {
 
-        if (originalPhonemes == null || originalPhonemes.size() < 1 || index < 0 || index > originalPhonemes.size() - 1) {
+        if (allPhonemes.size() >= limit
+            || originalPhonemes == null || originalPhonemes.size() < 1
+                || index < 0 || index > originalPhonemes.size() - 1) {
             return;
         }
 
@@ -181,11 +183,11 @@ public class NeighborGrammarGenerator implements RuleGenerator {
                 newPhonemes.set(index, phonemeNeighbors.get(i));
 
                 allPhonemes.add(newPhonemes);
-                generatePhonemeNeighbors(newPhonemes, index + 1);
+                generatePhonemeNeighbors(newPhonemes, index + 1, limit);
             }
         }
 
-        generatePhonemeNeighbors(originalPhonemes, index + 1);
+        generatePhonemeNeighbors(originalPhonemes, index + 1, limit);
     }
 
     private String listToString(List<String> list, String separator) {

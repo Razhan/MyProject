@@ -38,7 +38,7 @@ public class GetServerAddressTask {
                     }
                 }else {
                     doOnFinish(host, password, studyplans);
-//                    Log.v("EF_HOST", "getHostFromServer:"+host);
+                    Log.v("EF_HOST", "getHostFromServer:"+host);
                 }
             }
         });

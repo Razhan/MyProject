@@ -34,7 +34,9 @@ import com.ef.bite.ui.BaseActivity;
 import com.ef.bite.utils.AppLanguageHelper;
 import com.ef.bite.utils.FontHelper;
 import com.ef.bite.utils.JsonSerializeHelper;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -105,6 +107,12 @@ public class EFLoginWelcomeActivity extends BaseActivity {
             @Override
             public void onError(FacebookException exception) {
                 Log.i("onError", exception.toString());
+
+                if (exception instanceof FacebookAuthorizationException) {
+                    if (AccessToken.getCurrentAccessToken() != null) {
+                        LoginManager.getInstance().logOut();
+                    }
+                }
             }
         });
 

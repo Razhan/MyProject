@@ -16,6 +16,8 @@ import com.ef.bite.AppConst;
 import com.ef.bite.model.AndroidServerLog;
 import com.ef.bite.model.SMSRecord;
 import com.ef.bite.model.ServerErrorLog;
+import com.ef.bite.ui.test.TrustAllSSLSocketFactory;
+import com.ef.bite.ui.test.TrustCertainHostNameFactory;
 import com.parse.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,14 +25,22 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -41,7 +51,27 @@ import org.json.JSONObject;
 public class HttpRestfulClient {
 
     public final static int TIME_OUT = 45 * 1000;
-	public static int Header_Num = 3;// 0:baidu 1:91 2:anzhuo 3:woo 4:wandoujia
+
+    private static HttpClient  mhttpClient;
+
+    public static HttpClient getInstance(Context context) {
+        if (mhttpClient == null) {
+            HttpParams param = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(param, TIME_OUT);
+            HttpConnectionParams.setSoTimeout(param, TIME_OUT);
+            HttpConnectionParams.setTcpNoDelay(param, true);
+
+            SchemeRegistry registry = new SchemeRegistry();
+            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        registry.register(new Scheme("https", TrustAllSSLSocketFactory.getDefault(), 443));
+//            registry.register(new Scheme("https", TrustCertainHostNameFactory.getDefault(context), 443));
+            ClientConnectionManager manager = new ThreadSafeClientConnManager(param, registry);
+            mhttpClient = new DefaultHttpClient(manager, param);
+        }
+        return mhttpClient;
+    }
+
+
 
 	/*
 	 * 调用Restful web service API
@@ -52,7 +82,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
 		httpClient.getParams().setParameter(
@@ -89,7 +119,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);;
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
 		httpClient.getParams().setParameter(
@@ -126,7 +156,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);;
 		HttpResponse response = null;
 		httpClient.getParams().setParameter(
 				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
@@ -165,69 +195,69 @@ public class HttpRestfulClient {
 	/*
 	 * 
 	 */
-	public static String Post(String url, List<BasicNameValuePair> params, Context mcontext) {
-
-        if (!CheckNetWork(mcontext)) {
-            return null;
-        }
-
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpContext localContext = new BasicHttpContext();
-		HttpResponse response = null;
-		httpClient.getParams().setParameter(
-				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
-		httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
-				TIME_OUT);
-		try {
-			HttpPost httpPost = new HttpPost(url);
-			httpPost.addHeader("Content-type",
-                    "application/json; charset=utf-8");
-			if (params != null)
-				httpPost.setEntity(new UrlEncodedFormEntity(params));
-			response = httpClient.execute(httpPost, localContext);
-			HttpEntity entity = response.getEntity();
-			String jsonString = getUTF8ContentFromEntity(entity);
-			return jsonString;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static Object Post(String url, JSONObject params, Type returnType, Context mcontext) {
-
-        if (!CheckNetWork(mcontext)) {
-            return null;
-        }
-
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpContext localContext = new BasicHttpContext();
-		httpClient.getParams().setParameter(
-				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
-		httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
-				TIME_OUT);
-		HttpResponse response = null;
-		try {
-			HttpPost httpPost = new HttpPost(url);
-			httpPost.addHeader("Content-type",
-					"application/json; charset=utf-8");
-			if (params != null)
-				httpPost.setEntity(new StringEntity(params.toString(),
-						HTTP.UTF_8));
-			response = httpClient.execute(httpPost, localContext);
-			HttpEntity entity = response.getEntity();
-            String jsonString = getUTF8ContentFromEntity(entity);
-			if (jsonString != null) {
-				Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
-						returnType);
-				return obj;
-			} else
-				return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public static String Post(String url, List<BasicNameValuePair> params, Context mcontext) {
+//
+//        if (!CheckNetWork(mcontext)) {
+//            return null;
+//        }
+//
+//		HttpClient httpClient = new DefaultHttpClient();
+//		HttpContext localContext = new BasicHttpContext();
+//		HttpResponse response = null;
+//		httpClient.getParams().setParameter(
+//				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
+//		httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
+//				TIME_OUT);
+//		try {
+//			HttpPost httpPost = new HttpPost(url);
+//			httpPost.addHeader("Content-type",
+//                    "application/json; charset=utf-8");
+//			if (params != null)
+//				httpPost.setEntity(new UrlEncodedFormEntity(params));
+//			response = httpClient.execute(httpPost, localContext);
+//			HttpEntity entity = response.getEntity();
+//			String jsonString = getUTF8ContentFromEntity(entity);
+//			return jsonString;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
+//
+//	public static Object Post(String url, JSONObject params, Type returnType, Context mcontext) {
+//
+//        if (!CheckNetWork(mcontext)) {
+//            return null;
+//        }
+//
+//		HttpClient httpClient = new DefaultHttpClient();
+//		HttpContext localContext = new BasicHttpContext();
+//		httpClient.getParams().setParameter(
+//				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
+//		httpClient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
+//				TIME_OUT);
+//		HttpResponse response = null;
+//		try {
+//			HttpPost httpPost = new HttpPost(url);
+//			httpPost.addHeader("Content-type",
+//					"application/json; charset=utf-8");
+//			if (params != null)
+//				httpPost.setEntity(new StringEntity(params.toString(),
+//						HTTP.UTF_8));
+//			response = httpClient.execute(httpPost, localContext);
+//			HttpEntity entity = response.getEntity();
+//            String jsonString = getUTF8ContentFromEntity(entity);
+//			if (jsonString != null) {
+//				Object obj = JsonSerializeHelper.JsonDeserialize(jsonString,
+//						returnType);
+//				return obj;
+//			} else
+//				return null;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 
 	/**
 	 * Post with Json parameter
@@ -246,7 +276,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);
 		HttpContext localContext = new BasicHttpContext();
 		httpClient.getParams().setParameter(
 				CoreConnectionPNames.CONNECTION_TIMEOUT, TIME_OUT);
@@ -294,7 +324,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);;
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
 		try {
@@ -339,7 +369,7 @@ public class HttpRestfulClient {
             return null;
         }
 
-		HttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = getInstance(mcontext);
 		HttpContext localContext = new BasicHttpContext();
 		HttpResponse response = null;
 		try {
